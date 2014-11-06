@@ -1,0 +1,85 @@
+// ========== Deploy ====================================================
+
+buildscript {
+    repositories {
+        maven {
+            url uri("file://$System.env.OUTPUT_ROOT/deliverables/")
+        }
+    }
+    dependencies {
+        classpath "fraud:common.deploy:$rev_fraud_common"
+    }
+}
+
+apply plugin: 'deploy'
+
+deploy {
+    serviceName = 'auth'
+    basePort = 11000
+    useSSL = true
+    keyAlias = 'oauth'
+    keystoreFile = 'conf/auth/appconfig/oauth.jks'
+    keystorePass = '5ecret0AUTHPa55word'
+    truststoreFile = 'conf/auth/appconfig/oauth.jks'
+    truststorePass = '5ecret0AUTHPa55word'
+}
+
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":auth.api")
+    compile "fraud:common.rest:${rev_fraud_common}"
+    compile "fraud:common.utils:${rev_fraud_common}"
+    compile "fraud:common.status:${rev_fraud_common}"
+    compile "fraud:common.logging:${rev_fraud_common}"
+
+    // --------------------- CXF -----------------------------------------
+    compile "org.apache.cxf:cxf-rt-frontend-jaxrs:${rev_cxf}"
+    compile "org.apache.cxf:cxf-rt-rs-service-description:${rev_cxf}"
+
+    // --------------------- JAX-WS --------------------------------------
+    compile "org.apache.cxf:cxf-rt-frontend-jaxws:${rev_cxf}"
+    compile "org.apache.cxf:cxf-rt-transports-http:${rev_cxf}"
+
+    // --------------------- COMMON --------------------------------------
+    compile "commons-collections:commons-collections:${rev_common_collections}"
+    compile "ch.qos.logback:logback-core:${rev_logback}"
+
+    // --------------------- MONGO ---------------------------------------
+    compile "org.mongodb:mongo-java-driver:${rev_mongo}"
+    //compile "org.springframework.data:spring-data-mongodb:${rev_spring_data_mongo}"
+
+    // --------------------- CASSANDRA -----------------------------------
+    //compile "com.datastax.cassandra:cassandra-driver-core:${rev_cassandra_datastax}"
+    compile "com.valchkou.datastax:cassandra-driver-mapping:${rev_datastax_mapping}"
+    //compile "com.netflix.astyanax:astyanax:${rev_astyanax}"
+
+    // --------------------- SPRING --------------------------------------
+    compile "org.springframework:spring-core:${rev_spring}"
+    compile "org.springframework:spring-beans:${rev_spring}"
+    compile "org.springframework:spring-context:${rev_spring}"
+    compile "org.springframework:spring-aop:${rev_spring}"
+    compile "org.springframework:spring-web:${rev_spring}"
+    compile "org.springframework:spring-orm:${rev_spring}"
+    // password encoding:
+    compile "org.springframework.security:spring-security-core:${rev_spring_security}"
+
+    // --------------------- ENCRYPTION ----------------------------------
+    compile "org.jasypt:jasypt:${rev_jasypt}"
+    compile "org.jasypt:jasypt-spring3:${rev_jasypt}"
+    compile "com.nimbusds:nimbus-jose-jwt:${rev_jose_jwt}"
+
+    // --------------------- UI ------------------------------------------
+    //compile "org.webjars:angularjs:${rev_angularjs}"
+    //compile "org.webjars:restangular:${rev_restangular}"
+    //compile "org.webjars:bootstrap:${rev_bootstrap}"
+    //compile "org.webjars:angular-ui-bootstrap:${rev_angular_ui_bootstrap}"
+    //compile "org.webjars:angular-ui-router:${rev_angular_ui_router}"
+    //compile "org.webjars:ngStorage:${rev_angular_storage}"
+
+    // ===================== TEST ========================================
+    testCompile "fraud:common.spring-support:${rev_fraud_common}"
+    testCompile "junit:junit:${rev_junit}"
+    testCompile "org.easymock:easymock:${rev_easymock}"
+}

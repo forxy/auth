@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:context='http://www.springframework.org/schema/context'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mongo='http://www.springframework.org/schema/data/mongo'
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/mongo    http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+        http://www.springframework.org/schema/context       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- =========================================================================================
+                                   Mongo Data Source
+    ========================================================================================== -->
+    <context:annotation-config/>
+    <context:component-scan base-package='auth.controller.v1.pojo'/>
+
+    <mongo:mongo id="mongo" host='${mongoTemplate/host}' port='${mongoTemplate/port}'>
+        <mongo:options
+                connections-per-host='${mongoTemplate/connections}'
+                connect-timeout='${mongoTemplate/timeout}'
+                max-wait-time='${mongoTemplate/maxWait}'
+                write-number='${mongoTemplate/writeNumber}'
+                write-timeout='${mongoTemplate/writeTimeout}'
+                write-fsync='${mongoTemplate/writeFSync}'/>
+    </mongo:mongo>
+
+    <mongo:db-factory id="factory" dbname='auth' mongo-ref='mongo'/>
+
+    <mongo:repositories base-package='auth.db.dao.mongo'/>
+
+
+    <bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext">
+        <property name="fieldNamingStrategy">
+            <bean class="org.springframework.data.mongodb.core.mapping.SnakeCaseFieldNamingStrategy"/>
+        </property>
+    </bean>
+
+    <bean id="defaultMongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg name="typeKey">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mappingMongoConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg name="mongoDbFactory" ref="factory"/>
+        <constructor-arg name="mappingContext" ref="mappingContext"/>
+        <property name="typeMapper" ref="defaultMongoTypeMapper"/>
+    </bean>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="factory"/>
+        <constructor-arg name="mongoConverter" ref="mappingMongoConverter"/>
+    </bean>
+
+    <bean id="userDAO.impl.mongo" class="auth.db.dao.mongo.UserDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <bean id="profileDAO.impl.mongo" class="auth.db.dao.mongo.ProfileDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <bean id="clientDAO.impl.mongo" class="auth.db.dao.mongo.ClientDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <bean id="groupDAO.impl.mongo" class="auth.db.dao.mongo.GroupDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <bean id="tokenDAO.impl.mongo" class="auth.db.dao.mongo.TokenDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+
+    <!-- =========================================================================================
+                                   Cassandra Data Source
+    ========================================================================================== -->
+    <!--<bean id="cassandraClusterBuilder" class="com.datastax.driver.core.Cluster" factory-method="builder"/>
+    <bean id="cassandraClusterBuilder.withHost" factory-bean="cassandraClusterBuilder" factory-method="addContactPoint"
+          c:address="localhost"/>
+
+    <bean id="cassandraCluster" factory-bean="cassandraClusterBuilder.withHost" factory-method="build"/>
+
+    <bean id="cassandraSession" factory-bean="cassandraCluster" factory-method="connect"
+          c:keyspace="auth"/>
+
+    <bean id="auth.db.dao.cassandra.client.CassandraUserClient"
+          class="auth.db.dao.cassandra.client.CassandraUserClient"
+          p:session-ref="cassandraSession"/>
+
+    <bean id="auth.db.dao.UserDAO.impl.cassandra" class="auth.db.dao.cassandra.UserDAO"
+          autowire-candidate="false"
+          p:cassandraClient-ref="auth.db.dao.cassandra.client.CassandraUserClient"/>-->
+
+</beans>

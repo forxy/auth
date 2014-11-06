@@ -1,0 +1,14 @@
+rootProject.name = project_name
+
+def projects = [
+        ':api'    : [name: "auth.api", path: 'api'],
+        ':client' : [name: "auth.client", path: 'client'],
+        ':service': [name: "auth.service", path: 'service']
+]
+
+projects.each() { key, config ->
+    include key
+    def prj = project(key)
+    prj.name = config.name
+    prj.projectDir = file("$settingsDir/$config.path")
+}

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="Configuration.performance" class="common.support.Configuration">
+        <property name="settings">
+            <map key-type="java.lang.Object" value-type="java.lang.String">
+                <entry key="#{T(common.logging.LoggingServletFilter$Configs).IsHttpInfoLoggingEnabled}"
+                       value="true"/>
+                <entry key="#{T(common.logging.AbstractPerformanceLogger$Configs).IsPayloadLoggingEnabled}"
+                       value="true"/>
+                <entry key="#{T(common.logging.AbstractPerformanceLogger$Configs).IsPerformanceLoggingEnabled}"
+                       value="true"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- ================= SERVICE ================================================================================= -->
+
+    <bean id="Configuration.performance.endpoint" class="common.support.Configuration"
+          parent="Configuration.performance">
+        <property name="settings">
+            <map key-type="java.lang.Object" value-type="java.lang.String" merge="true">
+                <entry key="#{T(common.logging.support.Fields).ActivityName}" value="endpoint"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="performance.logger.request"
+          class="common.logging.writer.LogWriter" c:name="user.performance.request"/>
+    <bean id="performance.logger.response"
+          class="common.logging.writer.LogWriter" c:name="user.performance.response"/>
+
+    <bean id="performance.loggingFilter"
+          class="common.logging.LoggingServletFilter"
+          p:configuration-ref="Configuration.performance.endpoint"
+          p:requestWriter-ref="performance.logger.request"
+          p:responseWriter-ref="performance.logger.response">
+        <property name="requestFieldExtractors">
+            <bean class="common.logging.extractor.SpringELFieldExtractor">
+                <property name="extractRules">
+                    <map>
+                        <entry key="Username"
+                               value="#request.getParameter('client_id')?:#requestHeaders['client-id']?:null"/>
+                        <entry key="TransactionGUID"
+                               value="#request.getParameter('transaction_guid')?:#requestHeaders['transaction-guid']?:null"/>
+                        <entry key="MessageGUID"
+                               value="#request.getParameter('message_guid')?:#requestHeaders['message-guid']?:null"/>
+                        <entry key="OperationName" value="#request.requestURI.matches('.*/users[/\d+]+') and #request.getMethod().equals('GET') ? 'GetUsersPage' :
+                                                          #request.requestURI.matches('.*/users/login/?') and #request.getMethod().equals('POST') ? 'Login' :
+                                                          #request.requestURI.matches('.*/users/?') and #request.getMethod().equals('GET') ? 'GetUser' :
+                                                          #request.requestURI.matches('.*/users/?') and #request.getMethod().equals('POST') ? 'UpdateUser' :
+                                                          #request.requestURI.matches('.*/users/?') and #request.getMethod().equals('DELETE') ? 'DeleteUser' :
+                                                          #request.requestURI.matches('.*/status/?') and #request.getMethod().equals('GET') ? 'SystemStatus' :
+                                                          null"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="responseFieldExtractors">
+            <bean class="common.logging.extractor.SpringELFieldExtractor">
+                <property name="extractRules">
+                    <map>
+                        <entry key="TransactionGUID" value="#responseHeaders['Transaction-GUID']"/>
+                        <entry key="MessageGUID" value="#responseHeaders['Message-GUID']"/>
+                        <entry key="UserEmail"
+                               value="#payload.indexOf('&quot;tokenKey&quot;')&gt;=0 ? #payload.replaceAll('.*?&quot;tokenKey&quot;:\s*?&quot;([a-zA-Z0-9!#$%&amp;''*+/=?^_`{|}~-]+(\.[a-zA-Z0-9!#$%&amp;''*+/=?^_`{|}~-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*)&quot;.*','$1') : null"/>
+                        <entry key="StatusCode">
+                            <value>(#response.responseStatus==200 or #response.responseStatus==201 or
+                                #response.responseStatus==204) ? '0' :
+                                #response.responseStatus==400 ? '-1' :
+                                #response.responseStatus==500 ? #payload.replaceAll('.*?"code":\s*"?(\d+).*','$1') :
+                                #response.responseStatus
+                            </value>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- ================= DAO ===================================================================================== -->
+
+    <bean id="configuration.performance.dao" class="common.support.Configuration"
+          parent="Configuration.performance"/>
+
+    <bean id="databaseExceptionHandler"
+          class="common.logging.exceptions.DatabaseExceptionHandler"
+          p:databaseHost="${mongoTemplate/host}:${mongoTemplate/port}"/>
+
+    <bean id="auth.performance.logger.dao"
+          class="common.logging.writer.LogWriter" c:name="auth.performance.dao"/>
+
+    <bean id="performance.dao.loggingInterceptor"
+          class="common.logging.LoggingInterceptor"
+          p:configuration-ref="configuration.performance.dao"
+          p:responseWriter-ref="auth.performance.logger.dao"
+          p:exceptionHandler-ref="databaseExceptionHandler"/>
+
+    <bean id="userDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.IUserDAO"
+          p:target-ref="userDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="profileDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.IProfileDAO"
+          p:target-ref="profileDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="clientDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.IClientDAO"
+          p:target-ref="clientDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="groupDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.IGroupDAO"
+          p:target-ref="groupDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tokenDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.ITokenDAO"
+          p:target-ref="tokenDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--<bean id="auth.db.dao.UserDAO.cassandra" class="org.springframework.aop.framework.ProxyFactoryBean"
+          p:proxyInterfaces="auth.db.dao.IUserDAO"
+          p:target-ref="auth.db.dao.UserDAO.impl.cassandra">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="payment.scoring.performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>-->
+
+    <!-- ================= IMPLEMENTATION ========================================================================== -->
+
+    <bean id="configuration.performance.impl" class="common.support.Configuration"
+          parent="Configuration.performance"/>
+
+    <bean id="serviceExceptionHandler"
+          class="common.logging.exceptions.ServiceExceptionHandler"/>
+
+    <bean id="performance.logger.impl"
+          class="common.logging.writer.LogWriter" c:name="auth.performance.impl"/>
+
+    <bean id="impl.loggingInterceptor"
+          class="common.logging.LoggingInterceptor"
+          p:configuration-ref="configuration.performance.impl"
+          p:responseWriter-ref="performance.logger.impl"
+          p:exceptionHandler-ref="serviceExceptionHandler"/>
+
+    <bean id="userService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.service.IUserService"
+          p:target-ref="userService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="jwtManager.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.security.IJWTManager"
+          p:target-ref="jwtManager.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="authenticationService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.service.IAuthenticationService"
+          p:target-ref="authenticationService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="clientService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.service.IClientService"
+          p:target-ref="clientService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="groupService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.service.IGroupService"
+          p:target-ref="groupService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tokenService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.service.ITokenService"
+          p:target-ref="tokenService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+</beans>

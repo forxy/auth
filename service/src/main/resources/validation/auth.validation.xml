@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<oval xmlns="http://oval.sf.net/oval-configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://oval.sf.net/oval-configuration http://oval.sourceforge.net/oval-configuration.xsd">
+    <!-- ================================================================= -->
+    <!--                            Token                                  -->
+    <!-- ================================================================= -->
+    <class type="auth.api.v1.pojo.Token">
+        <field name="tokenKey">
+            <notNull message="tokenKey cannot be null"/>
+        </field>
+        <field name="clientID">
+            <notNull message="tokenKey cannot be null"/>
+        </field>
+    </class>
+    <!-- ================================================================= -->
+    <!--                            Client                                 -->
+    <!-- ================================================================= -->
+    <class type="auth.api.v1.pojo.Client">
+        <field name="secret">
+            <notNull message="Password cannot be null"/>
+            <length min="5" max="200" message="Password is not between {min} and {max} characters long"/>
+        </field>
+        <field name="name">
+            <notNull message="Application Name cannot be null"/>
+            <length min="1" max="200" message="firstName is not between {min} and {max} characters long"/>
+        </field>
+        <field name="description">
+            <length min="0" max="1000" message="Description is not between {min} and {max} characters long"/>
+        </field>
+    </class>
+</oval>

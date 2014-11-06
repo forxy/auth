@@ -1,0 +1,51 @@
+@startuml
+skinparam backgroundColor #444444
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ArrowFontColor white
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor white
+	LifeLineBackgroundColor white
+
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Verdana
+	ParticipantFontSize 17
+	ParticipantFontColor black
+
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Verdana
+}
+
+actor User
+participant "Auth GUI\n AngularJS MVC" as AuthGUI
+participant "Auth Service" as AuthSvc
+
+'== Startup ==
+'AuthGUI -> AuthSvc: /auth: client_id, secret
+'AuthGUI <- AuthSvc: access_code
+'AuthGUI -> AuthSvc: /token: access_code
+'AuthGUI <- AuthSvc: jwt (JSON Web Token)
+
+== Authentication ==
+User -> AuthGUI: go /users
+AuthGUI -> AuthSvc: GET <font color=red>/rest/v1/users</font>
+AuthGUI <- AuthSvc: 401
+AuthGUI -> AuthGUI: redirect to login page
+User -> AuthGUI: enter login:password
+AuthGUI -> AuthSvc: POST <font color=red>/login</font>
+AuthGUI <- AuthSvc: jwt (JSON Web Token)
+AuthGUI -> AuthSvc: GET <font color=red>/auth</font>\n?client_id=auth_gui_client_id\n&scope=openid profile\n&response_type=token\n&redirect_uri=/users\nAuthorization: Bearer jwt
+AuthGUI <- AuthSvc: 302 <font color=yellow>/users</font>\n?access_token=token\n&token_type=Bearer\n&expires_in=3600
+AuthGUI -> AuthSvc: GET <font color=red>/tokeninfo</font>\n?access_token=token
+AuthGUI <- AuthSvc: {\n  "audience": "authGUI",\n  "user_id": "login",\n  "scope": "openid profile",\n  "expires_in": 436\n}
+AuthGUI -> AuthGUI: save access_token to browser storage
+AuthGUI -> AuthSvc: GET <font color=red>/rest/v1/users</font>\nAuthorization: Bearer token
+AuthGUI <- AuthSvc: JSON data
+
+User <- AuthGUI: another authentication Response
+
+@enduml
