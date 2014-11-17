@@ -13,19 +13,19 @@
         </property>
     </bean>
 
-    <bean id="sslKeystore" class="HttpClientSSLKeyStore">
+    <bean id="sslKeystore" class="common.rest.client.transport.HttpClientSSLKeyStore">
         <constructor-arg type="java.io.InputStream" value="classpath:/cert/oauthTrustStore.jks"/>
         <constructor-arg value="5ecret0AUTHPa55word"/>
         <constructor-arg value="true"/>
     </bean>
 
-    <bean id="httpTransport" class="HttpClientTransport">
+    <bean id="httpTransport" class="common.rest.client.transport.HttpClientTransport">
         <constructor-arg index="0" ref="sslKeystore"/>
     </bean>
 
     <bean id="authServiceClient" class="auth.client.v1.AuthServiceClient">
-        <constructor-arg index="0" value="${ru.forxuy.authServiceClient/endpoint}"/>
-        <constructor-arg index="1" value="${ru.forxuy.authServiceClient/clientId}"/>
+        <constructor-arg index="0" value="${authServiceClient/endpoint}"/>
+        <constructor-arg index="1" value="${authServiceClient/clientId}"/>
         <constructor-arg index="2" ref="httpTransport"/>
     </bean>
 

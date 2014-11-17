@@ -1,13 +1,13 @@
 subprojects {
     apply plugin: 'maven'
-    apply plugin: 'java'
+    apply plugin: 'groovy'
 
     group = 'fraud'
 
     jar { from sourceSets.main.allJava }
 
     repositories {
-        mavenCentral()
+        jcenter()
         ivy { url "file://$System.env.OUTPUT_ROOT/deliverables/" }
 
         uploadArchives { repositories { ivy { url "file://$System.env.OUTPUT_ROOT/deliverables/" } } }

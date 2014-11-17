@@ -13,7 +13,7 @@
                                    Mongo Data Source
     ========================================================================================== -->
     <context:annotation-config/>
-    <context:component-scan base-package='auth.controller.v1.pojo'/>
+    <context:component-scan base-package='auth.api.v1.pojo'/>
 
     <mongo:mongo id="mongo" host='${mongoTemplate/host}' port='${mongoTemplate/port}'>
         <mongo:options
