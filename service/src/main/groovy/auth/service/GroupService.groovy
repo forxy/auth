@@ -2,7 +2,7 @@ package auth.service
 
 import auth.api.v1.pojo.Group
 import auth.db.dao.IGroupDAO
-import auth.exceptions.AuthServiceEventLogID
+import auth.exceptions.AuthServiceEvent
 import common.exceptions.ServiceException
 import common.pojo.EntityPage
 import common.pojo.SortDirection
@@ -38,7 +38,7 @@ class GroupService implements IGroupService {
             final Page<Group> p = groupDAO.findAll(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(AuthServiceEventLogID.InvalidPageNumber, page)
+            throw new ServiceException(AuthServiceEvent.InvalidPageNumber, page)
         }
     }
 
@@ -51,7 +51,7 @@ class GroupService implements IGroupService {
     Group getGroup(final String groupCode) {
         Group group = groupDAO.findOne(groupCode)
         if (group == null) {
-            throw new ServiceException(AuthServiceEventLogID.GroupNotFound, groupCode)
+            throw new ServiceException(AuthServiceEvent.GroupNotFound, groupCode)
         }
         return group
     }
@@ -61,7 +61,7 @@ class GroupService implements IGroupService {
         if (groupDAO.exists(group.getCode())) {
             groupDAO.save(group)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.GroupNotFound, group.getCode())
+            throw new ServiceException(AuthServiceEvent.GroupNotFound, group.getCode())
         }
     }
 
@@ -71,7 +71,7 @@ class GroupService implements IGroupService {
         if (!groupDAO.exists(group.getCode())) {
             groupDAO.save(group)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.GroupAlreadyExists, group.getCode())
+            throw new ServiceException(AuthServiceEvent.GroupAlreadyExists, group.getCode())
         }
     }
 
@@ -80,7 +80,7 @@ class GroupService implements IGroupService {
         if (groupDAO.exists(groupCode)) {
             groupDAO.delete(groupCode)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.GroupNotFound, groupCode)
+            throw new ServiceException(AuthServiceEvent.GroupNotFound, groupCode)
         }
     }
 }

@@ -2,7 +2,7 @@ package auth.service
 
 import auth.api.v1.pojo.Client
 import auth.db.dao.IClientDAO
-import auth.exceptions.AuthServiceEventLogID
+import auth.exceptions.AuthServiceEvent
 import common.exceptions.ServiceException
 import common.pojo.EntityPage
 import common.pojo.SortDirection
@@ -41,7 +41,7 @@ class ClientService implements IClientService {
             final Page<Client> p = clientDAO.findAll(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(AuthServiceEventLogID.InvalidPageNumber, page)
+            throw new ServiceException(AuthServiceEvent.InvalidPageNumber, page)
         }
     }
 
@@ -49,7 +49,7 @@ class ClientService implements IClientService {
     Client getClient(final String clientID) {
         Client client = clientDAO.findOne(clientID)
         if (client == null) {
-            throw new ServiceException(AuthServiceEventLogID.ClientNotFound, clientID)
+            throw new ServiceException(AuthServiceEvent.ClientNotFound, clientID)
         }
         return client
     }
@@ -59,7 +59,7 @@ class ClientService implements IClientService {
         if (clientDAO.exists(client.getClientID())) {
             clientDAO.save(client)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.ClientNotFound, client.getClientID())
+            throw new ServiceException(AuthServiceEvent.ClientNotFound, client.getClientID())
         }
     }
 
@@ -73,7 +73,7 @@ class ClientService implements IClientService {
         if (!clientDAO.exists(client.getClientID())) {
             clientDAO.save(client)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.ClientAlreadyExists, client.getClientID())
+            throw new ServiceException(AuthServiceEvent.ClientAlreadyExists, client.getClientID())
         }
     }
 
@@ -82,7 +82,7 @@ class ClientService implements IClientService {
         if (clientDAO.exists(clientID)) {
             clientDAO.delete(clientID)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.ClientNotFound, clientID)
+            throw new ServiceException(AuthServiceEvent.ClientNotFound, clientID)
         }
     }
 }

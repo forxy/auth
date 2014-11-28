@@ -2,7 +2,7 @@ package auth.service
 
 import auth.api.v1.pojo.User
 import auth.db.dao.IUserDAO
-import auth.exceptions.AuthServiceEventLogID
+import auth.exceptions.AuthServiceEvent
 import common.exceptions.ServiceException
 import common.pojo.EntityPage
 import common.pojo.SortDirection
@@ -41,7 +41,7 @@ class UserService implements IUserService {
             final Page<User> p = userDAO.findAll(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(AuthServiceEventLogID.InvalidPageNumber, page)
+            throw new ServiceException(AuthServiceEvent.InvalidPageNumber, page)
         }
     }
 
@@ -49,7 +49,7 @@ class UserService implements IUserService {
     User getUser(final String email) {
         User user = userDAO.findOne(email)
         if (user == null) {
-            throw new ServiceException(AuthServiceEventLogID.UserNotFound, email)
+            throw new ServiceException(AuthServiceEvent.UserNotFound, email)
         }
         return user
     }
@@ -59,7 +59,7 @@ class UserService implements IUserService {
         if (userDAO.exists(user.getEmail())) {
             userDAO.save(user)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.UserNotFound, user.getEmail())
+            throw new ServiceException(AuthServiceEvent.UserNotFound, user.getEmail())
         }
     }
 
@@ -69,7 +69,7 @@ class UserService implements IUserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()))
             return userDAO.save(user)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.UserAlreadyExists, user.getEmail())
+            throw new ServiceException(AuthServiceEvent.UserAlreadyExists, user.getEmail())
         }
     }
 
@@ -78,7 +78,7 @@ class UserService implements IUserService {
         if (userDAO.exists(email)) {
             userDAO.delete(email)
         } else {
-            throw new ServiceException(AuthServiceEventLogID.UserNotFound, email)
+            throw new ServiceException(AuthServiceEvent.UserNotFound, email)
         }
     }
 }

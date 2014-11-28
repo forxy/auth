@@ -3,7 +3,7 @@ package auth.test.logic
 import auth.api.v1.pojo.User
 import auth.controller.v1.UserController
 import auth.db.dao.IUserDAO
-import auth.exceptions.AuthServiceEventLogID
+import auth.exceptions.AuthServiceEvent
 import auth.test.BaseUserServiceTest
 import common.exceptions.ServiceException
 import common.pojo.EntityPage
@@ -82,7 +82,7 @@ class UserServiceImplTest extends BaseUserServiceTest {
                 userService.getUser(testUser.getEmail(), uriInfo, headers)
                 Assert.fail()
             } catch (ServiceException e) {
-                Assert.assertEquals(AuthServiceEventLogID.UserNotFound, e.getEventLogID())
+                Assert.assertEquals(AuthServiceEvent.UserNotFound, e.getEventLogID())
                 LOGGER.info('User {} has been successfully deleted.', TEST_USER_EMAIL)
             }
         } finally {
