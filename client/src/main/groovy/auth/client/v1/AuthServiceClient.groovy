@@ -2,7 +2,7 @@ package auth.client.v1
 
 import auth.api.v1.pojo.Client
 import common.exceptions.ClientException
-import common.exceptions.HttpEventLogID
+import common.exceptions.HttpEvent
 import common.pojo.EntityPage
 import common.pojo.StatusEntity
 import common.rest.client.RestServiceClientSupport
@@ -35,7 +35,7 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
             final byte[] trustStoreBytes = IOUtils.toByteArray(trustStoreStream)
             TRUST_STORE = new HttpClientSSLKeyStore(new ByteArrayInputStream(trustStoreBytes), '5ecret0AUTHPa55word')
         } catch (Exception e) {
-            throw new ClientException(new StatusEntity('400', e), e, HttpEventLogID.InvalidClientInput)
+            throw new ClientException(new StatusEntity('400', e), e, HttpEvent.InvalidClientInput)
         }
     }
 
