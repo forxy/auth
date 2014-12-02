@@ -9,6 +9,7 @@ import common.rest.client.RestServiceClientSupport
 import common.rest.client.transport.HttpClientSSLKeyStore
 import common.rest.client.transport.ITransport
 import common.rest.client.transport.support.ObjectMapperProvider
+import common.web.RequestHelper
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.http.client.methods.HttpGet
@@ -20,13 +21,10 @@ import java.text.SimpleDateFormat
  * Client service client implementation
  */
 class AuthServiceClient extends RestServiceClientSupport implements IAuthServiceClient {
-    protected static final String CLIENT_ID = 'Client-ID'
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ssZ')
-    private static final String TRANSACTION_GUID_PARAM = 'transactionGUID'
+    //private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ssZ')
     private static final HttpClientSSLKeyStore TRUST_STORE
 
     String endpoint
-
     String clientID
 
     static {
@@ -47,14 +45,12 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
         this.clientID = clientID
         this.transport = transport
 
-        // @formatter:off
-        mapper = ObjectMapperProvider.getMapper(
+        mapper = ObjectMapperProvider.defaultMapper
+        /*ObjectMapperProvider.getMapper(
                 ObjectMapperProvider.Config.newInstance().
                         withDateFormat(SIMPLE_DATE_FORMAT).
                         writeEmptyArrays(true).writeNullMapValues(true)
-        )
-        // @formatter:on
-
+        )*/
     }
 
     private Map<String, String> buildHeaders(final String transactionGUID, final String url, final String method)
@@ -65,15 +61,15 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
         final Map<String, String> headers = new HashMap<>()
         headers.put(HttpHeaders.ACCEPT, JSON_CONTENT_TYPE)
         headers.put(HttpHeaders.CONTENT_TYPE, JSON_CONTENT_TYPE)
-        headers.put(TRANSACTION_GUID, txGUID)
-        headers.put(CLIENT_ID, clientID)
+        headers.put(RequestHelper.Param.TRANSACTION_GUID.httpHeaderName, txGUID)
+        headers.put(RequestHelper.Param.CLIENT_ID.httpHeaderName, clientID)
         return headers
     }
 
     @Override
     @SuppressWarnings(['rawtypes', 'unchecked'])
     List<Client> getClients(String transactionGUID) {
-        final String confUrl = endpoint + 'clients'
+        final String confUrl = "$endpoint/clients"
 
         final ITransport.Response<List, StatusEntity> response =
                 transport.performGet(confUrl, buildHeaders(transactionGUID, endpoint, HttpGet.METHOD_NAME),
@@ -95,7 +91,7 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
     @Override
     @SuppressWarnings(['rawtypes', 'unchecked'])
     EntityPage<Client> getClients(final String transactionGUID, Integer page, Integer size) {
-        final String confUrl = endpoint + 'clients?page=' + page + '&size=' + size
+        final String confUrl = "$endpoint/clients?page=$page&size=$size"
 
         final ITransport.Response<EntityPage, StatusEntity> response =
                 transport.performGet(confUrl, buildHeaders(transactionGUID, endpoint, HttpGet.METHOD_NAME),
@@ -106,7 +102,7 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
     @Override
     @SuppressWarnings(['rawtypes', 'unchecked'])
     Client getClient(final String transactionGUID, String email) {
-        final String confUrl = endpoint + 'clients/' + email
+        final String confUrl = "$endpoint/clients/$email"
 
         final ITransport.Response<Client, StatusEntity> response =
                 transport.performGet(confUrl, buildHeaders(transactionGUID, endpoint, HttpGet.METHOD_NAME),
@@ -117,7 +113,7 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
     @Override
     @SuppressWarnings(['rawtypes', 'unchecked'])
     StatusEntity createClient(final String transactionGUID, final Client token) {
-        final String confUrl = endpoint + 'clients'
+        final String confUrl = "$endpoint/clients"
 
         final ITransport.Response<StatusEntity, StatusEntity> response =
                 transport.performPost(confUrl, buildHeaders(transactionGUID, endpoint, HttpGet.METHOD_NAME),
@@ -128,7 +124,7 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
     @Override
     @SuppressWarnings(['rawtypes', 'unchecked'])
     StatusEntity updateClient(final String transactionGUID, final Client token) {
-        final String confUrl = endpoint + 'clients'
+        final String confUrl = "$endpoint/clients"
 
         final ITransport.Response<StatusEntity, StatusEntity> response =
                 transport.performPut(confUrl, buildHeaders(transactionGUID, endpoint, HttpGet.METHOD_NAME),
@@ -139,7 +135,7 @@ class AuthServiceClient extends RestServiceClientSupport implements IAuthService
     @Override
     @SuppressWarnings(['rawtypes', 'unchecked'])
     StatusEntity deleteClient(String transactionGUID, String clientID) {
-        final String confUrl = endpoint + 'clients/' + clientID
+        final String confUrl = "$endpoint/clients/$clientID"
 
         final ITransport.Response<StatusEntity, StatusEntity> response =
                 transport.performDelete(confUrl, buildHeaders(transactionGUID, endpoint, HttpGet.METHOD_NAME),

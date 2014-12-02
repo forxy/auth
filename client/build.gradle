@@ -1,6 +1,6 @@
 sourceSets {
     funcTest {
-        java { srcDir 'src/funcTest/java' }
+        java { srcDir 'src/funcTest/groovy' }
         resources { srcDir 'src/funcTest/resources' }
         output.resourcesDir = output.classesDir
         compileClasspath = sourceSets.main.output + configurations.testRuntime
@@ -23,7 +23,6 @@ task funcTest(type: Test, dependsOn: funcTestClasses) {
     jvmArgs '-Xms512m', '-Xmx1024m', '-XX:MaxPermSize=256m', '-XX:+HeapDumpOnOutOfMemoryError'
     maxHeapSize '1024m'
     testClassesDir = sourceSets.funcTest.output.classesDir
-
     classpath = sourceSets.funcTest.runtimeClasspath + sourceSets.test.runtimeClasspath
     systemProperties System.properties
     includes = ['**/fnt/*Test.class']
