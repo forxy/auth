@@ -1,7 +1,7 @@
 package auth.controller.v1
 
-import auth.api.v1.pojo.Credentials
-import auth.api.v1.pojo.DiscoveryInfo
+import auth.api.v1.Credentials
+import auth.api.v1.DiscoveryInfo
 import auth.service.IAuthenticationService
 import common.rest.AbstractService
 

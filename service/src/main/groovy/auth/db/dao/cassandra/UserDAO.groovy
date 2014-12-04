@@ -1,6 +1,6 @@
 package auth.db.dao.cassandra
 
-import auth.api.v1.pojo.User
+import auth.api.v1.User
 import auth.db.dao.IUserDAO
 import auth.db.dao.cassandra.client.ICassandraClient
 import common.status.pojo.ComponentStatus

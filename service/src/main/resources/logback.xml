@@ -31,12 +31,12 @@
         </encoder>
     </appender>
 
-    <!--<appender name="PERF_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <appender name="PERF_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="PERF"/>
-    </appender>-->
+    </appender>
 
     <logger name="auth.performance" level="INFO">
-        <appender-ref ref="PERF"/>
+        <appender-ref ref="PERF_ASYNC"/>
     </logger>
 
     <logger name="auth.test" level="TRACE"/>

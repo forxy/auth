@@ -1,6 +1,6 @@
 package auth.security
 
-import auth.api.v1.pojo.User
+import auth.api.v1.User
 import com.nimbusds.jose.*
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.crypto.RSASSAVerifier

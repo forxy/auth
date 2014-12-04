@@ -1,6 +1,6 @@
 package auth.service
 
-import auth.api.v1.pojo.Client
+import auth.api.v1.Client
 import auth.db.dao.IClientDAO
 import auth.exceptions.AuthServiceEvent
 import common.exceptions.ServiceException

@@ -1,4 +1,4 @@
-package auth.api.v1.pojo
+package auth.api.v1
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString

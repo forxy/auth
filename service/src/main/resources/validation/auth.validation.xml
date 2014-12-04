@@ -4,7 +4,7 @@
     <!-- ================================================================= -->
     <!--                            Token                                  -->
     <!-- ================================================================= -->
-    <class type="auth.api.v1.pojo.Token">
+    <class type="auth.api.v1.Token">
         <field name="tokenKey">
             <notNull message="tokenKey cannot be null"/>
         </field>
@@ -15,7 +15,7 @@
     <!-- ================================================================= -->
     <!--                            Client                                 -->
     <!-- ================================================================= -->
-    <class type="auth.api.v1.pojo.Client">
+    <class type="auth.api.v1.Client">
         <field name="secret">
             <notNull message="Password cannot be null"/>
             <length min="5" max="200" message="Password is not between {min} and {max} characters long"/>

@@ -1,7 +1,7 @@
 package auth.service
 
-import auth.api.v1.pojo.Credentials
-import auth.api.v1.pojo.Profile
+import auth.api.v1.Credentials
+import auth.api.v1.Profile
 
 /**
  * Authentication manager

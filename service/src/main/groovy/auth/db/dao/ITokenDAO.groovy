@@ -1,11 +1,10 @@
 package auth.db.dao
 
-import auth.api.v1.pojo.Token
+import auth.api.v1.Token
 import common.status.ISystemStatusComponent
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.repository.PagingAndSortingRepository
 
 /**
  * Data Access Object for Forxy database to manipulate tokens.

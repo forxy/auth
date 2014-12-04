@@ -1,7 +1,7 @@
 package auth.db.dao.cassandra.client
 
-import auth.api.v1.pojo.Gender
-import auth.api.v1.pojo.User
+import auth.api.v1.Gender
+import auth.api.v1.User
 import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.PreparedStatement
 import com.datastax.driver.core.Row

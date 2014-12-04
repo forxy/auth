@@ -1,6 +1,6 @@
 package auth.db.dao.mongo
 
-import auth.api.v1.pojo.Client
+import auth.api.v1.Client
 import auth.db.dao.IClientDAO
 import common.status.pojo.ComponentStatus
 import common.status.pojo.StatusType

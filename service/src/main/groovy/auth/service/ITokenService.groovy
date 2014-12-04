@@ -1,6 +1,6 @@
 package auth.service
 
-import auth.api.v1.pojo.Token
+import auth.api.v1.Token
 import common.pojo.EntityPage
 import common.pojo.SortDirection
 

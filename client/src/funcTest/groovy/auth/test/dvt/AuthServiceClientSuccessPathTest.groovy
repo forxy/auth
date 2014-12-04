@@ -1,6 +1,6 @@
 package auth.test.dvt
 
-import auth.api.v1.pojo.Client
+import auth.api.v1.Client
 import auth.client.v1.IAuthServiceClient
 import auth.test.BaseAuthServiceTest
 import common.exceptions.ClientException
@@ -9,6 +9,8 @@ import common.pojo.StatusEntity
 import org.junit.Assert
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
+
+import static org.junit.Assert.assertNotNull
 
 /**
  * Test success path for AuthService client
@@ -20,10 +22,10 @@ class AuthServiceClientSuccessPathTest extends BaseAuthServiceTest {
 
     @Test
     void testGetAllAuths() {
-        Assert.assertNotNull(authServiceClient)
-        String transactionGUID = UUID.randomUUID().toString()
+        assertNotNull authServiceClient
+        String transactionGUID = UUID.randomUUID() as String
         EntityPage<Client> authPage = authServiceClient.getClients(transactionGUID, 1)
-        Assert.assertNotNull(authPage)
+        assertNotNull(authPage)
     }
 
     @Test
@@ -58,7 +60,7 @@ class AuthServiceClientSuccessPathTest extends BaseAuthServiceTest {
                 authServiceClient.getClient(transactionGUID, expectedClient.getName())
                 Assert.fail()
             } catch (ClientException e) {
-                Assert.assertNotNull(e.getErrorEntity())
+                assertNotNull(e.getErrorEntity())
                 Assert.assertEquals('404', e.getErrorEntity().getCode())
             }
         }

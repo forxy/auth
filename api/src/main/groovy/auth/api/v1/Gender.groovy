@@ -1,4 +1,4 @@
-package auth.api.v1.pojo
+package auth.api.v1
 
 public enum Gender {
 

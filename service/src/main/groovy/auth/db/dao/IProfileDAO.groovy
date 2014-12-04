@@ -1,6 +1,6 @@
 package auth.db.dao
 
-import auth.api.v1.pojo.Profile
+import auth.api.v1.Profile
 import common.status.ISystemStatusComponent
 
 /**

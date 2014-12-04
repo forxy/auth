@@ -1,6 +1,6 @@
 package auth.db.dao
 
-import auth.api.v1.pojo.User
+import auth.api.v1.User
 import common.status.ISystemStatusComponent
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

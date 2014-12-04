@@ -1,7 +1,7 @@
 package auth.controller.support
 
-import auth.api.v1.pojo.Group
-import auth.api.v1.pojo.User
+import auth.api.v1.Group
+import auth.api.v1.User
 import auth.security.IJWTManager
 import auth.service.IGroupService
 import auth.service.IUserService

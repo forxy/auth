@@ -1,4 +1,4 @@
-package auth.api.v1.pojo
+package auth.api.v1
 
 import common.pojo.SimpleJacksonDateDeserializer
 import common.pojo.SimpleJacksonDateSerializer
@@ -6,28 +6,16 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.codehaus.jackson.map.annotate.JsonDeserialize
 import org.codehaus.jackson.map.annotate.JsonSerialize
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
 
 @ToString
 @EqualsAndHashCode
-@Document(collection = 'user')
-class User implements Serializable {
+class UserSubject implements Serializable {
 
-    @Id
-    String email
+    String userID
 
-    String password
+    List<String> roles
 
-    String login
-
-    String firstName
-
-    String lastName
-
-    Gender gender
-
-    List<String> groups
+    Map<String, String> properties = new HashMap<String, String>()
 
     Date updateDate = new Date()
 

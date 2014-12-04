@@ -1,10 +1,8 @@
 package auth.client.v1;
 
-import auth.api.v1.pojo.Client;
+import auth.api.v1.Client;
 import common.pojo.EntityPage;
-import common.pojo.StatusEntity;
-
-import java.util.List;
+import common.pojo.StatusEntity
 
 interface IAuthServiceClient {
 

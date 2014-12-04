@@ -1,6 +1,6 @@
 package auth.security
 
-import auth.api.v1.pojo.User
+import auth.api.v1.User
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSObject
 import net.minidev.json.JSONObject

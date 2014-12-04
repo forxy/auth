@@ -40,7 +40,7 @@
     <bean id="userController" class="auth.controller.v1.UserController"
           p:userService-ref="userService.perf"/>
 
-    <bean id="discoveryInfo" class="auth.api.v1.pojo.DiscoveryInfo"
+    <bean id="discoveryInfo" class="auth.api.v1.DiscoveryInfo"
           p:jwksUri="http://localhost:11080/AuthService/service/rest/v1/auth/cert">
     </bean>
 

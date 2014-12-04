@@ -1,6 +1,6 @@
 package auth.service
 
-import auth.api.v1.pojo.Group
+import auth.api.v1.Group
 import auth.db.dao.IGroupDAO
 import auth.exceptions.AuthServiceEvent
 import common.exceptions.ServiceException

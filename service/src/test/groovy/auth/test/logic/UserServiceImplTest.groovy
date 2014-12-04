@@ -1,6 +1,6 @@
 package auth.test.logic
 
-import auth.api.v1.pojo.User
+import auth.api.v1.User
 import auth.controller.v1.UserController
 import auth.db.dao.IUserDAO
 import auth.exceptions.AuthServiceEvent
