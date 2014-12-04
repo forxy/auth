@@ -6,8 +6,8 @@ import auth.db.dao.IUserDAO
 import auth.exceptions.AuthServiceEvent
 import auth.test.BaseUserServiceTest
 import common.exceptions.ServiceException
-import common.pojo.EntityPage
-import common.pojo.SortDirection
+import common.api.EntityPage
+import common.api.SortDirection
 import org.apache.commons.collections.CollectionUtils
 import org.apache.cxf.jaxrs.impl.HttpHeadersImpl
 import org.apache.cxf.jaxrs.impl.UriInfoImpl

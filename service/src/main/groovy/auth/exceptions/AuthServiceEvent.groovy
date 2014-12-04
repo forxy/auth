@@ -53,9 +53,9 @@ enum AuthServiceEvent implements EventLogBase {
         this(eventID, responseID, Level.ERROR, eventType, formatString)
     }
 
-    private AuthServiceEvent(int eventID, int responseID, Level logLevel, EventType eventType, String formatString) {
+    private AuthServiceEvent(int eventID, int httpCode, Level logLevel, EventType eventType, String formatString) {
         this.eventID = BASE_EVENT_LOG_ID + eventID
-        this.responseID = responseID
+        this.httpCode = httpCode
         this.logLevel = logLevel
         this.formatString = formatString
         this.eventType = eventType

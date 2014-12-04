@@ -4,8 +4,8 @@ import auth.api.v1.Token
 import auth.db.dao.ITokenDAO
 import auth.exceptions.AuthServiceEvent
 import common.exceptions.ServiceException
-import common.pojo.EntityPage
-import common.pojo.SortDirection
+import common.api.EntityPage
+import common.api.SortDirection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort

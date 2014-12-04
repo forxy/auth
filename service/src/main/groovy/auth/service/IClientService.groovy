@@ -1,8 +1,8 @@
 package auth.service
 
 import auth.api.v1.Client
-import common.pojo.EntityPage
-import common.pojo.SortDirection
+import common.api.EntityPage
+import common.api.SortDirection
 
 /**
  * Entry point into auth service business logic

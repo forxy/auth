@@ -2,8 +2,8 @@ package auth.db.dao.mongo
 
 import auth.api.v1.Token
 import auth.db.dao.ITokenDAO
-import common.status.pojo.ComponentStatus
-import common.status.pojo.StatusType
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.data.domain.Page

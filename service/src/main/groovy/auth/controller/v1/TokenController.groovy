@@ -2,8 +2,8 @@ package auth.controller.v1
 
 import auth.api.v1.Token
 import auth.service.ITokenService
-import common.pojo.SortDirection
-import common.pojo.StatusEntity
+import common.api.SortDirection
+import common.api.StatusEntity
 import common.rest.AbstractService
 
 import javax.ws.rs.*
@@ -46,7 +46,7 @@ class TokenController extends AbstractService {
                            @Context final UriInfo uriInfo,
                            @Context final HttpHeaders headers) {
         tokenService.createToken(token)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$token.tokenKey")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$token.tokenKey")).build()
     }
 
     @PUT
@@ -55,7 +55,7 @@ class TokenController extends AbstractService {
                          @Context final UriInfo uriInfo,
                          @Context final HttpHeaders headers) {
         tokenService.updateToken(token)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$token.tokenKey")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$token.tokenKey")).build()
     }
 
     @DELETE
@@ -64,8 +64,7 @@ class TokenController extends AbstractService {
                          @Context final UriInfo uriInfo,
                          @Context final HttpHeaders headers) {
         tokenService.deleteToken(tokenKey)
-        return Response.ok(new StatusEntity('200',
-                "Token with token_key=$tokenKey has been successfully removed")).build()
+        return Response.ok(new StatusEntity("Token with token_key=$tokenKey has been successfully removed")).build()
     }
 
     void setTokenService(ITokenService tokenService) {

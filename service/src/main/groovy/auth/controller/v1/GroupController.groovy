@@ -2,8 +2,8 @@ package auth.controller.v1
 
 import auth.api.v1.Group
 import auth.service.IGroupService
-import common.pojo.SortDirection
-import common.pojo.StatusEntity
+import common.api.SortDirection
+import common.api.StatusEntity
 import common.rest.AbstractService
 
 import javax.ws.rs.*
@@ -60,7 +60,7 @@ class GroupController extends AbstractService {
                            @Context final UriInfo uriInfo,
                            @Context final HttpHeaders headers) {
         groupService.createGroup(group)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$group.code")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$group.code")).build()
     }
 
     @PUT
@@ -69,7 +69,7 @@ class GroupController extends AbstractService {
                          @Context final UriInfo uriInfo,
                          @Context final HttpHeaders headers) {
         groupService.updateGroup(group)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$group.code")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$group.code")).build()
     }
 
     @DELETE
@@ -78,6 +78,6 @@ class GroupController extends AbstractService {
                          @Context final UriInfo uriInfo,
                          @Context final HttpHeaders headers) {
         groupService.deleteGroup(code)
-        return Response.ok(new StatusEntity('200', "Group with code=$code has been successfully removed")).build()
+        return Response.ok(new StatusEntity("Group with code=$code has been successfully removed")).build()
     }
 }

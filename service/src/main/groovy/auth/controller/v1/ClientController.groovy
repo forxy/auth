@@ -2,8 +2,8 @@ package auth.controller.v1
 
 import auth.api.v1.Client
 import auth.service.IClientService
-import common.pojo.SortDirection
-import common.pojo.StatusEntity
+import common.api.SortDirection
+import common.api.StatusEntity
 import common.rest.AbstractService
 
 import javax.ws.rs.*
@@ -60,7 +60,7 @@ class ClientController extends AbstractService {
                             @Context final UriInfo uriInfo,
                             @Context final HttpHeaders headers) {
         clientService.createClient(client)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$client.clientID")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$client.clientID")).build()
     }
 
     @PUT
@@ -69,7 +69,7 @@ class ClientController extends AbstractService {
                           @Context final UriInfo uriInfo,
                           @Context final HttpHeaders headers) {
         clientService.updateClient(client)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$client.clientID")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$client.clientID")).build()
     }
 
     @DELETE
@@ -78,6 +78,6 @@ class ClientController extends AbstractService {
                           @Context final UriInfo uriInfo,
                           @Context final HttpHeaders headers) {
         clientService.deleteClient(clientID)
-        return Response.ok(new StatusEntity('200', "Client with ID=$clientID has been successfully removed")).build()
+        return Response.ok(new StatusEntity("Client with ID=$clientID has been successfully removed")).build()
     }
 }

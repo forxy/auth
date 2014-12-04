@@ -4,9 +4,9 @@ import auth.db.dao.IClientDAO
 import auth.db.dao.ITokenDAO
 import auth.db.dao.IUserDAO
 import common.status.ISystemStatusService
-import common.status.pojo.ComponentStatus
-import common.status.pojo.StatusType
-import common.status.pojo.SystemStatus
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
+import common.status.api.SystemStatus
 import common.support.SystemProperties
 
 /**

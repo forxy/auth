@@ -1,7 +1,7 @@
 package auth.api.v1
 
-import common.pojo.SimpleJacksonDateDeserializer
-import common.pojo.SimpleJacksonDateSerializer
+import common.api.SimpleJacksonDateDeserializer
+import common.api.SimpleJacksonDateSerializer
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.codehaus.jackson.map.annotate.JsonDeserialize

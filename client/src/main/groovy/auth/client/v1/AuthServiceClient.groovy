@@ -3,8 +3,8 @@ package auth.client.v1
 import auth.api.v1.Client
 import common.exceptions.ClientException
 import common.exceptions.HttpEvent
-import common.pojo.EntityPage
-import common.pojo.StatusEntity
+import common.api.EntityPage
+import common.api.StatusEntity
 import common.rest.client.RestServiceClientSupport
 import common.rest.client.transport.HttpClientSSLKeyStore
 import common.rest.client.transport.ITransport

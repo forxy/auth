@@ -3,8 +3,8 @@ package auth.db.dao.cassandra
 import auth.api.v1.User
 import auth.db.dao.IUserDAO
 import auth.db.dao.cassandra.client.ICassandraClient
-import common.status.pojo.ComponentStatus
-import common.status.pojo.StatusType
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable

@@ -3,8 +3,8 @@ package auth.controller.v1
 import auth.api.v1.Gender
 import auth.api.v1.User
 import auth.service.IUserService
-import common.pojo.SortDirection
-import common.pojo.StatusEntity
+import common.api.SortDirection
+import common.api.StatusEntity
 import common.rest.AbstractService
 
 import javax.annotation.security.RolesAllowed
@@ -66,7 +66,7 @@ class UserController extends AbstractService {
                         @Context final UriInfo uriInfo,
                         @Context final HttpHeaders headers) {
         userService.createUser(user)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$user.email")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$user.email")).build()
     }
 
     @PUT
@@ -76,7 +76,7 @@ class UserController extends AbstractService {
                         @Context final UriInfo uriInfo,
                         @Context final HttpHeaders headers) {
         userService.updateUser(user)
-        return Response.ok(new StatusEntity('200', "$uriInfo.absolutePath/$user.email")).build()
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$user.email")).build()
     }
 
     @DELETE
@@ -86,6 +86,6 @@ class UserController extends AbstractService {
                         @Context final UriInfo uriInfo,
                         @Context final HttpHeaders headers) {
         userService.deleteUser(email)
-        return Response.ok(new StatusEntity('200', "User with email=$email has been successfully removed")).build()
+        return Response.ok(new StatusEntity("User with email=$email has been successfully removed")).build()
     }
 }
