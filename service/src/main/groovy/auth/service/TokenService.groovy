@@ -2,7 +2,7 @@ package auth.service
 
 import auth.api.v1.Token
 import auth.db.dao.ITokenDAO
-import auth.exceptions.AuthServiceEvent
+import auth.exceptions.AuthEvent
 import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
@@ -38,7 +38,7 @@ class TokenService implements ITokenService {
             final Page<Token> p = tokenDAO.findAll(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(AuthServiceEvent.InvalidPageNumber, page)
+            throw new ServiceException(AuthEvent.InvalidPageNumber, page)
         }
     }
 
@@ -46,7 +46,7 @@ class TokenService implements ITokenService {
     Token getToken(final String email) {
         Token token = tokenDAO.findOne(email)
         if (token == null) {
-            throw new ServiceException(AuthServiceEvent.TokenNotFound, email)
+            throw new ServiceException(AuthEvent.TokenNotFound, email)
         }
         return token
     }
@@ -56,7 +56,7 @@ class TokenService implements ITokenService {
         if (tokenDAO.exists(token.getTokenKey())) {
             tokenDAO.save(token)
         } else {
-            throw new ServiceException(AuthServiceEvent.TokenNotFound, token.getTokenKey())
+            throw new ServiceException(AuthEvent.TokenNotFound, token.getTokenKey())
         }
     }
 
@@ -65,7 +65,7 @@ class TokenService implements ITokenService {
         if (!tokenDAO.exists(token.getTokenKey())) {
             tokenDAO.save(token)
         } else {
-            throw new ServiceException(AuthServiceEvent.TokenAlreadyExists, token.getTokenKey())
+            throw new ServiceException(AuthEvent.TokenAlreadyExists, token.getTokenKey())
         }
     }
 
@@ -74,7 +74,7 @@ class TokenService implements ITokenService {
         if (tokenDAO.exists(email)) {
             tokenDAO.delete(email)
         } else {
-            throw new ServiceException(AuthServiceEvent.TokenNotFound, email)
+            throw new ServiceException(AuthEvent.TokenNotFound, email)
         }
     }
 

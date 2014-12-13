@@ -12,7 +12,7 @@ import javax.ws.rs.core.*
 /**
  * Provides server-side authentication procedure
  */
-@Path('/auth/')
+@Path('/')
 class AuthController extends AbstractService {
 
     IAuthenticationService authenticationService

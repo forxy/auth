@@ -1,11 +1,9 @@
 package auth.api.v1
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import groovy.transform.Canonical
 
-@ToString
-@EqualsAndHashCode
-public class Credentials implements Serializable {
+@Canonical
+public class Credentials {
 
     String email
 

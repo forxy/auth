@@ -1,19 +1,14 @@
 package auth.api.v1
 
-import common.api.SimpleJacksonDateDeserializer
-import common.api.SimpleJacksonDateSerializer
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-import org.codehaus.jackson.map.annotate.JsonDeserialize
-import org.codehaus.jackson.map.annotate.JsonSerialize
+import groovy.transform.Canonical
+import org.joda.time.DateTime
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
-@ToString
-@EqualsAndHashCode
+@Canonical
 @Document(collection = 'token')
-class Token implements Serializable {
+class Token {
 
     @Id
     String tokenKey
@@ -30,17 +25,7 @@ class Token implements Serializable {
     UserSubject subject
 
     Long expiresIn
-    
+
     @Indexed
-    Date issuedAt = new Date()
-
-    @JsonSerialize(using = SimpleJacksonDateSerializer.class)
-    Date getIssuedAt() {
-        return issuedAt
-    }
-
-    @JsonDeserialize(using = SimpleJacksonDateDeserializer.class)
-    void setIssuedAt(final Date issuedAt) {
-        this.issuedAt = issuedAt
-    }
+    DateTime issuedAt
 }

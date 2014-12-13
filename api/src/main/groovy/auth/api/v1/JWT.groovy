@@ -1,14 +1,12 @@
 package auth.api.v1
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty
+import groovy.transform.Canonical
 
 /**
  * JSON Web Token body
  */
-@ToString
-@EqualsAndHashCode
+@Canonical
 class JWT {
 
     @JsonProperty('iss')

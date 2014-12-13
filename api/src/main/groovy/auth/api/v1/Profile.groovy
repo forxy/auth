@@ -1,29 +1,14 @@
 package auth.api.v1
 
-import common.api.SimpleJacksonDateDeserializer
-import common.api.SimpleJacksonDateSerializer
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-import org.codehaus.jackson.map.annotate.JsonDeserialize
-import org.codehaus.jackson.map.annotate.JsonSerialize
+import groovy.transform.Canonical
+import org.joda.time.DateTime
 
-@ToString
-@EqualsAndHashCode
-class Profile extends User implements Serializable {
+@Canonical
+class Profile extends User {
 
-    Date birthDate
+    DateTime birthDate
 
     Set<String> telephones
 
     Address address
-
-    @JsonSerialize(using = SimpleJacksonDateSerializer.class)
-    Date getBirthDate() {
-        return birthDate
-    }
-
-    @JsonDeserialize(using = SimpleJacksonDateDeserializer.class)
-    void setBirthDate(final Date birthDate) {
-        this.birthDate = birthDate
-    }
 }

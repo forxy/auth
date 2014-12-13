@@ -2,7 +2,7 @@ package auth.service
 
 import auth.api.v1.Group
 import auth.db.dao.IGroupDAO
-import auth.exceptions.AuthServiceEvent
+import auth.exceptions.AuthEvent
 import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
@@ -38,7 +38,7 @@ class GroupService implements IGroupService {
             final Page<Group> p = groupDAO.findAll(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(AuthServiceEvent.InvalidPageNumber, page)
+            throw new ServiceException(AuthEvent.InvalidPageNumber, page)
         }
     }
 
@@ -51,7 +51,7 @@ class GroupService implements IGroupService {
     Group getGroup(final String groupCode) {
         Group group = groupDAO.findOne(groupCode)
         if (group == null) {
-            throw new ServiceException(AuthServiceEvent.GroupNotFound, groupCode)
+            throw new ServiceException(AuthEvent.GroupNotFound, groupCode)
         }
         return group
     }
@@ -61,7 +61,7 @@ class GroupService implements IGroupService {
         if (groupDAO.exists(group.getCode())) {
             groupDAO.save(group)
         } else {
-            throw new ServiceException(AuthServiceEvent.GroupNotFound, group.getCode())
+            throw new ServiceException(AuthEvent.GroupNotFound, group.getCode())
         }
     }
 
@@ -71,7 +71,7 @@ class GroupService implements IGroupService {
         if (!groupDAO.exists(group.getCode())) {
             groupDAO.save(group)
         } else {
-            throw new ServiceException(AuthServiceEvent.GroupAlreadyExists, group.getCode())
+            throw new ServiceException(AuthEvent.GroupAlreadyExists, group.getCode())
         }
     }
 
@@ -80,7 +80,7 @@ class GroupService implements IGroupService {
         if (groupDAO.exists(groupCode)) {
             groupDAO.delete(groupCode)
         } else {
-            throw new ServiceException(AuthServiceEvent.GroupNotFound, groupCode)
+            throw new ServiceException(AuthEvent.GroupNotFound, groupCode)
         }
     }
 }

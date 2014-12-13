@@ -22,22 +22,6 @@
         <param-value>classpath*:spring/spring-context.xml</param-value>
     </context-param>
 
-    <!-- Web UI -->
-
-    <!--<welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-
-    <servlet>
-        <servlet-name>StaticServlet</servlet-name>
-        <jsp-file>/index.html</jsp-file>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>StaticServlet</servlet-name>
-        <url-pattern>/app/*</url-pattern>
-    </servlet-mapping>-->
-
     <!-- CXF -->
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
@@ -91,16 +75,16 @@
     </filter-mapping>
 
     <!-- HTTPS url mapping -->
-    <!--<security-constraint>
+    <security-constraint>
         <web-resource-collection>
             <web-resource-name>AuthService</web-resource-name>
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
-        <token-data-constraint>
+        <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </token-data-constraint>
-    </security-constraint>-->
-    <filter>
+        </user-data-constraint>
+    </security-constraint>
+    <!--<filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
         <init-param>
@@ -131,5 +115,5 @@
     <filter-mapping>
         <filter-name>CorsFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
 </web-app>

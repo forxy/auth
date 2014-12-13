@@ -5,7 +5,7 @@ import auth.api.v1.Profile
 import auth.api.v1.User
 import auth.db.dao.IProfileDAO
 import auth.db.dao.IUserDAO
-import auth.exceptions.AuthServiceEvent
+import auth.exceptions.AuthEvent
 import auth.security.IJWTManager
 import com.nimbusds.jose.JOSEException
 import common.exceptions.ServiceException
@@ -32,18 +32,18 @@ class AuthenticationService implements IAuthenticationService {
                 try {
                     return jwtManager.toJWT(user)
                 } catch (JOSEException e) {
-                    throw new ServiceException(e, AuthServiceEvent.NotAuthorized, credentials.getEmail())
+                    throw new ServiceException(e, AuthEvent.NotAuthorized, credentials.getEmail())
                 }
             }
         }
-        throw new ServiceException(AuthServiceEvent.NotAuthorized, credentials.getEmail())
+        throw new ServiceException(AuthEvent.NotAuthorized, credentials.getEmail())
     }
 
     @Override
     Profile getProfile(final String email) {
         Profile user = profileDAO.findOne(email)
         if (user == null) {
-            throw new ServiceException(AuthServiceEvent.UserNotFound, email)
+            throw new ServiceException(AuthEvent.UserNotFound, email)
         }
         return user
     }

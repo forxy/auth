@@ -4,7 +4,6 @@ import auth.api.v1.Group
 import auth.api.v1.User
 import auth.security.IJWTManager
 import auth.service.IGroupService
-import auth.service.IUserService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSObject
@@ -28,16 +27,14 @@ import java.security.Principal
 import java.text.ParseException
 
 @Provider
-@Priority(Priorities.AUTHENTICATION)
-class AuthenticationFilter implements ContainerRequestFilter {
+@Priority(Priorities.AUTHORIZATION)
+class AuthorizationFilter implements ContainerRequestFilter {
 
     @Context
     HttpHeaders headers
 
     @Context
     ResourceInfo resourceInfo
-
-    IUserService userService
 
     IGroupService groupService
 

@@ -2,7 +2,7 @@ package auth.service
 
 import auth.api.v1.Client
 import auth.db.dao.IClientDAO
-import auth.exceptions.AuthServiceEvent
+import auth.exceptions.AuthEvent
 import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
@@ -41,7 +41,7 @@ class ClientService implements IClientService {
             final Page<Client> p = clientDAO.findAll(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(AuthServiceEvent.InvalidPageNumber, page)
+            throw new ServiceException(AuthEvent.InvalidPageNumber, page)
         }
     }
 
@@ -49,7 +49,7 @@ class ClientService implements IClientService {
     Client getClient(final String clientID) {
         Client client = clientDAO.findOne(clientID)
         if (client == null) {
-            throw new ServiceException(AuthServiceEvent.ClientNotFound, clientID)
+            throw new ServiceException(AuthEvent.ClientNotFound, clientID)
         }
         return client
     }
@@ -59,7 +59,7 @@ class ClientService implements IClientService {
         if (clientDAO.exists(client.getClientID())) {
             clientDAO.save(client)
         } else {
-            throw new ServiceException(AuthServiceEvent.ClientNotFound, client.getClientID())
+            throw new ServiceException(AuthEvent.ClientNotFound, client.getClientID())
         }
     }
 
@@ -73,7 +73,7 @@ class ClientService implements IClientService {
         if (!clientDAO.exists(client.getClientID())) {
             clientDAO.save(client)
         } else {
-            throw new ServiceException(AuthServiceEvent.ClientAlreadyExists, client.getClientID())
+            throw new ServiceException(AuthEvent.ClientAlreadyExists, client.getClientID())
         }
     }
 
@@ -82,7 +82,7 @@ class ClientService implements IClientService {
         if (clientDAO.exists(clientID)) {
             clientDAO.delete(clientID)
         } else {
-            throw new ServiceException(AuthServiceEvent.ClientNotFound, clientID)
+            throw new ServiceException(AuthEvent.ClientNotFound, clientID)
         }
     }
 }

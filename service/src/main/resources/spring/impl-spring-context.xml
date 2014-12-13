@@ -9,10 +9,17 @@
     <bean id="jwtManager.impl" class="auth.security.JWTManager"/>
 
     <!-- System Status component-->
-    <bean id="systemStatusService" class="auth.service.SystemStatusService"
-          p:userDAO-ref="userDAO.mongo.perf"/>
+    <bean id="systemStatusService" class="common.status.SystemStatusService">
+        <property name="components">
+            <list>
+                <ref bean="userDAO.mongo.perf"/>
+                <ref bean="clientDAO.mongo.perf"/>
+                <ref bean="tokenDAO.mongo.perf"/>
+            </list>
+        </property>
+    </bean>
 
-    <bean id="systemStatusServiceEndpoint" class="common.rest.SystemStatusController"
+    <bean id="systemStatusController" class="common.rest.SystemStatusController"
           p:systemStatusService-ref="systemStatusService"/>
 
     <!-- business logic component-->

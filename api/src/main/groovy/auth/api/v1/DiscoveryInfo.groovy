@@ -1,14 +1,12 @@
 package auth.api.v1
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import groovy.transform.Canonical
 
 /**
  * OpenID configuration
  */
-@ToString
-@EqualsAndHashCode
-class DiscoveryInfo implements Serializable {
+@Canonical
+class DiscoveryInfo {
 
     String issuer
 

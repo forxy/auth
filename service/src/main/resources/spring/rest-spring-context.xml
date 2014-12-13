@@ -9,7 +9,7 @@
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-    <bean id="service.configuration" class="common.support.Configuration">
+    <bean id="service.configuration" class="common.utils.support.Configuration">
         <constructor-arg>
             <map>
                 <entry key="#{T(common.web.JSONValidationProvider$Configs).IsObjectValidationEnabled}"
@@ -81,12 +81,13 @@
     </jaxrs:server>-->
 
     <bean id="authenticationFilter" class="auth.controller.support.AuthenticationFilter"
-          p:groupManager-ref="groupService.perf"
-          p:userManager-ref="userService.perf"
+          groupService="groupService.perf"
+          userService="userService.perf"
           p:jwtManager-ref="jwtManager.perf">
-        <property name="exclude">
+        <property name="exclusions">
             <util:list>
-                <value>auth/login</value>
+                <value>login</value>
+                <value>status</value>
             </util:list>
         </property>
     </bean>
@@ -104,6 +105,7 @@
 
     <jaxrs:server id="authService.rest" address="/">
         <jaxrs:serviceBeans>
+            <ref bean="systemStatusController"/>
             <ref bean="userController"/>
             <ref bean="authController"/>
             <ref bean="tokenController"/>

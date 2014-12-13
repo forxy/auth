@@ -1,10 +1,8 @@
 package auth.api.v1
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import groovy.transform.Canonical
 
-@ToString
-@EqualsAndHashCode
+@Canonical
 class Address {
 
     String country

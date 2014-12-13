@@ -1,15 +1,10 @@
 package auth.api.v1
 
-import common.api.SimpleJacksonDateDeserializer
-import common.api.SimpleJacksonDateSerializer
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-import org.codehaus.jackson.map.annotate.JsonDeserialize
-import org.codehaus.jackson.map.annotate.JsonSerialize
+import groovy.transform.Canonical
+import org.joda.time.DateTime
 
-@ToString
-@EqualsAndHashCode
-class UserSubject implements Serializable {
+@Canonical
+class UserSubject {
 
     String userID
 
@@ -17,31 +12,11 @@ class UserSubject implements Serializable {
 
     Map<String, String> properties = new HashMap<String, String>()
 
-    Date updateDate = new Date()
+    DateTime updateDate
 
     String updatedBy
 
-    Date createDate = new Date()
+    DateTime createDate
 
     String createdBy
-
-    @JsonSerialize(using = SimpleJacksonDateSerializer.class)
-    Date getUpdateDate() {
-        return updateDate
-    }
-
-    @JsonDeserialize(using = SimpleJacksonDateDeserializer.class)
-    void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate
-    }
-
-    @JsonSerialize(using = SimpleJacksonDateSerializer.class)
-    Date getCreateDate() {
-        return createDate
-    }
-
-    @JsonDeserialize(using = SimpleJacksonDateDeserializer.class)
-    void setCreateDate(final Date createDate) {
-        this.createDate = createDate
-    }
 }
