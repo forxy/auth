@@ -40,7 +40,10 @@ dependencies {
 
     // --------------------- COMMON --------------------------------------
     compile "commons-collections:commons-collections:$rev_common_collections"
-    compile "ch.qos.logback:logback-core:$rev_logback"
+    runtime "ch.qos.logback:logback-classic:$rev_logback"
+
+//    compile "org.slf4j:slf4j-simple:$rev_slf4j"
+//    compile "org.slf4j:jcl-over-slf4j:$rev_slf4j"
 
     // --------------------- MONGO ---------------------------------------
     compile "org.mongodb:mongo-java-driver:$rev_mongo"
@@ -55,13 +58,25 @@ dependencies {
     compile "org.springframework:spring-aop:$rev_spring"
     compile "org.springframework:spring-web:$rev_spring"
     compile "org.springframework:spring-orm:$rev_spring"
+
+    compile "org.springframework.ldap:spring-ldap-core:$rev_spring_ldap"
+    /*compile ("org.springframework.ldap:spring-ldap-test:$rev_spring_ldap") {
+        transitive = false
+    }
+    compile ("org.apache.directory.server:apacheds-all:$rev_apacheds") {
+        transitive = false
+    }*/
+
+
     // password encoding:
     compile "org.springframework.security:spring-security-core:$rev_spring_security"
+    //compile "org.springframework.security:spring-security-ldap:$rev_spring_security"
 
     // --------------------- ENCRYPTION ----------------------------------
     compile "org.jasypt:jasypt:$rev_jasypt"
     compile "org.jasypt:jasypt-spring3:$rev_jasypt"
     compile "com.nimbusds:nimbus-jose-jwt:$rev_jose_jwt"
+    compile "org.bouncycastle:bcprov-jdk15on:$rev_bouncycastle"
 
     // ===================== TEST ========================================
     testCompile "fraud:common.spring-support:$rev_fraud_common"

@@ -30,9 +30,9 @@
     </bean>
 
     <bean id="performance.logger.request"
-          class="common.logging.writer.LogWriter" c:name="user.performance.request"/>
+          class="common.logging.writer.LogWriter" c:name="auth.performance.request"/>
     <bean id="performance.logger.response"
-          class="common.logging.writer.LogWriter" c:name="user.performance.response"/>
+          class="common.logging.writer.LogWriter" c:name="auth.performance.response"/>
 
     <bean id="performance.loggingFilter"
           class="common.logging.LoggingServletFilter"
@@ -43,7 +43,7 @@
             <bean class="common.logging.extractor.SpringELFieldExtractor">
                 <property name="extractRules">
                     <map>
-                        <entry key="Username"
+                        <entry key="ClientID"
                                value="#request.getParameter('client_id')?:#requestHeaders['client-id']?:null"/>
                         <entry key="TransactionGUID"
                                value="#request.getParameter('transaction_guid')?:#requestHeaders['transaction-guid']?:null"/>
@@ -99,6 +99,17 @@
           p:configuration-ref="configuration.performance.dao"
           p:responseWriter-ref="auth.performance.logger.dao"
           p:exceptionHandler-ref="databaseExceptionHandler"/>
+
+    <bean id="userDAO.ldap.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.IUserDAO, auth.db.dao.IProfileDAO"
+          p:target-ref="userDAO.impl.ldap">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="userDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
           autowire-candidate="false"

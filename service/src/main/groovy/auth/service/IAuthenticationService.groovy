@@ -1,6 +1,5 @@
 package auth.service
 
-import auth.api.v1.Credentials
 import auth.api.v1.Profile
 
 /**
@@ -8,7 +7,7 @@ import auth.api.v1.Profile
  */
 interface IAuthenticationService {
 
-    String login(Credentials credentials)
+    String login(String login, String password)
 
     Profile getProfile(final String email)
 }

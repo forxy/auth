@@ -14,8 +14,11 @@
         <property name="config">
             <bean class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig"
                   p:algorithm="PBEWithMD5AndDES"
-                  p:password="secret"
-                  p:providerName="org.bouncycastle.jce.provider.BouncyCastleProvider"/>
+                  p:password="secret">
+                <property name="provider">
+                    <bean class="org.bouncycastle.jce.provider.BouncyCastleProvider"/>
+                </property>
+            </bean>
         </property>
     </bean>
 
@@ -26,7 +29,7 @@
         <property name="locations">
             <list>
                 <value>file:${config.dir}/auth/appconfig/base/auth.properties</value>
-                <value>file:${config.dir}/auth/appconfig/env/${env}/auth.properties</value>
+                <value>file:${config.dir}/auth/appconfig/env/${spring.profiles.active}/auth.properties</value>
             </list>
         </property>
     </bean>

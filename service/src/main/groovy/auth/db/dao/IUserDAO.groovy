@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort
  */
 interface IUserDAO extends ISystemStatusComponent {
 
+    User authenticate(final String login, final String password)
+
     Page<User> findAll(final Pageable pageable, final User filter)
 
     Iterable<User> findAll(final Sort sort)

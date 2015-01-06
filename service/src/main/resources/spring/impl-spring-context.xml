@@ -24,13 +24,11 @@
 
     <!-- business logic component-->
     <bean id="userService.impl" class="auth.service.UserService"
-          p:userDAO-ref="userDAO.mongo.perf"
-          p:passwordEncoder-ref="passwordEncoder"/>
+          p:userDAO-ref="userDAO.mongo.perf"/>
 
     <bean id="authenticationService.impl" class="auth.service.AuthenticationService"
-          p:profileDAO-ref="profileDAO.mongo.perf"
-          p:userDAO-ref="userDAO.mongo.perf"
-          p:passwordEncoder-ref="passwordEncoder"
+          p:profileDAO-ref="userDAO.ldap.perf"
+          p:userDAO-ref="userDAO.ldap.perf"
           p:jwtManager-ref="jwtManager.perf"/>
 
     <bean id="clientService.impl" class="auth.service.ClientService"

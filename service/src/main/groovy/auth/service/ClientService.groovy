@@ -6,6 +6,7 @@ import auth.exceptions.AuthEvent
 import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
+import org.joda.time.DateTime
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -27,21 +28,21 @@ class ClientService implements IClientService {
     }
 
     @Override
-    EntityPage<Client> getClients(final Integer page, final Integer size, final SortDirection sortDirection,
+    EntityPage<Client> getClients(final Integer pageNumber, final Integer size, final SortDirection sortDirection,
                                   final String sortedBy, final Client filter) {
-        if (page >= 1) {
+        if (pageNumber >= 1) {
             int pageSize = size == null ? DEFAULT_PAGE_SIZE : size
             PageRequest pageRequest
             if (sortDirection != null && sortedBy != null) {
                 Sort.Direction dir = sortDirection == SortDirection.ASC ? Sort.Direction.ASC : Sort.Direction.DESC
-                pageRequest = new PageRequest(page - 1, pageSize, dir, sortedBy)
+                pageRequest = new PageRequest(pageNumber - 1, pageSize, dir, sortedBy)
             } else {
-                pageRequest = new PageRequest(page - 1, pageSize)
+                pageRequest = new PageRequest(pageNumber - 1, pageSize)
             }
-            final Page<Client> p = clientDAO.findAll(pageRequest, filter)
-            return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
+            final Page<Client> page = clientDAO.findAll(pageRequest, filter)
+            return new EntityPage<>(page.content, page.size, page.number, page.totalElements)
         } else {
-            throw new ServiceException(AuthEvent.InvalidPageNumber, page)
+            throw new ServiceException(AuthEvent.InvalidPageNumber, pageNumber)
         }
     }
 
@@ -56,24 +57,26 @@ class ClientService implements IClientService {
 
     @Override
     void updateClient(final Client client) {
-        if (clientDAO.exists(client.getClientID())) {
+        if (clientDAO.exists(client.clientID)) {
+            client.updateDate = DateTime.now()
             clientDAO.save(client)
         } else {
-            throw new ServiceException(AuthEvent.ClientNotFound, client.getClientID())
+            throw new ServiceException(AuthEvent.ClientNotFound, client.clientID)
         }
     }
 
     @Override
     void createClient(final Client client) {
-        if (client.getClientID() == null) {
-            client.setClientID(UUID.randomUUID().toString())
-        }
-        client.setCreateDate(new Date())
-        client.setSecret(passwordEncoder.encode(client.getSecret()))
-        if (!clientDAO.exists(client.getClientID())) {
+        if (!client.clientID || !clientDAO.exists(client.clientID)) {
+            if (!client.clientID) {
+                client.clientID = UUID.randomUUID() as String
+            }
+            client.createDate = DateTime.now()
+            client.updateDate = DateTime.now()
+            client.secret = passwordEncoder.encode(client.secret)
             clientDAO.save(client)
         } else {
-            throw new ServiceException(AuthEvent.ClientAlreadyExists, client.getClientID())
+            throw new ServiceException(AuthEvent.ClientAlreadyExists, client.clientID)
         }
     }
 

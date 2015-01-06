@@ -1,0 +1,162 @@
+dn: dc=forxy,dc=ru
+dc: forxy
+o: forxy.ru
+description: Root entry for forxy.ru
+objectClass: top
+objectclass: dcObject
+objectclass: organization
+
+dn: ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: Departments
+
+dn: ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: IT
+
+dn: ou=Development,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: Development
+
+dn: ou=Support,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: Support
+
+dn: ou=Information Services,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: Information Services
+
+dn: ou=System,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: System
+
+dn: ou=Accounting,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: Accounting
+
+dn: ou=General,ou=Accounting,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: General
+
+dn: cn=admin,ou=System,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+employeeNumber: -1
+mail: admin@forxy.ru
+cn: admin
+givenName: Admin
+sn: System
+title: Admin
+userPassword: password
+
+dn: cn=john.doe,ou=Development,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+employeeNumber: 2
+mail: john.doe@forxy.ru
+cn: john.doe
+givenName: John
+sn: Doe
+title: Senior Programmer
+telephoneNumber: +46 555-123456
+userPassword: secret
+
+dn: cn=some.dude,ou=Development,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+employeeNumber: 3
+mail: some.dude@forxy.ru
+cn: some.dude
+givenName: Some
+sn: Dude
+title: Architect
+telephoneNumber: +46 555-123457
+userPassword: secret
+
+dn: cn=john.smith,ou=Support,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+employeeNumber: 4
+mail: john.smith@forxy.ru
+cn: john.smith
+givenName: John
+sn: Smith
+title: Support Engineer
+telephoneNumber: +46 555-123458
+userPassword: secret
+
+dn: cn=mordac.preventor,ou=Information Services,ou=IT,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+employeeNumber: 5
+mail: mordac.preventor@forxy.ru
+cn: mordac.preventor
+givenName: Mordac
+sn: Preventor
+title: I/S Engineer
+telephoneNumber: +46 555-123460
+userPassword: secret
+
+dn: cn=jane.doe,ou=General,ou=Accounting,ou=Departments,dc=forxy,dc=ru
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+employeeNumber: 6
+mail: jane.doe@forxy.ru
+cn: jane.doe
+givenName: Jane
+sn: Doe
+title: Accounting Responsible
+telephoneNumber: +46 555-123459
+userPassword: secret
+
+dn: ou=Groups,dc=forxy,dc=ru
+objectclass: top
+objectclass: organizationalUnit
+ou: Groups
+
+dn: cn=users,ou=Groups,dc=forxy,dc=ru
+objectclass: top
+objectclass: groupOfNames
+cn: users
+description: Users
+member: cn=admin,ou=System,ou=IT,ou=Departments,dc=forxy,dc=ru
+member: cn=john.doe,ou=Development,ou=IT,ou=Departments,dc=forxy,dc=ru
+member: cn=some.dude,ou=Development,ou=IT,ou=Departments,dc=forxy,dc=ru
+member: cn=john.smith,ou=Support,ou=IT,ou=Departments,dc=forxy,dc=ru
+member: cn=jane.doe,ou=General,ou=Accounting,ou=Departments,dc=forxy,dc=ru
+member: cn=mordac.preventor,ou=Information Services,ou=IT,ou=Departments,dc=forxy,dc=ru
+
+dn: cn=fraud_admins,ou=Groups,dc=forxy,dc=ru
+objectclass: top
+objectclass: groupOfNames
+cn: fraud_admins
+description: Fraud Admins
+member: cn=admin,ou=System,ou=IT,ou=Departments,dc=forxy,dc=ru
+member: cn=mordac.preventor,ou=Information Services,ou=IT,ou=Departments,dc=forxy,dc=ru
+
+dn: cn=auth_admins,ou=Groups,dc=forxy,dc=ru
+objectclass: top
+objectclass: groupOfNames
+cn: auth_admins
+description: Auth Admins
+member: cn=admin,ou=System,ou=IT,ou=Departments,dc=forxy,dc=ru

@@ -38,14 +38,14 @@ class TokenDAO implements ITokenDAO {
     Page<Token> findAll(final Pageable pageable, final Token filter) {
         Query query = Query.query(new Criteria()).with(pageable)
         if (filter != null) {
-            if (StringUtils.isNotEmpty(filter.getTokenKey())) {
-                query.addCriteria(new Criteria('tokenKey').regex(filter.getTokenKey()))
+            if (StringUtils.isNotEmpty(filter.tokenKey)) {
+                query.addCriteria(new Criteria('tokenKey').regex(filter.tokenKey))
             }
-            if (StringUtils.isNotEmpty(filter.getClientID())) {
-                query.addCriteria(new Criteria('clientID').regex(filter.getClientID()))
+            if (StringUtils.isNotEmpty(filter.clientID)) {
+                query.addCriteria(new Criteria('clientID').regex(filter.clientID))
             }
-            if (StringUtils.isNotEmpty(filter.getType())) {
-                query.addCriteria(new Criteria('type').regex(filter.getType()))
+            if (StringUtils.isNotEmpty(filter.type)) {
+                query.addCriteria(new Criteria('type').regex(filter.type))
             }
         }
 
@@ -95,18 +95,18 @@ class TokenDAO implements ITokenDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (mongoTemplate != null && mongoTemplate.getDb() != null && mongoTemplate.getDb().getMongo() != null) {
-            location = mongoTemplate.getDb().getMongo().getConnectPoint()
+        if (mongoTemplate != null && mongoTemplate.db != null && mongoTemplate.db.mongo != null) {
+            location = mongoTemplate.db.mongo.connectPoint
 
-            long timeStart = new Date().getTime()
+            long timeStart = new Date().time
             try {
                 mongoTemplate.count(null, Token.class)
             } catch (final Exception e) {
-                exceptionMessage = e.getMessage()
+                exceptionMessage = e.message
                 exceptionDetails = ExceptionUtils.getStackTrace(e)
                 statusType = StatusType.RED
             } finally {
-                responseTime = new Date().getTime() - timeStart
+                responseTime = new Date().time - timeStart
             }
 
 

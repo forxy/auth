@@ -11,7 +11,7 @@ interface IUserService {
 
     Iterable<User> getAllUsers()
 
-    EntityPage<User> getUsers(final Integer page, final Integer size, final SortDirection sortDirection,
+    EntityPage<User> getUsers(final Integer pageNumber, final Integer size, final SortDirection sortDirection,
                               final String sortedBy, final User filter)
 
     User getUser(final String email)

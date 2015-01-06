@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>../logs/auth.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>../logs/auth.%i.log</fileNamePattern>
@@ -35,8 +35,16 @@
         <appender-ref ref="PERF"/>
     </appender>
 
+    <appender name="EVENT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="EVENT"/>
+    </appender>
+
     <logger name="auth.performance" level="INFO">
         <appender-ref ref="PERF_ASYNC"/>
+    </logger>
+
+    <logger name="common.exceptions" level="INFO">
+        <appender-ref ref="EVENT_ASYNC"/>
     </logger>
 
     <logger name="auth.test" level="TRACE"/>

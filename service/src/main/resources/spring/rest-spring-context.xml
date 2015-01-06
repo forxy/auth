@@ -80,17 +80,15 @@
         </jaxrs:providers>
     </jaxrs:server>-->
 
-    <bean id="authenticationFilter" class="auth.controller.support.AuthenticationFilter"
-          groupService="groupService.perf"
-          userService="userService.perf"
-          p:jwtManager-ref="jwtManager.perf">
-        <property name="exclusions">
-            <util:list>
-                <value>login</value>
-                <value>status</value>
-            </util:list>
-        </property>
-    </bean>
+    <util:list id="authExclusions">
+        <value>login</value>
+        <value>status</value>
+    </util:list>
+
+    <bean id="authFilter" class="auth.controller.support.AuthFilter"
+          p:userService-ref="userService.perf"
+          p:groupService-ref="groupService.perf"
+          p:jwtManager-ref="jwtManager.perf"/>
 
     <!--<bean id="usersAuthorizationInterceptor" class="org.apache.cxf.interceptor.security.SecureAnnotationsInterceptor"
           p:securedObject-ref="userServiceEndpoint"/>
@@ -120,7 +118,7 @@
             <ref bean="authenticationAuthorizationInterceptor"/>
         </jaxrs:inInterceptors>-->
         <jaxrs:providers>
-            <ref bean="authenticationFilter"/>
+            <ref bean="authFilter"/>
             <bean class="common.web.JSONValidationProvider">
                 <property name="configuration" ref="service.configuration"/>
                 <property name="validator" ref="payload.validator"/>

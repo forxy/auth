@@ -1,6 +1,5 @@
 package auth.service
 
-import auth.api.v1.Credentials
 import auth.api.v1.Profile
 import auth.api.v1.User
 import auth.db.dao.IProfileDAO
@@ -9,14 +8,11 @@ import auth.exceptions.AuthEvent
 import auth.security.IJWTManager
 import com.nimbusds.jose.JOSEException
 import common.exceptions.ServiceException
-import org.springframework.security.crypto.password.PasswordEncoder
 
 /**
  * Authentication Manager implementation
  */
 class AuthenticationService implements IAuthenticationService {
-
-    PasswordEncoder passwordEncoder
 
     IProfileDAO profileDAO
 
@@ -25,23 +21,21 @@ class AuthenticationService implements IAuthenticationService {
     IJWTManager jwtManager
 
     @Override
-    String login(Credentials credentials) {
-        User user = userDAO.findOne(credentials.getEmail())
-        if (user != null) {
-            if (passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
-                try {
-                    return jwtManager.toJWT(user)
-                } catch (JOSEException e) {
-                    throw new ServiceException(e, AuthEvent.NotAuthorized, credentials.getEmail())
-                }
+    String login(String login, String password) {
+        User user = userDAO.authenticate(login, password)
+        if (user) {
+            try {
+                return jwtManager.toJWT(user)
+            } catch (JOSEException e) {
+                throw new ServiceException(e, AuthEvent.InvalidCredentials, login)
             }
         }
-        throw new ServiceException(AuthEvent.NotAuthorized, credentials.getEmail())
+        throw new ServiceException(AuthEvent.InvalidCredentials, login)
     }
 
     @Override
     Profile getProfile(final String email) {
-        Profile user = profileDAO.findOne(email)
+        Profile user = profileDAO.getProfile(email)
         if (user == null) {
             throw new ServiceException(AuthEvent.UserNotFound, email)
         }

@@ -6,6 +6,7 @@ import auth.exceptions.AuthEvent
 import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
+import org.joda.time.DateTime
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -59,6 +60,7 @@ class GroupService implements IGroupService {
     @Override
     void updateGroup(final Group group) {
         if (groupDAO.exists(group.getCode())) {
+            group.updateDate = DateTime.now()
             groupDAO.save(group)
         } else {
             throw new ServiceException(AuthEvent.GroupNotFound, group.getCode())
@@ -67,8 +69,9 @@ class GroupService implements IGroupService {
 
     @Override
     void createGroup(final Group group) {
-        group.setCreateDate(new Date())
         if (!groupDAO.exists(group.getCode())) {
+            group.createDate = DateTime.now()
+            group.updateDate = DateTime.now()
             groupDAO.save(group)
         } else {
             throw new ServiceException(AuthEvent.GroupAlreadyExists, group.getCode())

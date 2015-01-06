@@ -18,6 +18,11 @@ class UserDAO implements IUserDAO {
     ICassandraClient<User> cassandraClient
 
     @Override
+    User authenticate(final String login,final String password) {
+        return null
+    }
+
+    @Override
     Page<User> findAll(final Pageable pageable, final User filter) {
         return findAll(pageable)
     }

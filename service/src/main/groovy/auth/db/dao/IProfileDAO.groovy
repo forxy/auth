@@ -10,12 +10,6 @@ interface IProfileDAO extends ISystemStatusComponent {
 
     Profile save(final Profile user)
 
-    Profile findOne(final String s)
-
-    boolean exists(final String s)
-
-    void delete(final String s)
-
-    void delete(final Profile user)
+    Profile getProfile(final String s)
 }
 

@@ -11,7 +11,7 @@ interface IClientService {
 
     Iterable<Client> getAllClients()
 
-    EntityPage<Client> getClients(final Integer page, final Integer size, final SortDirection sortDirection,
+    EntityPage<Client> getClients(final Integer pageNumber, final Integer size, final SortDirection sortDirection,
                                   final String sortedBy, final Client filter)
 
     Client getClient(final String clientID)

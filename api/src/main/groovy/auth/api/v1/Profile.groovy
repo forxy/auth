@@ -6,6 +6,8 @@ import org.joda.time.DateTime
 @Canonical
 class Profile extends User {
 
+    String companyName
+
     DateTime birthDate
 
     Set<String> telephones

@@ -22,17 +22,12 @@ class AuthController extends AbstractService {
     @POST
     @Path('/login')
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    Response login(@FormParam('email') String email,
+    Response login(@FormParam('login') String login,
                    @FormParam('password') String password,
                    @Context final UriInfo uriInfo,
                    @Context final HttpHeaders headers) {
         return respondWith(
-                authenticationService.login(
-                        new Credentials(
-                                email: email,
-                                password: password
-                        )
-                ),
+                authenticationService.login(login, password),
                 uriInfo,
                 headers
         ).build()
@@ -48,7 +43,7 @@ class AuthController extends AbstractService {
     }*/
 
     @GET
-    @RolesAllowed('profile')
+    //@RolesAllowed('profile')
     @Path('/profile/{email}/')
     @Produces(MediaType.APPLICATION_JSON)
     Response profile(@PathParam('email') final String email,
@@ -70,8 +65,7 @@ class AuthController extends AbstractService {
 
     @GET
     @Path('/.well-known/openid-configuration')
-    Response configuration(final Credentials credentials,
-                           @Context final UriInfo uriInfo,
+    Response configuration(@Context final UriInfo uriInfo,
                            @Context final HttpHeaders headers) {
         return respondWith(discoveryInfo, uriInfo, headers).build()
     }

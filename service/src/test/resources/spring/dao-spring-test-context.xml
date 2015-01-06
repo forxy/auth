@@ -4,6 +4,11 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation='http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd'>
 
+    <bean id="userDAO.impl.ldap"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="auth.db.dao.ldap.UserDAO"/>
+
     <bean id="userDAO.impl.mongo"
           class="org.easymock.EasyMock"
           factory-method="createNiceMock"

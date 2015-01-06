@@ -23,23 +23,8 @@ class ProfileDAO implements IProfileDAO {
     }
 
     @Override
-    Profile findOne(final String email) {
+    Profile getProfile(final String email) {
         return mongoTemplate.findOne(Query.query(Criteria.where('email').is(email)), Profile.class)
-    }
-
-    @Override
-    boolean exists(final String email) {
-        return mongoTemplate.findOne(Query.query(Criteria.where('email').is(email)), Profile.class) != null
-    }
-
-    @Override
-    void delete(final String email) {
-        mongoTemplate.remove(Query.query(Criteria.where('email').is(email)), Profile.class)
-    }
-
-    @Override
-    void delete(Profile profile) {
-        mongoTemplate.remove(Query.query(Criteria.where('email').is(profile.getEmail())), Profile.class)
     }
 
     @Override
@@ -49,18 +34,18 @@ class ProfileDAO implements IProfileDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (mongoTemplate != null && mongoTemplate.getDb() != null && mongoTemplate.getDb().getMongo() != null) {
-            location = mongoTemplate.getDb().getMongo().getConnectPoint()
+        if (mongoTemplate != null && mongoTemplate.db != null && mongoTemplate.db.mongo != null) {
+            location = mongoTemplate.db.mongo.connectPoint
 
-            long timeStart = new Date().getTime()
+            long timeStart = new Date().time
             try {
                 mongoTemplate.count(null, Profile.class)
             } catch (final Exception e) {
-                exceptionMessage = e.getMessage()
+                exceptionMessage = e.message
                 exceptionDetails = ExceptionUtils.getStackTrace(e)
                 statusType = StatusType.RED
             } finally {
-                responseTime = new Date().getTime() - timeStart
+                responseTime = new Date().time - timeStart
             }
 
 

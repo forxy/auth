@@ -44,17 +44,17 @@ class ClientDAO implements IClientDAO {
     Page<Client> findAll(final Pageable pageable, final Client filter) {
         Query query = Query.query(new Criteria()).with(pageable)
         if (filter != null) {
-            if (StringUtils.isNotEmpty(filter.getClientID())) {
-                query.addCriteria(new Criteria('clientID').regex(filter.getClientID(), 'i'))
+            if (StringUtils.isNotEmpty(filter.clientID)) {
+                query.addCriteria(new Criteria('clientID').regex(filter.clientID, 'i'))
             }
-            if (StringUtils.isNotEmpty(filter.getName())) {
-                query.addCriteria(new Criteria('name').regex(filter.getName(), 'i'))
+            if (StringUtils.isNotEmpty(filter.name)) {
+                query.addCriteria(new Criteria('name').regex(filter.name, 'i'))
             }
-            if (StringUtils.isNotEmpty(filter.getUpdatedBy())) {
-                query.addCriteria(new Criteria('updatedBy').regex(filter.getUpdatedBy(), 'i'))
+            if (StringUtils.isNotEmpty(filter.updatedBy)) {
+                query.addCriteria(new Criteria('updatedBy').regex(filter.updatedBy, 'i'))
             }
-            if (StringUtils.isNotEmpty(filter.getCreatedBy())) {
-                query.addCriteria(new Criteria('createdBy').regex(filter.getCreatedBy(), 'i'))
+            if (StringUtils.isNotEmpty(filter.createdBy)) {
+                query.addCriteria(new Criteria('createdBy').regex(filter.createdBy, 'i'))
             }
         }
 
@@ -98,18 +98,18 @@ class ClientDAO implements IClientDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (mongoTemplate != null && mongoTemplate.getDb() != null && mongoTemplate.getDb().getMongo() != null) {
-            location = mongoTemplate.getDb().getMongo().getConnectPoint()
+        if (mongoTemplate != null && mongoTemplate.db != null && mongoTemplate.db.mongo != null) {
+            location = mongoTemplate.db.mongo.connectPoint
 
-            long timeStart = new Date().getTime()
+            long timeStart = new Date().time
             try {
                 mongoTemplate.count(null, Client.class)
             } catch (final Exception e) {
-                exceptionMessage = e.getMessage()
+                exceptionMessage = e.message
                 exceptionDetails = ExceptionUtils.getStackTrace(e)
                 statusType = StatusType.RED
             } finally {
-                responseTime = new Date().getTime() - timeStart
+                responseTime = new Date().time - timeStart
             }
 
 

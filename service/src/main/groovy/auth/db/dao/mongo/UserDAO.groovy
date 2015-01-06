@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.security.crypto.password.PasswordEncoder
 
 /**
  * Mongo DB based data source for users
@@ -20,6 +21,8 @@ import org.springframework.data.mongodb.core.query.Query
 class UserDAO implements IUserDAO {
 
     MongoTemplate mongoTemplate
+
+    PasswordEncoder passwordEncoder
 
     @Override
     Iterable<User> findAll(final Sort sort) {
@@ -35,23 +38,33 @@ class UserDAO implements IUserDAO {
     }
 
     @Override
+    User authenticate(final String login, final String password) {
+        User user = findOne(login)
+        if (user && passwordEncoder.matches(password, user.password)) {
+            return user
+        } else {
+            return null
+        }
+    }
+
+    @Override
     Page<User> findAll(final Pageable pageable, final User filter) {
         Query query = Query.query(new Criteria()).with(pageable)
         if (filter != null) {
-            if (StringUtils.isNotEmpty(filter.getEmail())) {
-                query.addCriteria(new Criteria('email').regex(filter.getEmail(), 'i'))
+            if (StringUtils.isNotEmpty(filter.email)) {
+                query.addCriteria(new Criteria('email').regex(filter.email, 'i'))
             }
-            if (StringUtils.isNotEmpty(filter.getLogin())) {
-                query.addCriteria(new Criteria('login').regex(filter.getLogin(), 'i'))
+            if (StringUtils.isNotEmpty(filter.login)) {
+                query.addCriteria(new Criteria('login').regex(filter.login, 'i'))
             }
-            if (StringUtils.isNotEmpty(filter.getFirstName())) {
-                query.addCriteria(new Criteria('first_name').regex(filter.getFirstName(), 'i'))
+            if (StringUtils.isNotEmpty(filter.firstName)) {
+                query.addCriteria(new Criteria('first_name').regex(filter.firstName, 'i'))
             }
-            if (StringUtils.isNotEmpty(filter.getLastName())) {
-                query.addCriteria(new Criteria('last_name').regex(filter.getLastName(), 'i'))
+            if (StringUtils.isNotEmpty(filter.lastName)) {
+                query.addCriteria(new Criteria('last_name').regex(filter.lastName, 'i'))
             }
-            if (filter.getGender() != null) {
-                query.addCriteria(new Criteria('gender').is(filter.getGender()))
+            if (filter.gender != null) {
+                query.addCriteria(new Criteria('gender').is(filter.gender))
             }
         }
 
@@ -60,13 +73,20 @@ class UserDAO implements IUserDAO {
 
     @Override
     User save(final User user) {
+        user.password = passwordEncoder.encode(user.password)
         mongoTemplate.save(user)
         return user
     }
 
     @Override
-    User findOne(final String email) {
-        mongoTemplate.findOne(Query.query(Criteria.where('email').is(email)), User.class)
+    User findOne(final String login) {
+        mongoTemplate.findOne(
+                Query.query(
+                        new Criteria().orOperator(
+                                Criteria.where('email').is(login),
+                                Criteria.where('login').is(login)
+                        )
+                ), User.class)
     }
 
     @Override
@@ -101,18 +121,18 @@ class UserDAO implements IUserDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (mongoTemplate != null && mongoTemplate.getDb() != null && mongoTemplate.getDb().getMongo() != null) {
-            location = mongoTemplate.getDb().getMongo().getConnectPoint()
+        if (mongoTemplate != null && mongoTemplate.db != null && mongoTemplate.db.mongo != null) {
+            location = mongoTemplate.db.mongo.connectPoint
 
-            long timeStart = new Date().getTime()
+            long timeStart = new Date().time
             try {
                 mongoTemplate.count(null, User.class)
             } catch (final Exception e) {
-                exceptionMessage = e.getMessage()
+                exceptionMessage = e.message
                 exceptionDetails = ExceptionUtils.getStackTrace(e)
                 statusType = StatusType.RED
             } finally {
-                responseTime = new Date().getTime() - timeStart
+                responseTime = new Date().time - timeStart
             }
 
 

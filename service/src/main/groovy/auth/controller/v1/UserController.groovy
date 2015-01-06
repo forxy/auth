@@ -18,7 +18,7 @@ class UserController extends AbstractService {
     IUserService userService
 
     @GET
-    @RolesAllowed('users_get')
+    @RolesAllowed(['users_get', 'users_manage'])
     Response getUsers(@QueryParam('page') final Integer page,
                       @QueryParam('size') final Integer size,
                       @QueryParam('sort_dir') final SortDirection sortDirection,
@@ -51,7 +51,7 @@ class UserController extends AbstractService {
     }
 
     @GET
-    @RolesAllowed('users_get')
+    @RolesAllowed(['users_get', 'users_manage'])
     @Path('/{email}/')
     Response getUser(@PathParam('email') final String email,
                      @Context final UriInfo uriInfo,

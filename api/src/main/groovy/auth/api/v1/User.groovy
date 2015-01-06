@@ -1,7 +1,9 @@
 package auth.api.v1
 
 import groovy.transform.Canonical
+import org.joda.time.DateTime
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Canonical
@@ -13,6 +15,7 @@ class User {
 
     String password
 
+    @Indexed
     String login
 
     String firstName
@@ -23,11 +26,11 @@ class User {
 
     List<String> groups
 
-    Date updateDate = new Date()
+    DateTime updateDate
 
     String updatedBy
 
-    Date createDate = new Date()
+    DateTime createDate
 
     String createdBy
 }
