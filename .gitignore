@@ -242,3 +242,8 @@ dist
 .tmp
 .sass-cache
 app/bower_components
+
+service/appconfig/env/fnt/auth.properties
+service/appconfig/env/fnt/setenv.sh
+service/appconfig/env/fnt/setenv.bat
+service/appconfig/env/fnt/oauth.jks
