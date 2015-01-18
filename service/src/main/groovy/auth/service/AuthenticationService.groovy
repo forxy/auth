@@ -1,6 +1,5 @@
 package auth.service
 
-import auth.api.v1.Profile
 import auth.api.v1.User
 import auth.db.dao.IUserDAO
 import auth.exceptions.AuthEvent
@@ -31,8 +30,8 @@ class AuthenticationService implements IAuthenticationService {
     }
 
     @Override
-    Profile getProfile(final String email) {
-        Profile user = userDAO.getProfile(email)
+    User getProfile(final String email) {
+        User user = userDAO.getProfile(email)
         if (user == null) {
             throw new ServiceException(AuthEvent.UserNotFound, email)
         }

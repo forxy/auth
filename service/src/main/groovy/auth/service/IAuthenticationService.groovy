@@ -1,6 +1,6 @@
 package auth.service
 
-import auth.api.v1.Profile
+import auth.api.v1.User
 
 /**
  * Authentication manager
@@ -9,5 +9,5 @@ interface IAuthenticationService {
 
     String login(String login, String password)
 
-    Profile getProfile(final String email)
+    User getProfile(final String email)
 }

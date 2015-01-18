@@ -7,6 +7,9 @@ dependencies {
     // --------------------- MONGO ---------------------------------------
     compile "org.mongodb:mongo-java-driver:$rev_mongo"
     compile "org.springframework:spring-orm:$rev_spring"
+    compile ("org.springframework.data:spring-data-mongodb:$rev_spring_data_mongo") {
+        transitive = false
+    }
 
     // password encoding:
     compile "org.springframework.security:spring-security-core:$rev_spring_security"

@@ -15,6 +15,11 @@ dependencies {
     compile "org.springframework:spring-beans:$rev_spring"
     compile "org.springframework:spring-context:$rev_spring"
 
+    // --------------------- DATA ----------------------------------------
+    compile ("org.springframework.data:spring-data-commons:$rev_spring_data") {
+        transitive = false
+    }
+
     // ===================== TEST ========================================
     testCompile "fraud:common.spring-support:$rev_fraud_common"
     testCompile "junit:junit:$rev_junit"

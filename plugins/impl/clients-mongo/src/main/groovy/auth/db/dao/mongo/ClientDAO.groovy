@@ -52,7 +52,7 @@ class ClientDAO extends BaseClientDAO {
 
     @Override
     Client authenticate(final String clientID, final String secret) {
-        Client client = find(clientID)
+        Client client = find clientID
         if (client && passwordEncoder.matches(secret, client.secret)) {
             return client
         } else {
@@ -89,7 +89,9 @@ class ClientDAO extends BaseClientDAO {
 
     @Override
     Client create(final Client client) {
-        if (exists(client.clientID)) {
+        if (!client.clientID) {
+            client.clientID = UUID.randomUUID() as String
+        } else if (exists(client.clientID)) {
             throw new ServiceException(AuthDBEvent.ClientAlreadyExists, client.clientID)
         }
         client.createDate = DateTime.now()
@@ -147,7 +149,7 @@ class ClientDAO extends BaseClientDAO {
 
     @Override
     void delete(final Client client) {
-        delete(client.clientID)
+        delete client.clientID
     }
 
     @Override
