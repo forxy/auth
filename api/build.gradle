@@ -2,14 +2,6 @@ dependencies {
     // --------------------- FORXY ---------------------------------------
     compile "fraud:common.rest.api:$rev_fraud_common"
 
-    // --------------------- DATA ----------------------------------------
-    compile ("org.springframework.data:spring-data-mongodb:$rev_spring_data_mongo") {
-        transitive = false
-    }
-    compile ("org.springframework.data:spring-data-commons:$rev_spring_data") {
-        transitive = false
-    }
-
     // --------------------- GROOVY --------------------------------------
     compile "org.codehaus.groovy:groovy-all:$rev_groovy"
 }

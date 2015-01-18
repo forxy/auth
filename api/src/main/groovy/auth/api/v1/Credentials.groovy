@@ -4,8 +4,6 @@ import groovy.transform.Canonical
 
 @Canonical
 public class Credentials {
-
     String login
-
     String password
 }

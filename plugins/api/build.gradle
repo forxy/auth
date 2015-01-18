@@ -1,0 +1,21 @@
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":auth.api")
+    compile "fraud:common.status:$rev_fraud_common"
+
+    compile "com.google.guava:guava:$rev_guava"
+
+    // --------------------- GROOVY --------------------------------------
+    compile "org.codehaus.groovy:groovy-all:$rev_groovy"
+
+    // --------------------- SPRING --------------------------------------
+    compile "org.springframework:spring-core:$rev_spring"
+    compile "org.springframework:spring-beans:$rev_spring"
+    compile "org.springframework:spring-context:$rev_spring"
+
+    // ===================== TEST ========================================
+    testCompile "fraud:common.spring-support:$rev_fraud_common"
+    testCompile "junit:junit:$rev_junit"
+}

@@ -102,7 +102,7 @@
 
     <bean id="userDAO.ldap.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
           autowire-candidate="false"
-          p:proxyInterfaces="auth.db.dao.IUserDAO, auth.db.dao.IProfileDAO"
+          p:proxyInterfaces="auth.db.dao.IUserDAO"
           p:target-ref="userDAO.impl.ldap">
         <property name="interceptorNames">
             <list>
@@ -115,17 +115,6 @@
           autowire-candidate="false"
           p:proxyInterfaces="auth.db.dao.IUserDAO"
           p:target-ref="userDAO.impl.mongo">
-        <property name="interceptorNames">
-            <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="profileDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
-          autowire-candidate="false"
-          p:proxyInterfaces="auth.db.dao.IProfileDAO"
-          p:target-ref="profileDAO.impl.mongo">
         <property name="interceptorNames">
             <list>
                 <idref bean="performance.dao.loggingInterceptor"/>

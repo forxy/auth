@@ -3,6 +3,10 @@ rootProject.name = project_name
 def projects = [
         ':api'    : [name: "auth.api", path: 'api'],
         ':client' : [name: "auth.client", path: 'client'],
+        ':plugins.api' : [name: "auth.plugins.api", path: 'plugins/api'],
+        ':plugins.users-ldap' : [name: "auth.plugins.users-ldap", path: 'plugins/impl/users-ldap'],
+        ':plugins.users-mongo' : [name: "auth.plugins.users-mongo", path: 'plugins/impl/users-mongo'],
+        ':plugins.clients-mongo' : [name: "auth.plugins.clients-mongo", path: 'plugins/impl/clients-mongo'],
         ':service': [name: "auth.service", path: 'service']
 ]
 

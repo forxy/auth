@@ -2,35 +2,27 @@ package auth.api.v1
 
 import groovy.transform.Canonical
 import org.joda.time.DateTime
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.index.Indexed
-import org.springframework.data.mongodb.core.mapping.Document
 
 @Canonical
-@Document(collection = 'user')
 class User {
 
-    @Id
+    String login
     String email
-
     String password
 
-    @Indexed
-    String login
-
     String firstName
-
     String lastName
-
     Gender gender
+    DateTime birthDate
 
-    List<String> groups
+    String title
+    Set<String> telephones
+    Address address
 
     DateTime updateDate
-
     String updatedBy
-
     DateTime createDate
-
     String createdBy
+
+    Set<String> groups
 }

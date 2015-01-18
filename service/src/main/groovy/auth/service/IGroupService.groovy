@@ -14,7 +14,7 @@ interface IGroupService {
     EntityPage<Group> getGroups(final Integer page, final Integer size, final SortDirection sortDirection,
                                 final String sortedBy, final Group filter)
 
-    List<Group> getGroups(List<String> groupCodes)
+    List<Group> getGroups(Set<String> groupCodes)
 
     Group getGroup(final String groupCode)
 

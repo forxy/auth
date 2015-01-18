@@ -1,0 +1,17 @@
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":auth.plugins.api")
+    compile "fraud:common.exceptions:$rev_fraud_common"
+
+    // --------------------- LDAP ----------------------------------------
+    compile "org.springframework.ldap:spring-ldap-core:$rev_spring_ldap"
+
+    // --------------------- GROOVY --------------------------------------
+    compile "org.codehaus.groovy:groovy-all:$rev_groovy"
+
+    // ===================== TEST ========================================
+    testCompile "fraud:common.spring-support:$rev_fraud_common"
+    testCompile "junit:junit:$rev_junit"
+}

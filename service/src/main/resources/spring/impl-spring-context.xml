@@ -27,7 +27,6 @@
           p:userDAO-ref="userDAO.mongo.perf"/>
 
     <bean id="authenticationService.impl" class="auth.service.AuthenticationService"
-          p:profileDAO-ref="userDAO.ldap.perf"
           p:userDAO-ref="userDAO.ldap.perf"
           p:jwtManager-ref="jwtManager.perf"/>
 

@@ -2,7 +2,6 @@ package auth.service
 
 import auth.api.v1.Profile
 import auth.api.v1.User
-import auth.db.dao.IProfileDAO
 import auth.db.dao.IUserDAO
 import auth.exceptions.AuthEvent
 import auth.security.IJWTManager
@@ -13,8 +12,6 @@ import common.exceptions.ServiceException
  * Authentication Manager implementation
  */
 class AuthenticationService implements IAuthenticationService {
-
-    IProfileDAO profileDAO
 
     IUserDAO userDAO
 
@@ -35,7 +32,7 @@ class AuthenticationService implements IAuthenticationService {
 
     @Override
     Profile getProfile(final String email) {
-        Profile user = profileDAO.getProfile(email)
+        Profile user = userDAO.getProfile(email)
         if (user == null) {
             throw new ServiceException(AuthEvent.UserNotFound, email)
         }

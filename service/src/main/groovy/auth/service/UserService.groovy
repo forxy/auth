@@ -36,7 +36,7 @@ class UserService implements IUserService {
             } else {
                 pageRequest = new PageRequest(pageNumber - 1, pageSize)
             }
-            final Page<User> page = userDAO.findAll(pageRequest, filter)
+            final Page<User> page = userDAO.find(pageRequest, filter)
             return new EntityPage<>(page.content, page.size, page.number, page.totalElements)
         } else {
             throw new ServiceException(AuthEvent.InvalidPageNumber, pageNumber)
@@ -45,7 +45,7 @@ class UserService implements IUserService {
 
     @Override
     User getUser(final String email) {
-        User user = userDAO.findOne(email)
+        User user = userDAO.find(email)
         if (user == null) {
             throw new ServiceException(AuthEvent.UserNotFound, email)
         }

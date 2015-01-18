@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+
+    <bean id="userPasswordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"/>
+
+    <mongo:mongo id="mongo.users" host='${auth.mongo.users.host}' port='${auth.mongo.users.port}'>
+        <mongo:options
+                connections-per-host='${auth.mongo.users.connections}'
+                connect-timeout='${auth.mongo.users.timeout}'
+                max-wait-time='${auth.mongo.users.maxWait}'
+                write-number='${auth.mongo.users.writeNumber}'
+                write-timeout='${auth.mongo.users.writeTimeout}'
+                write-fsync='${auth.mongo.users.writeFSync}'/>
+    </mongo:mongo>
+
+    <mongo:db-factory id="factory.users" dbname='auth' mongo-ref='mongo.users'/>
+
+    <bean id="defaultTypeMapper.users" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mappingContext.users" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext">
+        <property name="fieldNamingStrategy">
+            <bean class="org.springframework.data.mongodb.core.mapping.SnakeCaseFieldNamingStrategy"/>
+        </property>
+    </bean>
+
+    <mongo:mapping-converter id="mappingConverter.users"
+                             db-factory-ref="factory.users"
+                             type-mapper-ref="defaultTypeMapper.users"
+                             base-package="auth.api.v1"
+                             mapping-context-ref="mappingContext.users">
+        <mongo:custom-converters>
+            <mongo:converter>
+                <bean class="auth.db.dao.mongo.converter.UserReadConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="auth.db.dao.mongo.converter.UserWriteConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="auth.db.dao.mongo.converter.ProfileReadConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="auth.db.dao.mongo.converter.ProfileWriteConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="auth.db.dao.mongo.converter.GroupReadConverter"/>
+            </mongo:converter>
+            <mongo:converter>
+                <bean class="auth.db.dao.mongo.converter.GroupWriteConverter"/>
+            </mongo:converter>
+        </mongo:custom-converters>
+    </mongo:mapping-converter>
+
+
+    <bean id="mongoTemplate.users" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="factory.users"/>
+        <constructor-arg name="mongoConverter" ref="mappingConverter.users"/>
+    </bean>
+
+    <bean id="userDAO.impl.mongo.base" class="auth.db.dao.mongo.UserDAO" abstract="true" autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate.users"
+          p:passwordEncoder-ref="userPasswordEncoder"/>
+
+    <bean id="groupDAO.impl.mongo.base" class="auth.db.dao.mongo.GroupDAO" abstract="true" autowire-candidate="false"
+          p:adminLoginName="${auth.mongo.login.admin}"
+          p:mongoTemplate-ref="mongoTemplate.users"/>
+
+</beans>

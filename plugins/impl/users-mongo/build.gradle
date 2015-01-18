@@ -1,0 +1,20 @@
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":auth.plugins.api")
+
+    // --------------------- MONGO ---------------------------------------
+    compile "org.mongodb:mongo-java-driver:$rev_mongo"
+    compile "org.springframework:spring-orm:$rev_spring"
+
+    // password encoding:
+    compile "org.springframework.security:spring-security-core:$rev_spring_security"
+
+    // --------------------- GROOVY --------------------------------------
+    compile "org.codehaus.groovy:groovy-all:$rev_groovy"
+
+    // ===================== TEST ========================================
+    testCompile "fraud:common.spring-support:$rev_fraud_common"
+    testCompile "junit:junit:$rev_junit"
+}

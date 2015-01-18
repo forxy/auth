@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:location="classpath:/spring/auth.users-mongo.properties"/>
+
+
+    <import resource="classpath:spring/users-mongo-plugin-spring-context.xml"/>
+
+    <bean id="eventBus" class="com.google.common.eventbus.EventBus"/>
+
+    <bean id="groupDAO.impl.mongo" parent="groupDAO.impl.mongo.base"
+          p:userDAO-ref="userDAO.impl.mongo"
+          p:eventBus-ref="eventBus"/>
+
+    <bean id="userDAO.impl.mongo" parent="userDAO.impl.mongo.base"
+          p:groupDAO-ref="groupDAO.impl.mongo"
+          p:eventBus-ref="eventBus"/>
+
+</beans>

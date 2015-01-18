@@ -4,10 +4,7 @@ import groovy.transform.Canonical
 
 @Canonical
 class Address {
-
     String country
-
     String city
-
     String addressLine
 }

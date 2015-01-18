@@ -58,9 +58,9 @@ class UserServiceImplTest extends BaseUserServiceTest {
         EasyMock.expect(uriInfoMock.getAbsolutePath()).andReturn(uri)
         EasyMock.expect(userDAOMock.exists(TEST_USER_EMAIL)).andReturn(false)
         EasyMock.expect(userDAOMock.save(testUser)).andReturn(testUser)
-        EasyMock.expect(userDAOMock.findOne(TEST_USER_EMAIL)).andReturn(testUser)
+        EasyMock.expect(userDAOMock.find(TEST_USER_EMAIL)).andReturn(testUser)
         EasyMock.expect(userDAOMock.exists(TEST_USER_EMAIL)).andReturn(true)
-        EasyMock.expect(userDAOMock.findOne(TEST_USER_EMAIL)).andReturn(null)
+        EasyMock.expect(userDAOMock.find(TEST_USER_EMAIL)).andReturn(null)
         try {
             EasyMock.replay(userDAOMock, uriInfoMock)
 
@@ -103,7 +103,7 @@ class UserServiceImplTest extends BaseUserServiceTest {
         HttpHeaders headers = new HttpHeadersImpl(m)
 
         List<User> users = [new User(email: TEST_USER_EMAIL, password: '')]
-        EasyMock.expect(userDAOMock.findAll(EasyMock.anyObject(Pageable.class), EasyMock.anyObject(User.class)))
+        EasyMock.expect(userDAOMock.find(EasyMock.anyObject(Pageable.class), EasyMock.anyObject(User.class)))
                 .andReturn(new PageImpl<User>(users))
         EasyMock.replay(userDAOMock)
         Response response = userService.getUsers(1, 10, SortDirection.ASC, 'email', null, null, null, null, null,

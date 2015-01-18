@@ -36,7 +36,7 @@ class GroupService implements IGroupService {
             } else {
                 pageRequest = new PageRequest(page - 1, pageSize)
             }
-            final Page<Group> p = groupDAO.findAll(pageRequest, filter)
+            final Page<Group> p = groupDAO.find(pageRequest, filter)
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
             throw new ServiceException(AuthEvent.InvalidPageNumber, page)
@@ -44,13 +44,13 @@ class GroupService implements IGroupService {
     }
 
     @Override
-    List<Group> getGroups(List<String> groupCodes) {
-        return groupDAO.findAll(groupCodes)
+    List<Group> getGroups(Set<String> groupCodes) {
+        return groupDAO.find(groupCodes)
     }
 
     @Override
     Group getGroup(final String groupCode) {
-        Group group = groupDAO.findOne(groupCode)
+        Group group = groupDAO.find(groupCode)
         if (group == null) {
             throw new ServiceException(AuthEvent.GroupNotFound, groupCode)
         }
