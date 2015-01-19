@@ -1,0 +1,21 @@
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":auth.plugins.api")
+
+    // --------------------- REDIS ---------------------------------------
+    compile "org.springframework:spring-orm:$rev_spring"
+    compile "org.springframework.data:spring-data-redis:$rev_spring_data_redis"
+    compile "redis.clients:jedis:$rev_jedis"
+
+    // password encoding:
+    compile "org.springframework.security:spring-security-core:$rev_spring_security"
+
+    // --------------------- GROOVY --------------------------------------
+    compile "org.codehaus.groovy:groovy-all:$rev_groovy"
+
+    // ===================== TEST ========================================
+    testCompile "fraud:common.spring-support:$rev_fraud_common"
+    testCompile "junit:junit:$rev_junit"
+}

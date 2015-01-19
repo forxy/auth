@@ -88,6 +88,17 @@ class UserDAO extends BaseUserDAO {
     }
 
     @Override
+    User find(final String id) {
+        fromDomain(mongoTemplate.findOne(
+                Query.query(
+                        new Criteria().orOperator(
+                                Criteria.where('_id').is(id),
+                                Criteria.where('email').is(id)
+                        )
+                ), UserDTO.class))
+    }
+
+    @Override
     User getProfile(final String login) {
         return fromDomain(mongoTemplate.findOne(Query.query(Criteria.where('_id').is(login)), ProfileDTO.class))
     }
@@ -130,17 +141,6 @@ class UserDAO extends BaseUserDAO {
         eventBus.post(new UserChanged(from: old, to: profile))
         mongoTemplate.save(toDomain(profile))
         return profile
-    }
-
-    @Override
-    User find(final String id) {
-        fromDomain(mongoTemplate.findOne(
-                Query.query(
-                        new Criteria().orOperator(
-                                Criteria.where('_id').is(id),
-                                Criteria.where('email').is(id)
-                        )
-                ), UserDTO.class))
     }
 
     @Override

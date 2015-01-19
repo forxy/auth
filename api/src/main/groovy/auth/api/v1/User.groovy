@@ -4,11 +4,9 @@ import groovy.transform.Canonical
 import org.joda.time.DateTime
 
 @Canonical
-class User {
+class User extends Account {
 
     String login
-    String email
-    String password
 
     String firstName
     String lastName

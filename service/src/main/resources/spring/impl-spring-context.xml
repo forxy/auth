@@ -50,7 +50,8 @@
 
     <bean id="authController" class="auth.controller.v1.AuthController"
           p:authenticationService-ref="authenticationService.perf"
-          p:discoveryInfo-ref="discoveryInfo"/>
+          p:discoveryInfo-ref="discoveryInfo"
+          p:jwtManager-ref="jwtManager.perf"/>
 
     <bean id="tokenController" class="auth.controller.v1.TokenController"
           p:tokenService-ref="tokenService.perf"/>

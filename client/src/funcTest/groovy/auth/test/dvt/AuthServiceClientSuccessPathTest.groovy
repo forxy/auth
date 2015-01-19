@@ -24,7 +24,7 @@ class AuthServiceClientSuccessPathTest extends BaseAuthServiceTest {
     @Test
     void createUpdateDeleteAuth() {
         // prepare test data
-        Client expectedClient = new Client(name: 'Test', secret: 'secret', description: 'Description')
+        Client expectedClient = new Client(name: 'Test', password: 'password', description: 'Description')
         StatusEntity status
         try {
             // creating auth

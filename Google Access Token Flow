@@ -1,0 +1,149 @@
+
+
+https://accounts.google.com/ServiceLogin?
+   service=lso&
+   passive=1209600&
+   continue=https://accounts.google.com/o/oauth2/auth?scope%3Dopenid%2Bemail%26response_type%3Dcode%26redirect_uri%3Dhttps://www.is-fraud.admin.com/oauth2callback%26state%3Dsecurity_token%253D138r5719ru3e1%2526url%253Dhttps://oa2cb.example.com/myHome%26client_id%3D762870515498-rno0dnv6mhnok6oou4dqie39ts3jse1n.apps.googleusercontent.com%26hl%3Dru%26from_login%3D1%26as%3D76a1863e18f03dc8&
+   ltmpl=popup&
+   shdf=CnYLEhF0aGlyZFBhcnR5TG9nb1VybBoADAsSFXRoaXJkUGFydHlEaXNwbGF5TmFtZRoLRnJhdWQgQWRtaW4MCxIGZG9tYWluGgtGcmF1ZCBBZG1pbgwLEhV0aGlyZFBhcnR5RGlzcGxheVR5cGUaB0RFRkFVTFQMEgNsc28iFHtmRq7ZyyZusRsyAyGl-aoVbdjBKAEyFFT8xoGsjHKWYD_RdLRIMb0LikAe&
+   sarp=1&
+   scc=1
+
+https://accounts.google.com/o/oauth2/auth?client_id=762870515498-rno0dnv6mhnok6oou4dqie39ts3jse1n.apps.googleusercontent.com&response_type=code&scope=openid%20email&redirect_uri=https://www.is-fraud.admin.com/oauth2callback&state=security_token%3D138r5719ru3e1%26url%3Dhttps://oa2cb.example.com/myHome
+https://accounts.google.com/o/oauth2/auth?
+  client_id=762870515498-rno0dnv6mhnok6oou4dqie39ts3jse1n.apps.googleusercontent.com&
+  response_type=code&
+  scope=openid%20email&
+  redirect_uri=https://www.is-fraud.admin.com/oauth2callback&
+  state=security_token%3D138r5719ru3e1%26url%3Dhttps://oa2cb.example.com/myHome
+
+https://www.is-fraud.admin.com/oauth2callback?state=security_token%3D138r5719ru3e1%26url%3Dhttps://oa2cb.example.com/myHome&code=4/udSpK56KblkcfLfselDZ1Kq_bWnQ5Es5a_q9y0UJ8hk.UtaKgD7My08RoiIBeO6P2m_OCgQGlgI&authuser=0&num_sessions=1&prompt=consent&session_state=796a0d40a74f5651ffb46db63ca9e52d154ad7ee..3ffe
+https://www.is-fraud.admin.com/oauth2callback?
+  state=security_token%3D138r5719ru3e1%26url%3Dhttps://oa2cb.example.com/myHome&
+  code=4/nDTowhlNK81nddfd5gZzxtv91jYsXNklFVBmuMttn7Y.wuyeKs289HYQYFZr95uygvVRyOoFlgI&
+  authuser=0&
+  num_sessions=1&
+  prompt=consent&
+  session_state=796a0d40a74f5651ffb46db63ca9e52d154ad7ee..3ffe
+   https://accounts.google.com/o/oauth2/auth?
+
+
+POST https://www.googleapis.com/oauth2/v3/token HTTP/1.1
+Host: www.googleapis.com
+Content-Type: application/x-www-form-urlencoded
+
+code=4/udSpK56KblkcfLfselDZ1Kq_bWnQ5Es5a_q9y0UJ8hk.UtaKgD7My08RoiIBeO6P2m_OCgQGlgI&
+client_id=762870515498-rno0dnv6mhnok6oou4dqie39ts3jse1n.apps.googleusercontent.com&
+client_secret=lhkh4eHACUtC_3NinwZsNwS3&
+redirect_uri=https://www.is-fraud.admin.com/oauth2callback&
+grant_type=authorization_code
+
+{
+ "access_token": "ya29.AAGB1htrWDe132CpSygWcrV-efG58-0bYdWY4nSI8WtSRRhtnYJMe9ZMKhTG6mMrzl_IBlV7Lf5Tcg",
+ "token_type": "Bearer",
+ "expires_in": 3600,
+ "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImIxZTAzMDA0NmVkZTJhNTFkMGY1ZmU4MjRiYWNmNjdkMzA0NGFmOGMifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwic3ViIjoiMTEzNjAwNTU0MjgyNzUzMTEyMzI3IiwiYXpwIjoiNzYyODcwNTE1NDk4LXJubzBkbnY2bWhub2s2b291NGRxaWUzOXRzM2pzZTFuLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiZW1haWwiOiJhc2thZGlhc0BnbWFpbC5jb20iLCJhdF9oYXNoIjoiMURuX0YwTlhpVy1BV1N0TmRjUXNxQSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdWQiOiI3NjI4NzA1MTU0OTgtcm5vMGRudjZtaG5vazZvb3U0ZHFpZTM5dHMzanNlMW4uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJpYXQiOjE0MjE2ODQyNjQsImV4cCI6MTQyMTY4ODE2NH0.aOg1lUK-29SDxjrkrmYClUcoZFh0Hp1Y_k3BQ5DvCKmxFC9rwqEP5UdhPa1d1c65TgBWWI5hpSvYoN8j5xu88e2yjTfRGjxue4_gl0E2N1vNeczBCiLmtQn5fwsPMNDOnLjQCMKnSb9x_5QU8kfE68sz8NQG73dq0BSuxj4YkZs"
+}
+
+https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=ya29.AAGB1htrWDe132CpSygWcrV-efG58-0bYdWY4nSI8WtSRRhtnYJMe9ZMKhTG6mMrzl_IBlV7Lf5Tcg
+{
+ "issued_to": "762870515498-rno0dnv6mhnok6oou4dqie39ts3jse1n.apps.googleusercontent.com",
+ "audience": "762870515498-rno0dnv6mhnok6oou4dqie39ts3jse1n.apps.googleusercontent.com",
+ "user_id": "113600554282753112327",
+ "scope": "https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email",
+ "expires_in": 3361,
+ "email": "askadias@gmail.com",
+ "verified_email": true,
+ "access_type": "online"
+}
+
+
+https://www.googleapis.com/plus/v1/people/me?access_token=ya29.AAGB1htrWDe132CpSygWcrV-efG58-0bYdWY4nSI8WtSRRhtnYJMe9ZMKhTG6mMrzl_IBlV7Lf5Tcg
+{
+ "kind": "plus#person",
+ "etag": "\"RqKWnRU4WW46-6W3rWhLR9iFZQM/-6xdkJNLvKPRKZbGLaYKVTn6KUs\"",
+ "occupation": "Программист",
+ "gender": "male",
+ "emails": [
+  {
+   "value": "askadias@gmail.com",
+   "type": "account"
+  }
+ ],
+ "urls": [
+  {
+   "value": "http://www.youtube.com/user/Askadias",
+   "type": "otherProfile",
+   "label": "Kast Askadias"
+  },
+  {
+   "value": "https://profiles.google.com/113600554282753112327/buzz",
+   "type": "contributor",
+   "label": "Живая лента"
+  }
+ ],
+ "objectType": "person",
+ "id": "113600554282753112327",
+ "displayName": "Kast Askadias",
+ "name": {
+  "familyName": "Askadias",
+  "givenName": "Kast"
+ },
+ "tagline": "Lifestyle is Freedom. Everything is simple.",
+ "url": "https://plus.google.com/+KastAskadias",
+ "image": {
+  "url": "https://lh4.googleusercontent.com/-OeRNMbJ6XTA/AAAAAAAAAAI/AAAAAAAAAG0/65aGeDwAHa4/photo.jpg?sz=50",
+  "isDefault": false
+ },
+ "organizations": [
+  {
+   "name": "БГУИР",
+   "title": "Программное Обеспечение Информационных Технологий",
+   "type": "school",
+   "startDate": "2005",
+   "endDate": "2010",
+   "primary": false
+  },
+  {
+   "name": "Школа №12 г.Мозырь",
+   "title": "Абитуриент",
+   "type": "school",
+   "startDate": "1994",
+   "endDate": "2005",
+   "primary": false
+  },
+  {
+   "name": "EPAM Systems",
+   "title": "Программист",
+   "type": "work",
+   "primary": true
+  }
+ ],
+ "placesLived": [
+  {
+   "value": "Минск",
+   "primary": true
+  },
+  {
+   "value": "Мозырь"
+  },
+  {
+   "value": "Бузулук"
+  }
+ ],
+ "isPlusUser": true,
+ "circledByCount": 0,
+ "verified": false,
+ "cover": {
+  "layout": "banner",
+  "coverPhoto": {
+   "url": "https://lh5.googleusercontent.com/-dY2le43KosU/UahfmIpg3PI/AAAAAAAAAGI/Hl4AyiOZub0/s630-fcrop64=1,00000995fffff155/wallpaper_1920x1200_4031.jpg",
+   "height": 587,
+   "width": 940
+  },
+  "coverInfo": {
+   "topImageOffset": 0,
+   "leftImageOffset": 0
+  }
+ }
+}

@@ -50,9 +50,9 @@ class JWTest {
 
         JWSVerifier verifier = new MACVerifier(sharedSecret)
 
-        LOGGER.info('Recovered payload message: ' + jwsObject.getPayload())
+        LOGGER.info("Recovered payload message: $jwsObject.payload")
         Assert.assertTrue(jwsObject.verify(verifier))
-        Assert.assertEquals(TEST_STRING, jwsObject.getPayload().toString())
+        Assert.assertEquals(TEST_STRING, jwsObject.payload as String)
     }
 
     @Test
@@ -64,8 +64,8 @@ class JWTest {
         keyGenerator.initialize(1024)
 
         KeyPair kp = keyGenerator.genKeyPair()
-        RSAPublicKey publicKey = (RSAPublicKey) kp.getPublic()
-        RSAPrivateKey privateKey = (RSAPrivateKey) kp.getPrivate()
+        RSAPublicKey publicKey = (RSAPublicKey) kp.public
+        RSAPrivateKey privateKey = (RSAPrivateKey) kp.private
 
         // Create RSA-signer with the key
         JWSSigner signer = new RSASSASigner(privateKey)
@@ -103,11 +103,11 @@ class JWTest {
         keyGenerator.initialize(new ECParameterSpec(c, g, BigInteger.valueOf(5L), 10))
         KeyPair keyPair = keyGenerator.generateKeyPair()
 
-        ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic()
-        ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate()
+        ECPublicKey publicKey = (ECPublicKey) keyPair.public
+        ECPrivateKey privateKey = (ECPrivateKey) keyPair.private
 
         // Create the EC signer
-        JWSSigner signer = new ECDSASigner(privateKey.getS())
+        JWSSigner signer = new ECDSASigner(privateKey.s)
 
         // Creates the JWS object with payload
         JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.ES256), new Payload('Elliptic cure'))
@@ -119,12 +119,12 @@ class JWTest {
         String s = jwsObject.serialize()
 
         // The recipient must create a verifier with the 'x' and 'y' EC params
-        BigInteger x = publicKey.getW().getAffineX()
-        BigInteger y = publicKey.getW().getAffineY()
+        BigInteger x = publicKey.w.affineX
+        BigInteger y = publicKey.w.affineY
         JWSVerifier verifier = new ECDSAVerifier(x, y)
 
         // Verify the EC signature
         Assert.assertTrue('ES256 signature verified', jwsObject.verify(verifier))
-        Assert.assertEquals('Elliptic cure', jwsObject.getPayload().toString())
+        Assert.assertEquals('Elliptic cure', jwsObject.payload as String)
     }
 }

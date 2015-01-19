@@ -1,5 +1,6 @@
 package auth.service
 
+import auth.api.v1.AuthorizationType
 import auth.api.v1.User
 import auth.db.dao.IUserDAO
 import auth.exceptions.AuthEvent
@@ -18,7 +19,7 @@ class AuthenticationService implements IAuthenticationService {
 
     @Override
     String login(String login, String password) {
-        User user = userDAO.authenticate(login, password)
+        User user = userDAO.authenticate login, password
         if (user) {
             try {
                 return jwtManager.toJWT(user)
@@ -36,5 +37,15 @@ class AuthenticationService implements IAuthenticationService {
             throw new ServiceException(AuthEvent.UserNotFound, email)
         }
         return user
+    }
+
+    @Override
+    String authorize(final String clientID,
+                     final Set<AuthorizationType> responseType,
+                     final String email,
+                     final Set<String> scopes,
+                     final String redirectUri) {
+        String authorizationCode = null
+        return authorizationCode
     }
 }

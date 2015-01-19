@@ -2,8 +2,11 @@ package auth.api.v1
 
 import groovy.transform.Canonical
 
+/**
+ * Generic Auth Account
+ */
 @Canonical
-public class Credentials {
-    String login
+class Account {
+    String email
     String password
 }

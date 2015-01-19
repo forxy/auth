@@ -1,6 +1,6 @@
 package auth.security
 
-import auth.api.v1.User
+import auth.api.v1.Account
 import com.nimbusds.jose.*
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.crypto.RSASSAVerifier
@@ -19,9 +19,9 @@ import java.text.ParseException
  */
 class JWTManager implements IJWTManager, InitializingBean {
 
-    String privateKey
-
     String clientID
+
+    String privateKey
 
     String publicKey
 
@@ -32,32 +32,30 @@ class JWTManager implements IJWTManager, InitializingBean {
     JWSVerifier rsaVerifier
 
     @Override
-    String toJWT(User user) throws JOSEException {
+    String toJWT(Account account) throws JOSEException {
         JWTClaimsSet jwtClaims = new JWTClaimsSet()
-        jwtClaims.setIssuer('http://localhost:11080/AuthService/')
-        jwtClaims.setSubject(user.getEmail())
-        List<String> aud = new ArrayList<>()
-        aud.add('http://localhost:11080/AuthService/')
-        jwtClaims.setAudience(aud)
+        jwtClaims.issuer = clientID
+        jwtClaims.subject = account.email
+        jwtClaims.audience = ['http://localhost:11080/AuthService/']
 
         // Set expiration in 10 minutes
-        jwtClaims.setExpirationTime(new Date(new Date().getTime() + 1000 * 60 * 10))
-        jwtClaims.setNotBeforeTime(new Date())
-        jwtClaims.setIssueTime(new Date())
-        jwtClaims.setJWTID(UUID.randomUUID().toString())
+        jwtClaims.expirationTime = new Date(new Date().time + 1000 * 60 * 10)
+        jwtClaims.notBeforeTime = new Date()
+        jwtClaims.issueTime = new Date()
+        jwtClaims.JWTID = UUID.randomUUID().toString()
         return toJWT(jwtClaims.toJSONObject())
     }
 
     String toJWT(JSONObject json) throws JOSEException {
         JWSSigner signer = new RSASSASigner(rsaPrivateKey)
         JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.RS256), new Payload(json))
-        jwsObject.sign(signer)
+        jwsObject.sign signer
         return jwsObject.serialize()
     }
 
     JWSObject fromJWT(String jwt) throws ParseException, JOSEException {
-        JWSObject jwsObject = JWSObject.parse(jwt)
-        jwsObject.verify(rsaVerifier)
+        JWSObject jwsObject = JWSObject.parse jwt
+        jwsObject.verify rsaVerifier
         return jwsObject
     }
 
@@ -67,8 +65,8 @@ class JWTManager implements IJWTManager, InitializingBean {
         keyGenerator.initialize(1024)
 
         KeyPair kp = keyGenerator.genKeyPair()
-        rsaPublicKey = (RSAPublicKey) kp.getPublic()
-        rsaPrivateKey = (RSAPrivateKey) kp.getPrivate()
+        rsaPublicKey = (RSAPublicKey) kp.public
+        rsaPrivateKey = (RSAPrivateKey) kp.private
 
         rsaVerifier = new RSASSAVerifier(rsaPublicKey)
     }

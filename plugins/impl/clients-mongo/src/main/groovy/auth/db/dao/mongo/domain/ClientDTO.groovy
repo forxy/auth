@@ -13,7 +13,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 class ClientDTO {
     @Id
     String clientID
-    String secret
+    @Indexed(unique = true)
+    String email
+    String password
     @Indexed(unique = true)
     String name
     String description

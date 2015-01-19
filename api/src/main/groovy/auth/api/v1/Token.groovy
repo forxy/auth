@@ -9,8 +9,8 @@ class Token {
     String clientID
     String type
     String refreshToken
-    UserSubject subject
+    String subject
     Long expiresIn
     DateTime issuedAt
-    List<String> scopes
+    Set<String> scopes
 }

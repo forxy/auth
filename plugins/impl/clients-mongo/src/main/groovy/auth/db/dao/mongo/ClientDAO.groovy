@@ -53,7 +53,7 @@ class ClientDAO extends BaseClientDAO {
     @Override
     Client authenticate(final String clientID, final String secret) {
         Client client = find clientID
-        if (client && passwordEncoder.matches(secret, client.secret)) {
+        if (client && passwordEncoder.matches(secret, client.password)) {
             return client
         } else {
             return null
@@ -66,6 +66,9 @@ class ClientDAO extends BaseClientDAO {
         if (filter != null) {
             if (StringUtils.isNotEmpty(filter.clientID)) {
                 query.addCriteria(new Criteria('_id').regex(filter.clientID, 'i'))
+            }
+            if (StringUtils.isNotEmpty(filter.email)) {
+                query.addCriteria(new Criteria('email').regex(filter.email, 'i'))
             }
             if (StringUtils.isNotEmpty(filter.name)) {
                 query.addCriteria(new Criteria('name').regex(filter.name, 'i'))
@@ -85,6 +88,17 @@ class ClientDAO extends BaseClientDAO {
     List<Client> find(Set<String> ids) {
         Query query = Query.query(new Criteria('_id').in(ids))
         return fromDomain(mongoTemplate.find(query, ClientDTO.class))
+    }
+
+    @Override
+    Client find(final String id) {
+        fromDomain(mongoTemplate.findOne(
+                Query.query(
+                        new Criteria().orOperator(
+                                Criteria.where('_id').is(id),
+                                Criteria.where('email').is(id)
+                        )
+                ), ClientDTO.class))
     }
 
     @Override
@@ -109,22 +123,11 @@ class ClientDAO extends BaseClientDAO {
 
     @Override
     Client silentSave(final Client client) {
-        client.secret = passwordEncoder.encode(client.secret)
+        client.password = passwordEncoder.encode(client.password)
         client.updateDate = DateTime.now()
         client.updatedBy = client.updatedBy ?: 'unknown'
         mongoTemplate.save toDomain(client)
         return client
-    }
-
-    @Override
-    Client find(final String id) {
-        fromDomain(mongoTemplate.findOne(
-                Query.query(
-                        new Criteria().orOperator(
-                                Criteria.where('_id').is(id),
-                                Criteria.where('email').is(id)
-                        )
-                ), ClientDTO.class))
     }
 
     @Override

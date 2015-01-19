@@ -74,7 +74,7 @@ abstract class ClientDAOTest extends AbstractJUnit4SpringContextTests {
         Client client = clientDAO.create(new Client(
                 clientID: UUID.randomUUID().toString(),
                 name: name,
-                secret: 'password',
+                password: 'password',
                 description: 'test client',
                 webUri: 'http://testClient',
                 scopes: scopes,

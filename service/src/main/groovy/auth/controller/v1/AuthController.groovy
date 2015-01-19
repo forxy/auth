@@ -1,11 +1,14 @@
 package auth.controller.v1
 
-import auth.api.v1.Credentials
+import auth.api.v1.AuthorizationType
 import auth.api.v1.DiscoveryInfo
+import auth.api.v1.User
+import auth.security.IJWTManager
 import auth.service.IAuthenticationService
+import com.nimbusds.jose.JWSObject
 import common.rest.AbstractService
+import net.minidev.json.JSONObject
 
-import javax.annotation.security.RolesAllowed
 import javax.ws.rs.*
 import javax.ws.rs.core.*
 
@@ -18,6 +21,8 @@ class AuthController extends AbstractService {
     IAuthenticationService authenticationService
 
     DiscoveryInfo discoveryInfo
+
+    IJWTManager jwtManager
 
     @POST
     @Path('/login')
@@ -54,6 +59,33 @@ class AuthController extends AbstractService {
                 uriInfo,
                 headers
         ).build()
+    }
+
+    @POST
+    @Path('/auth')
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    Response authorize(@FormParam('client_id') String clientID,
+                   @FormParam('response_type') String responseTypesSet,
+                   @FormParam('scope') String requestedScopes,
+                   @FormParam('redirect_uri') String redirectUri,
+                   @FormParam('state') String state,
+                   @Context final UriInfo uriInfo,
+                   @Context final HttpHeaders headers) {
+        String[] authorization = headers.getHeaderString(HttpHeaders.AUTHORIZATION)?.split(' ')
+        if (authorization && authorization[0] == 'Bearer') {
+            JWSObject jwt = jwtManager.fromJWT(authorization[1])
+            JSONObject jwtBody = jwt.payload.toJSONObject()
+            String authorizationCode = authenticationService.authorize(
+                    clientID,
+                    responseTypesSet.split(' ').collect{ AuthorizationType.valueOf(it)} as Set,
+                    jwtBody.get('sub') as String,
+                    responseTypesSet.split(' ') as Set,
+                    redirectUri
+            )
+            redirectUri += "?state=$state&code=$authorizationCode"
+            return Response.temporaryRedirect(URI.create(redirectUri)).build()
+        }
+        return respondWith(Response.Status.UNAUTHORIZED, uriInfo, headers).build()
     }
 
     @GET

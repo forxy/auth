@@ -4,10 +4,9 @@ import groovy.transform.Canonical
 import org.joda.time.DateTime
 
 @Canonical
-class Client {
+class Client extends Account {
 
     String clientID
-    String secret
 
     String name
     String description

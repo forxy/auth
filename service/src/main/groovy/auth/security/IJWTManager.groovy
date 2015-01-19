@@ -1,6 +1,6 @@
 package auth.security
 
-import auth.api.v1.User
+import auth.api.v1.Account
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JWSObject
 import net.minidev.json.JSONObject
@@ -12,7 +12,7 @@ import java.text.ParseException
  */
 interface IJWTManager {
 
-    String toJWT(User user) throws JOSEException
+    String toJWT(Account account) throws JOSEException
 
     String toJWT(JSONObject json) throws JOSEException
 

@@ -73,7 +73,7 @@ class ClientService implements IClientService {
             }
             client.createDate = DateTime.now()
             client.updateDate = DateTime.now()
-            client.secret = passwordEncoder.encode(client.secret)
+            client.password = passwordEncoder.encode(client.password)
             clientDAO.save(client)
         } else {
             throw new ServiceException(AuthEvent.ClientAlreadyExists, client.clientID)

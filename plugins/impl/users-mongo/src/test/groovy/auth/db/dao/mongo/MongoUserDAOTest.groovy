@@ -7,5 +7,5 @@ import org.springframework.test.context.ContextConfiguration
  * User Data Source tests for MongoDB implementation
  */
 @ContextConfiguration(locations = ['classpath:spring/spring-test-context.xml'])
-class MongoDAOTest extends UserAndGroupDAOTest {
+class MongoUserDAOTest extends UserAndGroupDAOTest {
 }

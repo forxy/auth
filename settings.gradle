@@ -7,12 +7,13 @@ def projects = [
         ':plugins.users-ldap' : [name: "auth.plugins.users-ldap", path: 'plugins/impl/users-ldap'],
         ':plugins.users-mongo' : [name: "auth.plugins.users-mongo", path: 'plugins/impl/users-mongo'],
         ':plugins.clients-mongo' : [name: "auth.plugins.clients-mongo", path: 'plugins/impl/clients-mongo'],
+        ':plugins.permissions-redis' : [name: "auth.plugins.permissions-redis", path: 'plugins/impl/permissions-redis'],
         ':service': [name: "auth.service", path: 'service']
 ]
 
 projects.each() { key, config ->
     include key
-    def prj = project(key)
+    def prj = project key
     prj.name = config.name
-    prj.projectDir = file("$settingsDir/$config.path")
+    prj.projectDir = file "$settingsDir/$config.path"
 }

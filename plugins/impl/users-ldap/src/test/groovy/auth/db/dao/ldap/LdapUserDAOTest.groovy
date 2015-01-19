@@ -7,5 +7,5 @@ import org.springframework.test.context.ContextConfiguration
  * User Data Source tests for LDAP implementation
  */
 @ContextConfiguration(locations = ['classpath:spring/spring-test-context.xml'])
-class LdapDAOTest extends UserAndGroupDAOTest {
+class LdapUserDAOTest extends UserAndGroupDAOTest {
 }
