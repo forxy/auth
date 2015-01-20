@@ -85,25 +85,4 @@
           p:groupDAO-ref="groupDAO.impl.ldap"
           p:eventBus-ref="eventBus"/>
 
-
-    <!-- =========================================================================================
-                                   Cassandra Data Source
-    ========================================================================================== -->
-    <!--<bean id="cassandraClusterBuilder" class="com.datastax.driver.core.Cluster" factory-method="builder"/>
-    <bean id="cassandraClusterBuilder.withHost" factory-bean="cassandraClusterBuilder" factory-method="addContactPoint"
-          c:address="localhost"/>
-
-    <bean id="cassandraCluster" factory-bean="cassandraClusterBuilder.withHost" factory-method="build"/>
-
-    <bean id="cassandraSession" factory-bean="cassandraCluster" factory-method="connect"
-          c:keyspace="auth"/>
-
-    <bean id="auth.db.dao.cassandra.client.CassandraUserClient"
-          class="auth.db.dao.cassandra.client.CassandraUserClient"
-          p:session-ref="cassandraSession"/>
-
-    <bean id="auth.db.dao.UserDAO.impl.cassandra" class="auth.db.dao.cassandra.UserDAO"
-          autowire-candidate="false"
-          p:cassandraClient-ref="auth.db.dao.cassandra.client.CassandraUserClient"/>-->
-
 </beans>

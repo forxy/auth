@@ -2,6 +2,7 @@
 <beans xmlns='http://www.springframework.org/schema/beans'
        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -10,7 +11,8 @@
     <context:annotation-config/>
     <context:component-scan base-package='auth.db.dao.mongo.domain'/>
 
-    <bean id="clientPasswordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"/>
+    <bean id="clientPasswordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"
+          c:_0="${auth.mongo.clients.password.secret}"/>
 
     <mongo:mongo id="mongo.clients" host='${auth.mongo.clients.host}' port='${auth.mongo.clients.port}'>
         <mongo:options

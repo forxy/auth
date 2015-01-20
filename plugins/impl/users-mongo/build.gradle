@@ -18,6 +18,7 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all:$rev_groovy"
 
     // ===================== TEST ========================================
+    testCompile project(path: ':auth.plugins.api', configuration: 'tests')
     testCompile "fraud:common.spring-support:$rev_fraud_common"
     testCompile "junit:junit:$rev_junit"
 }

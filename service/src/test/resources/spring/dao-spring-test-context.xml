@@ -14,11 +14,6 @@
           factory-method="createNiceMock"
           c:toMock="auth.db.dao.IUserDAO"/>
 
-    <bean id="profileDAO.impl.mongo"
-          class="org.easymock.EasyMock"
-          factory-method="createNiceMock"
-          c:toMock="auth.db.dao.IProfileDAO"/>
-
     <bean id="clientDAO.impl.mongo"
           class="org.easymock.EasyMock"
           factory-method="createNiceMock"

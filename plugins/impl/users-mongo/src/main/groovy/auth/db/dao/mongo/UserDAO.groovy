@@ -108,6 +108,7 @@ class UserDAO extends BaseUserDAO {
         if (exists(user.login)) {
             throw new ServiceException(AuthDBEvent.UserAlreadyExists, user.login)
         }
+        user.password = passwordEncoder.encode(user.password)
         user.createDate = DateTime.now()
         user.createdBy = user.createdBy ?: 'unknown'
         silentSave user
@@ -125,7 +126,6 @@ class UserDAO extends BaseUserDAO {
 
     @Override
     User silentSave(final User user) {
-        user.password = passwordEncoder.encode(user.password)
         user.updateDate = DateTime.now()
         user.updatedBy = user.updatedBy ?: 'unknown'
         mongoTemplate.save(toDomain(user))

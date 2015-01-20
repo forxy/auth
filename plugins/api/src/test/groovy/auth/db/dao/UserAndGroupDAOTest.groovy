@@ -39,7 +39,7 @@ abstract class UserAndGroupDAOTest extends AbstractJUnit4SpringContextTests {
     @Test
     void testAuthenticate() {
         User admin = userDAO.authenticate 'admin', 'password'
-        assert admin, 'Admin should not be null'
+        assert admin, 'Admin not authorized'
     }
 
     @Test

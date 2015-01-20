@@ -1,7 +1,7 @@
 db.client.insert({
     "_id" : "290a3fc6-b7c6-46be-85a8-fedd1c45a9f9",
     "email" : "290a3fc6-b7c6-46be-85a8-fedd1c45a9f9@forxy.ru",
-    "password" : "8462e32980b5f666b068286bee48a6aeb31252312bca1ed2fda90ca4b8996f95ba0fcdfe663ceefb",
+    "password" : "a5a0ffe6d44ca442e604a9aef205831b7cf725caf1299bac1fe745d9886640eb68a5138fc1330fb5",
     "name" : "Auth Service",
     "description" : "Authentication / Authorization REST service",
     "web_uri" : "https://localhost:11080/auth/rest/v1/",
@@ -32,7 +32,7 @@ db.client.insert({
 db.client.insert({
     "_id" : "bcf901ea-3c87-4302-91cd-620ae4c80f9c",
     "email" : "bcf901ea-3c87-4302-91cd-620ae4c80f9c@forxy.ru",
-    "password" : "a57a960cac75e151c15d9011db47df1e9a8de737f25b03fb9d5a111355dffc70ee6d5153bfa7bafd",
+    "password" : "828b7488eaefd5001f08a8bd1296fc37b347c8c92f1be435f360220c552dad34dbd9883613d6edb2",
     "name" : "Fraud Service",
     "description" : "Fraud REST service",
     "web_uri" : "https://localhost:12080/fraud/rest/v1/",

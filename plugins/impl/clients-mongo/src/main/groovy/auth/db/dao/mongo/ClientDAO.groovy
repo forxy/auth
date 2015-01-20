@@ -108,6 +108,7 @@ class ClientDAO extends BaseClientDAO {
         } else if (exists(client.clientID)) {
             throw new ServiceException(AuthDBEvent.ClientAlreadyExists, client.clientID)
         }
+        client.password = passwordEncoder.encode(client.password)
         client.createDate = DateTime.now()
         client.createdBy = client.createdBy ?: 'unknown'
         return silentSave(client)
@@ -123,7 +124,6 @@ class ClientDAO extends BaseClientDAO {
 
     @Override
     Client silentSave(final Client client) {
-        client.password = passwordEncoder.encode(client.password)
         client.updateDate = DateTime.now()
         client.updatedBy = client.updatedBy ?: 'unknown'
         mongoTemplate.save toDomain(client)

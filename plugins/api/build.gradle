@@ -1,5 +1,18 @@
 // ========== Dependencies ==============================================
 
+configurations {
+    tests
+}
+
+task testJar(type: Jar, dependsOn: testClasses) {
+    baseName = "test-${project.archivesBaseName}"
+    from sourceSets.test.output
+}
+
+artifacts {
+    tests testJar
+}
+
 dependencies {
     // --------------------- FORXY ---------------------------------------
     compile project(":auth.api")

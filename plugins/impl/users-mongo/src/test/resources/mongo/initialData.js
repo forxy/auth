@@ -1,7 +1,7 @@
 db.user.insert({
     "_id": "kast",
-    "password": "ab518f2267abc8bac15c1af41fe0472a62bf36de27ebca8e62b5fad23e6edd6caec6058cd6e8a186",
-    "login": "askadias@gmail.com",
+    "password": "eeb5d0f736ab20b7ef18f00f20c5b62de44202f3ab153ce132dc503c381f8e0721ac73a5aa26ae73",
+    "email": "askadias@gmail.com",
     "first_name": "Kast",
     "last_name": "Askadias",
     "gender": "MALE",
@@ -15,7 +15,7 @@ db.user.insert({
 
 db.user.insert({
     "_id": "askadias",
-    "password": "ab518f2267abc8bac15c1af41fe0472a62bf36de27ebca8e62b5fad23e6edd6caec6058cd6e8a186",
+    "password": "eeb5d0f736ab20b7ef18f00f20c5b62de44202f3ab153ce132dc503c381f8e0721ac73a5aa26ae73",
     "email": "askadias@mail.ru",
     "first_name": "Kast",
     "last_name": "Askadias",
@@ -29,7 +29,7 @@ db.user.insert({
 
 db.user.insert({
     "_id": "admin",
-    "password": "00e241282558cde7e030eb7c2b579b3f3e6200978fb884d94f2128b989a5cbc920110a8b55ed27e9",
+    "password": "eeb5d0f736ab20b7ef18f00f20c5b62de44202f3ab153ce132dc503c381f8e0721ac73a5aa26ae73",
     "email": "admin@admin.com",
     "first_name": "admin",
     "last_name": "admin",
