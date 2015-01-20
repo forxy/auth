@@ -1,11 +1,3 @@
-dn: dc=forxy,dc=ru
-dc: forxy
-o: forxy.ru
-description: Root entry for forxy.ru
-objectClass: top
-objectclass: dcObject
-objectclass: organization
-
 dn: ou=Departments,dc=forxy,dc=ru
 objectclass: top
 objectclass: organizationalUnit
