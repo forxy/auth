@@ -183,8 +183,8 @@ class GroupDAO extends BaseGroupDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (ldapTemplate && ldapTemplate.contextSource) {
-            location = ldapTemplate.contextSource?.readOnlyContext?.environment?.get('java.naming.provider.url')
+        if (ldapTemplate?.contextSource?.readOnlyContext?.environment) {
+            location = ldapTemplate.contextSource.readOnlyContext.environment.get('java.naming.provider.url')
 
             long timeStart = new Date().time
             try {

@@ -162,7 +162,7 @@ class ClientDAO extends BaseClientDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (mongoTemplate != null && mongoTemplate.db != null && mongoTemplate.db.mongo != null) {
+        if (mongoTemplate?.db?.mongo) {
             location = mongoTemplate.db.mongo.connectPoint
 
             long timeStart = new Date().time
@@ -180,7 +180,14 @@ class ClientDAO extends BaseClientDAO {
         } else {
             statusType = StatusType.RED
         }
-        return new ComponentStatus('Clients DAO', location, statusType, null, ComponentStatus.ComponentType.DB,
-                responseTime, null, exceptionMessage, exceptionDetails)
+        return new ComponentStatus(
+                name: 'Client DAO',
+                location: location,
+                status: statusType,
+                componentType: ComponentStatus.ComponentType.DB,
+                responseTime: responseTime,
+                exceptionMessage: exceptionMessage,
+                exceptionDetails: exceptionDetails
+        )
     }
 }

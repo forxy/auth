@@ -14,9 +14,12 @@
     <bean id="systemStatusService" class="common.status.SystemStatusService">
         <property name="components">
             <list>
+                <ref bean="userDAO.ldap.perf"/>
+                <ref bean="groupDAO.ldap.perf"/>
                 <ref bean="userDAO.mongo.perf"/>
+                <ref bean="groupDAO.mongo.perf"/>
                 <ref bean="clientDAO.mongo.perf"/>
-                <ref bean="tokenDAO.mongo.perf"/>
+                <ref bean="permissionDAO.mongo.perf"/>
             </list>
         </property>
     </bean>
@@ -30,6 +33,7 @@
 
     <bean id="authenticationService.impl" class="auth.service.AuthenticationService"
           p:userDAO-ref="userDAO.ldap.perf"
+          p:permissionDAO-ref="permissionDAO.mongo.perf"
           p:jwtManager-ref="jwtManager.perf"/>
 
     <bean id="clientService.impl" class="auth.service.ClientService"
@@ -38,9 +42,6 @@
 
     <bean id="groupService.impl" class="auth.service.GroupService"
           p:groupDAO-ref="groupDAO.mongo.perf"/>
-
-    <bean id="tokenService.impl" class="auth.service.TokenService"
-          p:tokenDAO-ref="tokenDAO.mongo.perf"/>
 
     <!-- service endpoints definitions-->
     <bean id="userController" class="auth.controller.v1.UserController"
@@ -55,17 +56,9 @@
           p:discoveryInfo-ref="discoveryInfo"
           p:jwtManager-ref="jwtManager.perf"/>
 
-    <bean id="tokenController" class="auth.controller.v1.TokenController"
-          p:tokenService-ref="tokenService.perf"/>
-
     <bean id="clientController" class="auth.controller.v1.ClientController"
           p:clientService-ref="clientService.perf"/>
 
     <bean id="groupController" class="auth.controller.v1.GroupController"
           p:groupService-ref="groupService.perf"/>
-
-    <!-- OAuth business logic component-->
-    <!--<bean id="oauthProvider" class="auth.logic.OAuthManager"
-          p:clientService-ref="clientService.impl"
-          p:tokenManager-ref="tokenManager.impl"/>-->
 </beans>

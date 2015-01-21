@@ -29,56 +29,7 @@
         </constructor-arg>
     </bean>
 
-
-    <!-- OAuth configuration -->
-    <!--<bean id="tvServiceClientFactory" class="org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean">
-        <property name="address" value="${accessTokenValidatorClient/endpoint}"/>
-        <property name="headers">
-            <map>
-                <entry key="Accept" value="application/xml"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="tvServiceClient" factory-bean="tvServiceClientFactory" factory-method="createWebClient"/>
-
-    <bean id="tokenValidator" class="org.apache.cxf.rs.security.oauth2.filters.AccessTokenValidatorClient">
-        <property name="tokenValidatorClient" ref="tvServiceClient"/>
-    </bean>
-
-    <bean id="oauthFiler" class="org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter">
-        <property name="dataProvider" ref="oauthProvider"/>
-        <property name="tokenValidator" ref="tokenValidator"/>
-    </bean>
-
-    <bean id="accessTokenServiceEndpoint" class="org.apache.cxf.rs.security.oauth2.services.AccessTokenService">
-        <property name="dataProvider" ref="oauthProvider"/>
-    </bean>
-
-    <bean id="accessTokenValidatorServiceEndpoint"
-          class="org.apache.cxf.rs.security.oauth2.services.AccessTokenValidatorService">
-        <property name="dataProvider" ref="oauthProvider"/>
-    </bean>
-
-    <bean id="authorizationServiceEndpoint"
-          class="org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService">
-        <property name="dataProvider" ref="oauthProvider"/>
-    </bean>
-
-    <bean id="oAuthJSONProvider" class="org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider"/>-->
-
     <bean id="runtimeExceptionMapper" class="common.exceptions.support.RuntimeExceptionMapper"/>
-
-    <!--<jaxrs:server id="oauthServer" address="/oauth">
-        <jaxrs:serviceBeans>
-            <ref bean="accessTokenServiceEndpoint"/>
-            <ref bean="accessTokenValidatorServiceEndpoint"/>
-        </jaxrs:serviceBeans>
-        <jaxrs:providers>
-            <ref bean="oAuthJSONProvider"/>
-            <ref bean="runtimeExceptionMapper"/>
-        </jaxrs:providers>
-    </jaxrs:server>-->
 
     <util:list id="authExclusions">
         <value>login</value>
@@ -90,33 +41,14 @@
           p:groupService-ref="groupService.perf"
           p:jwtManager-ref="jwtManager.perf"/>
 
-    <!--<bean id="usersAuthorizationInterceptor" class="org.apache.cxf.interceptor.security.SecureAnnotationsInterceptor"
-          p:securedObject-ref="userServiceEndpoint"/>
-    <bean id="clientsAuthorizationInterceptor" class="org.apache.cxf.interceptor.security.SecureAnnotationsInterceptor"
-          p:securedObject-ref="clientServiceEndpoint"/>
-    <bean id="groupsAuthorizationInterceptor" class="org.apache.cxf.interceptor.security.SecureAnnotationsInterceptor"
-          p:securedObject-ref="groupServiceEndpoint"/>
-    <bean id="tokensAuthorizationInterceptor" class="org.apache.cxf.interceptor.security.SecureAnnotationsInterceptor"
-          p:securedObject-ref="tokenGrantServiceEndpoint"/>
-    <bean id="authenticationAuthorizationInterceptor" class="org.apache.cxf.interceptor.security.SecureAnnotationsInterceptor"
-          p:securedObject-ref="authServiceEndpoint"/>-->
-
     <jaxrs:server id="authService.rest" address="/">
         <jaxrs:serviceBeans>
             <ref bean="systemStatusController"/>
             <ref bean="userController"/>
             <ref bean="authController"/>
-            <ref bean="tokenController"/>
             <ref bean="clientController"/>
             <ref bean="groupController"/>
         </jaxrs:serviceBeans>
-        <!--<jaxrs:inInterceptors>
-            <ref bean="usersAuthorizationInterceptor"/>
-            <ref bean="clientsAuthorizationInterceptor"/>
-            <ref bean="groupsAuthorizationInterceptor"/>
-            <ref bean="tokensAuthorizationInterceptor"/>
-            <ref bean="authenticationAuthorizationInterceptor"/>
-        </jaxrs:inInterceptors>-->
         <jaxrs:providers>
             <ref bean="authFilter"/>
             <bean class="common.web.JSONValidationProvider">

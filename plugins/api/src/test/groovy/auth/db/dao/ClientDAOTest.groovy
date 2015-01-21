@@ -1,6 +1,8 @@
 package auth.db.dao
 
 import auth.api.v1.Client
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
@@ -56,6 +58,15 @@ abstract class ClientDAOTest extends AbstractJUnit4SpringContextTests {
         } finally {
             delete client
         }
+    }
+
+    @Test
+    void testGetUserDAOSystemStatus() {
+        ComponentStatus status = clientDAO.status
+        assert status, 'DB status not available'
+        assert status.componentType == ComponentStatus.ComponentType.DB
+        assert status.status == StatusType.GREEN
+        assert status.name == 'Client DAO'
     }
 
     Client createClient(String login) {

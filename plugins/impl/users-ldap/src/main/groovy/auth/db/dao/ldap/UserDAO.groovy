@@ -267,8 +267,8 @@ class UserDAO extends BaseUserDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (ldapTemplate) {
-            location = ldapTemplate?.contextSource?.readOnlyContext?.environment?.get('java.naming.provider.url')
+        if (ldapTemplate?.contextSource?.readOnlyContext?.environment) {
+            location = ldapTemplate.contextSource.readOnlyContext.environment.get('java.naming.provider.url')
 
             long timeStart = DateTime.now().millis
             try {

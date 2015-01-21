@@ -145,7 +145,7 @@ class GroupDAO extends BaseGroupDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (mongoTemplate != null && mongoTemplate.db != null && mongoTemplate.db.mongo != null) {
+        if (mongoTemplate?.db?.mongo) {
             location = mongoTemplate.db.mongo.connectPoint
 
             long timeStart = new Date().time
@@ -161,7 +161,14 @@ class GroupDAO extends BaseGroupDAO {
         } else {
             statusType = StatusType.RED
         }
-        return new ComponentStatus('Group DAO', location, statusType, null, ComponentStatus.ComponentType.DB,
-                responseTime, null, exceptionMessage, exceptionDetails)
+        return new ComponentStatus(
+                name: 'Group DAO',
+                location: location,
+                status: statusType,
+                componentType: ComponentStatus.ComponentType.DB,
+                responseTime: responseTime,
+                exceptionMessage: exceptionMessage,
+                exceptionDetails: exceptionDetails
+        )
     }
 }

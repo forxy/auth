@@ -2,6 +2,7 @@ package auth.service
 
 import auth.api.v1.AuthorizationType
 import auth.api.v1.User
+import auth.db.dao.IPermissionDAO
 import auth.db.dao.IUserDAO
 import auth.exceptions.AuthEvent
 import auth.security.IJWTManager
@@ -14,6 +15,7 @@ import common.exceptions.ServiceException
 class AuthenticationService implements IAuthenticationService {
 
     IUserDAO userDAO
+    IPermissionDAO permissionDAO
 
     IJWTManager jwtManager
 
