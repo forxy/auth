@@ -74,24 +74,24 @@ class PermissionDAO extends BasePermissionDAO {
     void deleteGroupPermissions(final Group group) {
         if (group?.members) {
             userDAO.find(group.members)?.each { User owner ->
-                (owner.groups - group.code)?.each {
-                    redis.keys("resource:*:group:$it:scopes")?.each {
+                Map<String,Set<String>> clientScopes
+                (owner.groups - group.code)?.each { String nonRemovableGroup ->
+                    redis.keys("resource:*:group:$nonRemovableGroup:scopes")?.each {
                         String resourceClientID = it.split(':')[1]
-                        redis.opsForSet().members(it)
+                        Set<String> scopes = redis.opsForSet().members(it) ?: []
+                        clientScopes[(resourceClientID)] = clientScopes[(resourceClientID)] ?
+                                scopes : clientScopes[(resourceClientID)] + scopes
                     }
-
+                }
+                clientScopes?.each { resourceClientID, scopes ->
+                    Set<String> approvalsToRevoke = getGroupPermissions(group.code, resourceClientID) - scopes
+                    redis.keys("resource:$resourceClientID:owner:$owner:client:*:approvals").each {
+                        redis.opsForSet().remove(it, approvalsToRevoke)
+                    }
                 }
             }
         }
-
-        Set<String> keys = redis.keys("resource:*:group:$group.code:scopes" as String)
-        /*keys.each {
-            String resourceClientID = it.split(':')[1]
-            Set<String> scopes = redis.opsForSet().members(it)
-            revokeAccountApprovals()
-        }*/
-
-        redis.delete(keys)
+        redis.delete(redis.keys("resource:*:group:$group.code:scopes" as String))
     }
 
     @Override
