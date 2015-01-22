@@ -41,9 +41,9 @@ abstract class BaseGroupDAO implements IGroupDAO {
 
     protected void mapNewUsers(final Group group) {
         if (group.members) {
-            userDAO.find(group.members)?.each {
+            userDAO?.find(group.members)?.each {
                 it.groups << group.code
-                userDAO.silentSave it
+                userDAO?.silentSave it
             }
         }
     }

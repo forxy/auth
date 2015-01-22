@@ -22,5 +22,5 @@ class User extends Account {
     DateTime createDate
     String createdBy
 
-    Set<String> groups
+    Set<String> groups = []
 }

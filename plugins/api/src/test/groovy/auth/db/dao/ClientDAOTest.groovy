@@ -29,7 +29,7 @@ abstract class ClientDAOTest extends AbstractJUnit4SpringContextTests {
             assert client.name == 'test'
             assert client.description == 'test client'
             assert client.webUri == 'http://testClient'
-            assert client.scopes == []
+            assert client.scopes == [] as Set
         } finally {
             delete client
         }

@@ -1,6 +1,5 @@
 package auth.db.dao
 
-import auth.api.v1.Group
 import auth.api.v1.User
 import common.status.ISystemStatusComponent
 import org.springframework.data.domain.Page

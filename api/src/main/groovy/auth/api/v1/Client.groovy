@@ -17,7 +17,7 @@ class Client extends Account {
     DateTime createDate
     String createdBy
 
-    List<String> redirectUris = new ArrayList<>()
-    List<String> scopes = new ArrayList<>()
-    List<String> audiences = new ArrayList<>()
+    Set<String> redirectUris = []
+    Set<String> scopes = []
+    Set<String> audiences = []
 }
