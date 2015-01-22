@@ -73,7 +73,7 @@ class PermissionDAO extends BasePermissionDAO {
     @Override
     void deleteGroupPermissions(final Group group) {
         if (group?.members) {
-            userDAO.find(group.members)?.each { User owner ->
+            userDAO?.find(group.members)?.each { User owner ->
                 Map<String,Set<String>> clientScopes
                 (owner.groups - group.code)?.each { String nonRemovableGroup ->
                     redis.keys("resource:*:group:$nonRemovableGroup:scopes")?.each {
