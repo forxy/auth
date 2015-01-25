@@ -175,8 +175,6 @@ class ClientDAO extends BaseClientDAO {
             } finally {
                 responseTime = new Date().time - timeStart
             }
-
-
         } else {
             statusType = StatusType.RED
         }

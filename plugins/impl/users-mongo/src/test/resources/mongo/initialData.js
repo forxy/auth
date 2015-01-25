@@ -1,7 +1,7 @@
 db.user.insert({
-    "_id": "kast",
+    "_id": "askadias@gmail.com",
     "password": "eeb5d0f736ab20b7ef18f00f20c5b62de44202f3ab153ce132dc503c381f8e0721ac73a5aa26ae73",
-    "email": "askadias@gmail.com",
+    "login": "kast",
     "first_name": "Kast",
     "last_name": "Askadias",
     "gender": "MALE",
@@ -14,9 +14,9 @@ db.user.insert({
 });
 
 db.user.insert({
-    "_id": "askadias",
+    "_id": "askadias@mail.ru",
     "password": "eeb5d0f736ab20b7ef18f00f20c5b62de44202f3ab153ce132dc503c381f8e0721ac73a5aa26ae73",
-    "email": "askadias@mail.ru",
+    "login": "askadias",
     "first_name": "Kast",
     "last_name": "Askadias",
     "gender": "MALE",
@@ -28,9 +28,9 @@ db.user.insert({
 });
 
 db.user.insert({
-    "_id": "admin",
+    "_id": "admin@forxy.ru",
     "password": "eeb5d0f736ab20b7ef18f00f20c5b62de44202f3ab153ce132dc503c381f8e0721ac73a5aa26ae73",
-    "email": "admin@admin.com",
+    "login": "admin",
     "first_name": "admin",
     "last_name": "admin",
     "gender": "MALE",
@@ -49,9 +49,9 @@ db.user_group.insert({
     "name": "Users",
     "description": "Group of common users",
     "members": [
-        "admin",
-        "kast",
-        "askadias"
+        "admin@forxy.ru",
+        "askadias@gmail.com",
+        "askadias@mail.ru"
     ],
     "update_date": ISODate("2014-07-17T21:00:00.000Z"),
     "create_date": ISODate("2014-07-17T21:00:00.000Z")
@@ -62,8 +62,8 @@ db.user_group.insert({
     "name": "Auth Admins",
     "description": "Auth Service administrators",
     "members": [
-        "admin",
-        "kast"
+        "admin@forxy.ru",
+        "askadias@gmail.com"
     ],
     "update_date": ISODate("2014-07-17T21:00:00.000Z"),
     "create_date": ISODate("2014-07-17T21:00:00.000Z")

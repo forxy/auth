@@ -49,10 +49,14 @@ class UserDAO extends BaseUserDAO {
         ldapTemplate.contextSource.readOnlyContext.environment.get('org.springframework.ldap.base.path') as LdapName
     }
 
-    LdapName getUserDN(String login) {
+    LdapName getUserDN(String id) {
         LdapUtils.prepend(
                 ldapTemplate.searchForContext(
-                        query().where('objectClass').is('person').and(loginPropertyName).is(login)
+                        query().where('objectClass').is('person').and(
+                                query().where('mail').is(id).or(
+                                        query().where(loginPropertyName).is(id)
+                                )
+                        )
                 ).dn,
                 baseDN
         )
@@ -224,17 +228,17 @@ class UserDAO extends BaseUserDAO {
     }
 
     @Override
-    User authenticate(final String login, final String password) {
+    User authenticate(final String identifier, final String password) {
         try {
             ldapTemplate.authenticate(
                     query().where('objectClass').is('person')
-                            .and(query().where('mail').is(login).or(loginPropertyName).is(login)),
+                            .and(query().where('mail').is(identifier).or(loginPropertyName).is(identifier)),
                     password
             )
         } catch (Exception ignore) {
             return null
         }
-        return find(login)
+        return find(identifier)
     }
 
     @Override

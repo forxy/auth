@@ -84,7 +84,8 @@ class GroupDAO extends BaseGroupDAO {
         if (exists(group.code)) {
             throw new ServiceException(AuthDBEvent.GroupAlreadyExists, group.code)
         }
-        group.members = group.members ? group.members + adminLoginName : [adminLoginName]
+        String adminEmail = userDAO.find(adminLoginName)?.email
+        group.members = group.members ? group.members + adminEmail : [adminEmail]
         group.createDate = DateTime.now()
         group.createdBy = group.createdBy ?: 'unknown'
         silentSave group

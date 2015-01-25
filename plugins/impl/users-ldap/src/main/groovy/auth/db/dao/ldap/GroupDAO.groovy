@@ -44,10 +44,14 @@ class GroupDAO extends BaseGroupDAO {
         ldapTemplate.contextSource.readOnlyContext.environment.get('org.springframework.ldap.base.path') as LdapName
     }
 
-    LdapName getUserDN(String login) {
+    LdapName getUserDN(String id) {
         LdapUtils.prepend(
                 ldapTemplate.searchForContext(
-                        query().where('objectClass').is('person').and(loginPropertyName).is(login)
+                        query().where('objectClass').is('person').and(
+                                query().where('mail').is(id).or(
+                                        query().where(loginPropertyName).is(id)
+                                )
+                        )
                 ).dn,
                 baseDN
         )
@@ -72,7 +76,7 @@ class GroupDAO extends BaseGroupDAO {
                     name: context.getStringAttribute(namePropertyName),
                     description: context.getStringAttribute('description'),
                     members: context.getAttributeSortedStringSet('member')?.collect {
-                        extractLoginFromDN it
+                        userDAO.find(extractLoginFromDN(it))?.email
                     }
             )
         }

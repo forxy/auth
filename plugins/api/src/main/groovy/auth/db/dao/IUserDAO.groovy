@@ -25,7 +25,7 @@ interface IUserDAO extends ISystemStatusComponent {
 
     User getProfile(final String login)
 
-    User authenticate(final String login, final String password)
+    User authenticate(final String identifier, final String password)
 
     boolean exists(final String id)
 

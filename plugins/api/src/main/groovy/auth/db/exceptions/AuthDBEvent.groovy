@@ -9,10 +9,10 @@ enum AuthDBEvent implements EventLogBase {
     // -------------------------------------------------------------------
 
     UserAlreadyExists(1000, 406, EventLogBase.EventType.InvalidInput,
-            'User with login \'%1$s\' already exists.'),
+            'User with email \'%1$s\' already exists.'),
 
     UserNotFound(1001, 404, EventLogBase.EventType.InvalidInput,
-            'User with login \'%1$s\' is not found.'),
+            'User with email \'%1$s\' is not found.'),
 
     GroupAlreadyExists(1002, 406, EventLogBase.EventType.InvalidInput,
             'Group with code \'%1$s\' already exists.'),

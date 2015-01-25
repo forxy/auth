@@ -14,9 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 class UserDTO {
 
     @Id
-    String login
-    @Indexed
     String email
+    @Indexed
+    String login
     String password
 
     String firstName

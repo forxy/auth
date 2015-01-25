@@ -48,8 +48,8 @@ class UserDAO extends BaseUserDAO {
     }
 
     @Override
-    User authenticate(final String login, final String password) {
-        User user = find login
+    User authenticate(final String identifier, final String password) {
+        User user = find identifier
         if (user && passwordEncoder.matches(password, user.password)) {
             return user
         } else {
@@ -62,10 +62,10 @@ class UserDAO extends BaseUserDAO {
         Query query = Query.query(new Criteria()).with(pageable)
         if (filter != null) {
             if (StringUtils.isNotEmpty(filter.email)) {
-                query.addCriteria(new Criteria('email').regex(filter.email, 'i'))
+                query.addCriteria(new Criteria('_id').regex(filter.email, 'i'))
             }
             if (StringUtils.isNotEmpty(filter.login)) {
-                query.addCriteria(new Criteria('_id').regex(filter.login, 'i'))
+                query.addCriteria(new Criteria('login').regex(filter.login, 'i'))
             }
             if (StringUtils.isNotEmpty(filter.firstName)) {
                 query.addCriteria(new Criteria('first_name').regex(filter.firstName, 'i'))
@@ -93,20 +93,20 @@ class UserDAO extends BaseUserDAO {
                 Query.query(
                         new Criteria().orOperator(
                                 Criteria.where('_id').is(id),
-                                Criteria.where('email').is(id)
+                                Criteria.where('login').is(id)
                         )
                 ), UserDTO.class))
     }
 
     @Override
-    User getProfile(final String login) {
-        return fromDomain(mongoTemplate.findOne(Query.query(Criteria.where('_id').is(login)), ProfileDTO.class))
+    User getProfile(final String email) {
+        return fromDomain(mongoTemplate.findOne(Query.query(Criteria.where('_id').is(email)), ProfileDTO.class))
     }
 
     @Override
     User create(final User user) {
-        if (exists(user.login)) {
-            throw new ServiceException(AuthDBEvent.UserAlreadyExists, user.login)
+        if (exists(user.email)) {
+            throw new ServiceException(AuthDBEvent.UserAlreadyExists, user.email)
         }
         user.password = passwordEncoder.encode(user.password)
         user.createDate = DateTime.now()
@@ -118,7 +118,7 @@ class UserDAO extends BaseUserDAO {
 
     @Override
     User save(final User user) {
-        User old = find user.login
+        User old = find user.email
         silentSave user
         eventBus.post(new UserChanged(from: old, to: user))
         return user
@@ -137,7 +137,7 @@ class UserDAO extends BaseUserDAO {
         profile.password = passwordEncoder.encode(profile.password)
         profile.updateDate = DateTime.now()
         profile.updatedBy = profile.updatedBy ?: 'unknown'
-        User old = getProfile profile.login
+        User old = getProfile profile.email
         eventBus.post(new UserChanged(from: old, to: profile))
         mongoTemplate.save(toDomain(profile))
         return profile
@@ -159,18 +159,18 @@ class UserDAO extends BaseUserDAO {
     }
 
     @Override
-    void delete(final String login) {
-        User user = find login
+    void delete(final String email) {
+        User user = find email
         if (!user) {
-            throw new ServiceException(AuthDBEvent.UserNotFound, login)
+            throw new ServiceException(AuthDBEvent.UserNotFound, email)
         }
-        mongoTemplate.remove(Query.query(Criteria.where('_id').is(user.login)), UserDTO.class)
+        mongoTemplate.remove(Query.query(Criteria.where('_id').is(user.email)), UserDTO.class)
         eventBus.post(new UserRemoved(user: user))
     }
 
     @Override
     void delete(final User user) {
-        delete user.login
+        delete user.email
     }
 
     @Override

@@ -21,11 +21,11 @@ abstract class BaseGroupDAO implements IGroupDAO {
         Set<String> groupsToRemove = oldGroups - newGroups
         Set<String> groupsToAdd = newGroups - oldGroups
         find(groupsToRemove).each {
-            it.members -= userChanged.to?.login
+            it.members -= userChanged.to?.email
             silentSave it
         }
         find(groupsToAdd).each {
-            it.members << userChanged.to?.login
+            it.members << userChanged.to?.email
             silentSave it
         }
     }
@@ -34,7 +34,7 @@ abstract class BaseGroupDAO implements IGroupDAO {
     void updateUserMembership(UserRemoved userRemoved) {
         userRemoved?.user?.groups?.each {
             Group group = find it
-            group.members -= userRemoved.user.login
+            group.members -= userRemoved.user.email
             silentSave group
         }
     }
