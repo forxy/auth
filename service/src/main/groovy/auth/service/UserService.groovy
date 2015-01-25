@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
 /**
- * Implementation class for UserService business logic
+ * Implementation class for users management
  */
 class UserService implements IUserService {
 

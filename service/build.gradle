@@ -60,9 +60,9 @@ dependencies {
     compile "org.jasypt:jasypt:$rev_jasypt"
     compile "org.jasypt:jasypt-spring3:$rev_jasypt"
     compile "com.nimbusds:nimbus-jose-jwt:$rev_jose_jwt"
-    compile "org.bouncycastle:bcprov-jdk15on:$rev_bouncycastle"
 
     // ===================== TEST ========================================
+    testCompile project(path: ':auth.plugins.api', configuration: 'tests')
     testCompile "fraud:common.spring-support:$rev_fraud_common"
     testCompile "junit:junit:$rev_junit"
     testCompile "org.easymock:easymock:$rev_easymock"

@@ -10,7 +10,7 @@ import com.nimbusds.jose.JOSEException
 import common.exceptions.ServiceException
 
 /**
- * Authentication Manager implementation
+ * Authentication implementation
  */
 class AuthenticationService implements IAuthenticationService {
 

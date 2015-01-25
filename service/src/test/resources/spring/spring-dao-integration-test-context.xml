@@ -5,6 +5,8 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="classpath*:spring/*-plugin-spring-context.xml"/>
+
     <bean id="encryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
         <property name="config">
             <bean class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig"
@@ -28,17 +30,21 @@
         </property>
     </bean>
 
-    <bean id="configuration" class="common.utils.support.Configuration">
-        <constructor-arg>
-            <map>
-                <entry key="#{T(common.web.JSONValidationProvider$Configs).IsObjectValidationEnabled}"
-                       value="false"/>
-            </map>
-        </constructor-arg>
-    </bean>
+    <bean id="eventBus" class="com.google.common.eventbus.EventBus"/>
 
-    <import resource="classpath:spring/impl-spring-context.xml"/>
-    <import resource="classpath:spring/log-spring-context.xml"/>
-    <import resource="classpath:spring/dao-spring-test-context.xml"/>
+    <bean id="groupDAO.impl.mongo" parent="groupDAO.impl.mongo.base"
+          p:userDAO-ref="userDAO.impl.mongo"
+          p:eventBus-ref="eventBus"/>
+
+    <bean id="userDAO.impl.mongo" parent="userDAO.impl.mongo.base"
+          p:groupDAO-ref="groupDAO.impl.mongo"
+          p:eventBus-ref="eventBus"/>
+
+    <bean id="clientDAO.impl.mongo" parent="clientDAO.impl.mongo.base"
+          p:eventBus-ref="eventBus"/>
+
+    <bean id="permissionDAO.impl.redis" parent="permissionDAO.impl.redis.base"
+          p:userDAO-ref="userDAO.impl.mongo"
+          p:eventBus-ref="eventBus"/>
 
 </beans>

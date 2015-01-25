@@ -14,8 +14,8 @@
     <bean id="systemStatusService" class="common.status.SystemStatusService">
         <property name="components">
             <list>
-                <ref bean="userDAO.ldap.perf"/>
-                <ref bean="groupDAO.ldap.perf"/>
+                <!--<ref bean="userDAO.ldap.perf"/>
+                <ref bean="groupDAO.ldap.perf"/>-->
                 <ref bean="userDAO.mongo.perf"/>
                 <ref bean="groupDAO.mongo.perf"/>
                 <ref bean="clientDAO.mongo.perf"/>
@@ -32,7 +32,7 @@
           p:userDAO-ref="userDAO.mongo.perf"/>
 
     <bean id="authenticationService.impl" class="auth.service.AuthenticationService"
-          p:userDAO-ref="userDAO.ldap.perf"
+          p:userDAO-ref="userDAO.mongo.perf"
           p:permissionDAO-ref="permissionDAO.mongo.perf"
           p:jwtManager-ref="jwtManager.perf"/>
 

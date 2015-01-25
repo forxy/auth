@@ -20,7 +20,9 @@ class PermissionDAO extends BasePermissionDAO {
 
     @Override
     Set<String> getGroupsPermissionsUnion(final Set<String> codes, final String resourceClientID) {
-        return redis.opsForSet().union(null, codes.collect { "resource:$resourceClientID:group:$it:scopes" as String } as Set)
+        return redis.opsForSet().union(null, codes.collect {
+            "resource:$resourceClientID:group:$it:scopes" as String
+        } as Set)
     }
 
     @Override
@@ -70,28 +72,53 @@ class PermissionDAO extends BasePermissionDAO {
         }
     }
 
+    /**
+     * At this particular complex case we need to remove all the permissions and approvals that this group has.
+     * But at the same time we need not to remove the permissions assigned to this group user that he has being included
+     * into other group that has pretty the same permissions i.e.:
+     *
+     * user1  -> group1 [read_data, write_data] -> resource1 [read_data, write_data]
+     *        -> group2 [read_data]             ->
+     *
+     * Let's say that user1 has both approved permissions for resource1
+     * Then if we will remove group1 we need to remove only write_data permission approved for this user
+     *
+     * @param groupToRemove entity to remove all the permissions assigned to the all it's users
+     */
     @Override
-    void deleteGroupPermissions(final Group group) {
-        if (group?.members) {
-            userDAO?.find(group.members)?.each { User owner ->
-                Map<String,Set<String>> clientScopes
-                (owner.groups - group.code)?.each { String nonRemovableGroup ->
-                    redis.keys("resource:*:group:$nonRemovableGroup:scopes")?.each {
+    void deleteGroupPermissions(final Group groupToRemove) {
+        Set<String> groupPermissionKeys = redis.keys("resource:*:group:$groupToRemove.code:scopes" as String)
+
+        if (groupToRemove?.members) {
+
+            // retrieve all the permissions granted to removable group
+            Map<String, Set<String>> clientScopesForGroup = [:]
+            groupPermissionKeys?.each {
+                clientScopesForGroup[(it.split(':')[1])] = redis.opsForSet().members(it)
+            }
+            userDAO?.find(groupToRemove.members)?.each { User owner ->
+
+                // retrieve all the granted to user permissions not related to removable group
+                Map<String, Set<String>> clientScopesForUser = [:]
+                (owner.groups - groupToRemove.code)?.each { String nonRemovableGroup ->
+                    redis.keys("resource:*:group:$nonRemovableGroup:scopes" as String)?.each {
                         String resourceClientID = it.split(':')[1]
                         Set<String> scopes = redis.opsForSet().members(it) ?: []
-                        clientScopes[(resourceClientID)] = clientScopes[(resourceClientID)] ?
-                                scopes : clientScopes[(resourceClientID)] + scopes
+                        clientScopesForUser[(resourceClientID)] = clientScopesForUser[(resourceClientID)] ?
+                                scopes : clientScopesForUser[(resourceClientID)] + scopes
                     }
                 }
-                clientScopes?.each { resourceClientID, scopes ->
-                    Set<String> approvalsToRevoke = getGroupPermissions(group.code, resourceClientID) - scopes
-                    redis.keys("resource:$resourceClientID:owner:$owner:client:*:approvals").each {
-                        redis.opsForSet().remove(it, approvalsToRevoke)
+
+                // revoke all the permissions that were approved for user excluding non removable ones
+                clientScopesForGroup?.each { resourceClientID, scopes ->
+                    Set<String> approvalsToRevoke = scopes - clientScopesForUser[resourceClientID]
+                    redis.keys("resource:$resourceClientID:owner:$owner.email:client:*:approvals" as String)?.each {
+                        redis.opsForSet().remove(it, approvalsToRevoke?.toArray() as String[])
                     }
                 }
             }
         }
-        redis.delete(redis.keys("resource:*:group:$group.code:scopes" as String))
+        redis.delete(groupPermissionKeys)
     }
 
     @Override

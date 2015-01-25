@@ -4,7 +4,6 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
     <bean id="eventBus" class="com.google.common.eventbus.EventBus"/>
 
     <!-- =========================================================================================
@@ -27,6 +26,7 @@
 
     <bean id="permissionDAO.impl.redis" parent="permissionDAO.impl.redis.base"
           autowire-candidate="false"
+          p:userDAO-ref="userDAO.mongo.perf"
           p:eventBus-ref="eventBus"/>
 
 
@@ -34,12 +34,12 @@
                                        LDAP Data Source
         ========================================================================================== -->
 
-    <bean id="groupDAO.impl.ldap" parent="groupDAO.impl.ldap.base"
+    <!--<bean id="groupDAO.impl.ldap" parent="groupDAO.impl.ldap.base"
           p:userDAO-ref="userDAO.impl.ldap"
           p:eventBus-ref="eventBus"/>
 
     <bean id="userDAO.impl.ldap" parent="userDAO.impl.ldap.base"
           p:groupDAO-ref="groupDAO.impl.ldap"
-          p:eventBus-ref="eventBus"/>
+          p:eventBus-ref="eventBus"/>-->
 
 </beans>

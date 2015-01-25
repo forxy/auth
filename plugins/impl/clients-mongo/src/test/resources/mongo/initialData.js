@@ -54,3 +54,6 @@ db.client.insert({
     "update_date" : ISODate("2014-08-21T10:25:33.474Z"),
     "create_date" : ISODate("2014-08-21T10:25:33.477Z")
 });
+
+db.client.ensureIndex( { email: 1} );
+db.client.ensureIndex( { name: 1} );

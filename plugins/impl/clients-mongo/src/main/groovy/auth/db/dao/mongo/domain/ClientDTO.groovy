@@ -26,9 +26,9 @@ class ClientDTO {
     DateTime createDate
     String createdBy
 
-    List<String> redirectUris = new ArrayList<>()
-    List<String> scopes = new ArrayList<>()
-    List<String> audiences = new ArrayList<>()
+    Set<String> redirectUris = []
+    Set<String> scopes = []
+    Set<String> audiences = []
 
     public static ClientDTO toDomain(Client client) {
         ClientDTO domain = new ClientDTO()

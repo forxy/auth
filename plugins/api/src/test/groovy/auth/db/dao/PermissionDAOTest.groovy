@@ -100,7 +100,7 @@ abstract class PermissionDAOTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    void testGetUserDAOSystemStatus() {
+    void testGetSystemStatus() {
         ComponentStatus status = permissionDAO.status
         assert status, 'DB status not available'
         assert status.componentType == ComponentStatus.ComponentType.DB

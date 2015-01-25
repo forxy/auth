@@ -87,26 +87,55 @@
     <bean id="configuration.performance.dao" class="common.utils.support.Configuration"
           parent="Configuration.performance"/>
 
-    <bean id="databaseExceptionHandler"
+    <bean id="databaseExceptionHandler.user.ldap"
           class="common.logging.exceptions.DatabaseExceptionHandler"
-          p:databaseHost="${mongoTemplate/host}:${mongoTemplate/port}"/>
+          p:databaseHost="${auth.ldap.url}"/>
+
+    <bean id="databaseExceptionHandler.user.mongo"
+          class="common.logging.exceptions.DatabaseExceptionHandler"
+          p:databaseHost="${auth.mongo.users.host}:${auth.mongo.users.port}"/>
+
+    <bean id="databaseExceptionHandler.client.mongo"
+          class="common.logging.exceptions.DatabaseExceptionHandler"
+          p:databaseHost="${auth.mongo.clients.host}:${auth.mongo.clients.port}"/>
+
+    <bean id="databaseExceptionHandler.permission.redis"
+          class="common.logging.exceptions.DatabaseExceptionHandler"
+          p:databaseHost="${auth.redis.permissions.host}:${auth.redis.permissions.port}"/>
+
+    <!--<bean id="databaseExceptionHandler.token.redis"
+          class="common.logging.exceptions.DatabaseExceptionHandler"
+          p:databaseHost="${auth.mongo.tokens.host}:${auth.mongo.tokens.port}"/>-->
 
     <bean id="auth.performance.logger.dao"
           class="common.logging.writer.LogWriter" c:name="auth.performance.dao"/>
 
     <bean id="performance.dao.loggingInterceptor"
           class="common.logging.LoggingInterceptor"
+          abstract="true"
           p:configuration-ref="configuration.performance.dao"
-          p:responseWriter-ref="auth.performance.logger.dao"
-          p:exceptionHandler-ref="databaseExceptionHandler"/>
+          p:responseWriter-ref="auth.performance.logger.dao"/>
 
-    <bean id="userDAO.ldap.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+    <bean id="performance.dao.loggingInterceptor.users.ldap" parent="performance.dao.loggingInterceptor"
+          p:exceptionHandler-ref="databaseExceptionHandler.user.ldap"/>
+
+    <bean id="performance.dao.loggingInterceptor.users.mongo" parent="performance.dao.loggingInterceptor"
+          p:exceptionHandler-ref="databaseExceptionHandler.user.mongo"/>
+
+    <bean id="performance.dao.loggingInterceptor.clients.mongo" parent="performance.dao.loggingInterceptor"
+          p:exceptionHandler-ref="databaseExceptionHandler.client.mongo"/>
+
+    <bean id="performance.dao.loggingInterceptor.permission.redis" parent="performance.dao.loggingInterceptor"
+          p:exceptionHandler-ref="databaseExceptionHandler.permission.redis"/>
+
+
+    <!--<bean id="userDAO.ldap.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
           autowire-candidate="false"
           p:proxyInterfaces="auth.db.dao.IUserDAO"
           p:target-ref="userDAO.impl.ldap">
         <property name="interceptorNames">
             <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
+                <idref bean="performance.dao.loggingInterceptor.users.ldap"/>
             </list>
         </property>
     </bean>
@@ -117,10 +146,10 @@
           p:target-ref="groupDAO.impl.ldap">
         <property name="interceptorNames">
             <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
+                <idref bean="performance.dao.loggingInterceptor.users.ldap"/>
             </list>
         </property>
-    </bean>
+    </bean>-->
 
     <bean id="userDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
           autowire-candidate="false"
@@ -128,7 +157,7 @@
           p:target-ref="userDAO.impl.mongo">
         <property name="interceptorNames">
             <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
+                <idref bean="performance.dao.loggingInterceptor.users.mongo"/>
             </list>
         </property>
     </bean>
@@ -139,7 +168,7 @@
           p:target-ref="groupDAO.impl.mongo">
         <property name="interceptorNames">
             <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
+                <idref bean="performance.dao.loggingInterceptor.users.mongo"/>
             </list>
         </property>
     </bean>
@@ -150,7 +179,7 @@
           p:target-ref="clientDAO.impl.mongo">
         <property name="interceptorNames">
             <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
+                <idref bean="performance.dao.loggingInterceptor.clients.mongo"/>
             </list>
         </property>
     </bean>
@@ -161,7 +190,7 @@
           p:target-ref="permissionDAO.impl.redis">
         <property name="interceptorNames">
             <list>
-                <idref bean="performance.dao.loggingInterceptor"/>
+                <idref bean="performance.dao.loggingInterceptor.permission.redis"/>
             </list>
         </property>
     </bean>

@@ -23,10 +23,10 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
 
     @Test
     void testDeleteClientWithGrantedAndApprovedPermissions() {
-        Client client = createClient 'testClient'
-        Client resource = createClient 'testResource', ['test1', 'test2']
-        User owner = createUser 'testUser'
-        Group group = createGroup 'testGroup'
+        Client client = createClient 'testClient1'
+        Client resource = createClient 'testResource1', ['test1', 'test2']
+        User owner = createUser 'testUser1'
+        Group group = createGroup 'testGroup1'
         try {
             permissionDAO.grantPermissionsToGroup(group.code, resource.clientID, ['test1'] as Set)
             permissionDAO.approveAccountPermissions(owner.email, client.clientID, resource.clientID, ['test1'] as Set)
@@ -46,10 +46,10 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
 
     @Test
     void testDeleteResourceWithGrantedAndApprovedPermissions() {
-        Client client = createClient 'testClient'
-        Client resource = createClient 'testResource', ['test1', 'test2']
-        User owner = createUser 'testUser'
-        Group group = createGroup 'testGroup'
+        Client client = createClient 'testClient2'
+        Client resource = createClient 'testResource2', ['test1', 'test2']
+        User owner = createUser 'testUser2'
+        Group group = createGroup 'testGroup2'
         try {
             permissionDAO.grantPermissionsToGroup(group.code, resource.clientID, ['test1'] as Set)
             permissionDAO.approveAccountPermissions(owner.email, client.clientID, resource.clientID, ['test1'] as Set)
@@ -61,18 +61,18 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
             assert !permissionDAO.getGroupPermissions(group.code, resource.clientID), 'Permissions are still granted'
             assert !permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID), 'Approved client permissions not removed'
         } finally {
-            delete client
-            delete group
             delete owner
+            delete group
+            delete client
         }
     }
 
     @Test
     void testDeleteGroupWithGrantedAndApprovedPermissions() {
-        Client client = createClient 'testClient'
-        Client resource = createClient 'testResource', ['test1', 'test2']
-        User owner = createUser 'testUser'
-        Group group = createGroup 'testGroup'
+        Client client = createClient 'testClient3'
+        Client resource = createClient 'testResource3', ['test1', 'test2']
+        User owner = createUser 'testUser3'
+        Group group = createGroup 'testGroup3', [owner.email]
         try {
             permissionDAO.grantPermissionsToGroup(group.code, resource.clientID, ['test1'] as Set)
             permissionDAO.approveAccountPermissions(owner.email, client.clientID, resource.clientID, ['test1'] as Set)
@@ -84,9 +84,9 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
             assert !permissionDAO.getGroupPermissions(group.code, resource.clientID), 'Permissions are still granted'
             assert !permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID), 'Approved client permissions not removed'
         } finally {
-            delete client
-            delete group
             delete owner
+            delete resource
+            delete client
         }
     }
 
@@ -132,21 +132,23 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
         assert !groupDAO.find(group.code), "Group '$group.code' has not been removed"
     }
 
-    Client createClient(String login) {
-        createClient login, null, null, null
+    Client createClient(String name) {
+        createClient name, null, null, null
     }
 
-    Client createClient(String login, List<String> scopes) {
-        createClient login, scopes, null, null
+    Client createClient(String name, List<String> scopes) {
+        createClient name, scopes, null, null
     }
 
-    Client createClient(String login, List<String> scopes, List<String> redirectUris) {
-        createClient login, scopes, redirectUris, null
+    Client createClient(String name, List<String> scopes, List<String> redirectUris) {
+        createClient name, scopes, redirectUris, null
     }
 
     Client createClient(String name, List<String> scopes, List<String> redirectUris, List<String> audiences) {
+        String id = UUID.randomUUID().toString()
         Client client = clientDAO.create(new Client(
-                clientID: UUID.randomUUID().toString(),
+                clientID: id,
+                email: "$id@forxy.ru",
                 name: name,
                 password: 'password',
                 description: 'test client',

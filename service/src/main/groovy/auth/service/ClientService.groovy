@@ -13,7 +13,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.security.crypto.password.PasswordEncoder
 
 /**
- * Implementation class for ClientService business logic
+ * Implementation class for clients/applications management
  */
 class ClientService implements IClientService {
 

@@ -5,11 +5,11 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="classpath*:spring/*-plugin-spring-context.xml"/>
     <import resource="classpath:spring/rest-spring-context.xml"/>
     <import resource="classpath:spring/impl-spring-context.xml"/>
     <import resource="classpath:spring/dao-spring-context.xml"/>
     <import resource="classpath:spring/log-spring-context.xml"/>
-    <import resource="classpath:spring/*-plugin-spring-context.xml"/>
 
     <bean id="encryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
         <property name="config">

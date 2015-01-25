@@ -61,7 +61,7 @@ abstract class ClientDAOTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    void testGetUserDAOSystemStatus() {
+    void testGetSystemStatus() {
         ComponentStatus status = clientDAO.status
         assert status, 'DB status not available'
         assert status.componentType == ComponentStatus.ComponentType.DB
@@ -82,8 +82,10 @@ abstract class ClientDAOTest extends AbstractJUnit4SpringContextTests {
     }
 
     Client createClient(String name, List<String> scopes, List<String> redirectUris, List<String> audiences) {
+        String id = UUID.randomUUID().toString()
         Client client = clientDAO.create(new Client(
-                clientID: UUID.randomUUID().toString(),
+                clientID: id,
+                email: "$id@forxy.ru",
                 name: name,
                 password: 'password',
                 description: 'test client',
