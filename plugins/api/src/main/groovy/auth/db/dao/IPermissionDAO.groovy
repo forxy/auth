@@ -9,40 +9,37 @@ import common.status.ISystemStatusComponent
 interface IPermissionDAO extends ISystemStatusComponent {
 
     // Permissions
+    Set<String> getGroupsPermissionsUnion(Set<String> groupCodes)
 
-    Set<String> getGroupsPermissionsUnion(final Set<String> codes, final String resourceClientID)
+    Set<String> getGroupPermissions(final String code)
 
-    Set<String> getGroupPermissions(final String code, final String resourceClientID)
+    void grantPermissionsToGroup(final String code, final Set<String> scopes)
 
-    void grantPermissionsToGroup(final String code, final String resourceClientID, final Set<String> scopes)
+    void revokeGroupPermissions(final String code, final Set<String> scopes)
 
-    void revokeGroupPermissions(final String code, final String resourceClientID, final Set<String> scopes)
+    Set<String> getAccountPermissions(final String email)
 
-    Set<String> getAccountPermissions(final String email, final String resourceClientID)
+    void grantPermissionsToAccount(final String email, final Set<String> scopes)
 
-    void grantPermissionsToAccount(final String email, final String resourceClientID, final Set<String> scopes)
+    void revokeAccountPermissions(final String email, final Set<String> scopes)
 
-    void revokeAccountPermissions(final String email, final String resourceClientID, final Set<String> scopes)
-
-    void revokeResourcePermissions(final String resourceClientID, final Set<String> scopes)
+    void revokePermissions(final Set<String> scopes)
 
     void deleteGroupPermissions(final Group group)
 
     void deleteAccountPermissions(final String email)
 
-    void deleteClientPermissions(final String resourceClientID)
-
     // Approvals
 
-    Set<String> getAccountApprovals(final String ownerEmail, final String clientID, final String resourceClientID)
+    Set<String> getAccountApprovals(final String ownerEmail, final String clientID)
 
-    void approveAccountPermissions(final String ownerEmail, final String clientID, final String resourceClientID, final Set<String> scopes)
+    void approveAccountPermissions(final String ownerEmail, final String clientID, final Set<String> scopes)
 
-    void revokeAccountApprovals(final String ownerEmail, final String clientID, final String resourceClientID, final Set<String> scopes)
+    void revokeAccountApprovals(final String ownerEmail, final String clientID, final Set<String> scopes)
 
-    void deleteOwnerApprovals(final String email)
+    void revokeApprovals(Set<String> scopes)
+
+    void deleteOwnerApprovals(final String ownerEmail)
 
     void deleteClientApprovals(final String clientID)
-
-    void deleteResourceApprovals(final String resourceClientID)
 }

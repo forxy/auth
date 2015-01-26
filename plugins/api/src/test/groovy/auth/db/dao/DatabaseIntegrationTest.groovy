@@ -24,19 +24,23 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
     @Test
     void testDeleteClientWithGrantedAndApprovedPermissions() {
         Client client = createClient 'testClient1'
-        Client resource = createClient 'testResource1', ['test1', 'test2']
+        Client resource = createClient 'testResource1', ['rs1.test1', 'rs1.test2']
         User owner = createUser 'testUser1'
         Group group = createGroup 'testGroup1'
         try {
-            permissionDAO.grantPermissionsToGroup(group.code, resource.clientID, ['test1'] as Set)
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, resource.clientID, ['test1'] as Set)
-            assert permissionDAO.getGroupPermissions(group.code, resource.clientID) == ['test1'] as Set, 'Permissions not granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID) == ['test1'] as Set, 'Permissions not approved'
+            permissionDAO.grantPermissionsToGroup(group.code, ['rs1.test1'] as Set)
+            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs1.test1'] as Set)
+            assert permissionDAO.getGroupPermissions(group.code) == ['rs1.test1'] as Set,
+                    'Permissions not granted'
+            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs1.test1'] as Set,
+                    'Permissions not approved'
 
             delete client
 
-            assert permissionDAO.getGroupPermissions(group.code, resource.clientID) == ['test1'] as Set, 'Permissions should be still granted'
-            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID), 'Approved client permissions not removed'
+            assert permissionDAO.getGroupPermissions(group.code) == ['rs1.test1'] as Set,
+                    'Permissions should be still granted'
+            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID),
+                    'Approved client permissions not removed'
         } finally {
             delete resource
             delete group
@@ -47,19 +51,23 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
     @Test
     void testDeleteResourceWithGrantedAndApprovedPermissions() {
         Client client = createClient 'testClient2'
-        Client resource = createClient 'testResource2', ['test1', 'test2']
+        Client resource = createClient 'testResource2', ['rs2.test1', 'rs2.test2']
         User owner = createUser 'testUser2'
         Group group = createGroup 'testGroup2'
         try {
-            permissionDAO.grantPermissionsToGroup(group.code, resource.clientID, ['test1'] as Set)
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, resource.clientID, ['test1'] as Set)
-            assert permissionDAO.getGroupPermissions(group.code, resource.clientID) == ['test1'] as Set, 'Permissions not granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID) == ['test1'] as Set, 'Permissions not approved'
+            permissionDAO.grantPermissionsToGroup(group.code, ['rs2.test1'] as Set)
+            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs2.test1'] as Set)
+            assert permissionDAO.getGroupPermissions(group.code) == ['rs2.test1'] as Set,
+                    'Permissions not granted'
+            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs2.test1'] as Set,
+                    'Permissions not approved'
 
             delete resource
 
-            assert !permissionDAO.getGroupPermissions(group.code, resource.clientID), 'Permissions are still granted'
-            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID), 'Approved client permissions not removed'
+            assert !permissionDAO.getGroupPermissions(group.code),
+                    'Permissions are still granted'
+            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID),
+                    'Approved client permissions not removed'
         } finally {
             delete owner
             delete group
@@ -70,21 +78,70 @@ abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests 
     @Test
     void testDeleteGroupWithGrantedAndApprovedPermissions() {
         Client client = createClient 'testClient3'
-        Client resource = createClient 'testResource3', ['test1', 'test2']
+        Client resource = createClient 'testResource3', ['rs3.test1', 'rs3.test2']
         User owner = createUser 'testUser3'
         Group group = createGroup 'testGroup3', [owner.email]
         try {
-            permissionDAO.grantPermissionsToGroup(group.code, resource.clientID, ['test1'] as Set)
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, resource.clientID, ['test1'] as Set)
-            assert permissionDAO.getGroupPermissions(group.code, resource.clientID) == ['test1'] as Set, 'Permissions not granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID) == ['test1'] as Set, 'Permissions not approved'
+            permissionDAO.grantPermissionsToGroup(group.code, ['rs3.test1'] as Set)
+            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs3.test1'] as Set)
+            assert permissionDAO.getGroupPermissions(group.code) == ['rs3.test1'] as Set,
+                    'Permissions not granted'
+            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs3.test1'] as Set,
+                    'Permissions not approved'
 
             delete group
 
-            assert !permissionDAO.getGroupPermissions(group.code, resource.clientID), 'Permissions are still granted'
-            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID, resource.clientID), 'Approved client permissions not removed'
+            assert !permissionDAO.getGroupPermissions(group.code),
+                    'Permissions are still granted'
+            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID),
+                    'Approved client permissions not removed'
         } finally {
             delete owner
+            delete resource
+            delete client
+        }
+    }
+
+    @Test
+    void testDeleteMultiuserGroupWithGrantedAndApprovedPermissions() {
+        Client client = createClient 'testClient4'
+        Client resource = createClient 'testResource4', ['rs4.read', 'rs4.write']
+        User owner = createUser 'testOwner4'
+        User user = createUser 'testUser4'
+        Group adminGroup = createGroup 'testAdminGroup4', [owner.email]
+        Group userGroup = createGroup 'testUserGroup4', [owner.email, user.email]
+        try {
+            // link groups with resource using permissions available for this client/resource
+            permissionDAO.grantPermissionsToGroup(adminGroup.code, ['rs4.read', 'rs4.write'] as Set)
+            permissionDAO.grantPermissionsToGroup(userGroup.code, ['rs4.read'] as Set)
+
+            // approve these permissions for the group users
+            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs4.read', 'rs4.write'] as Set)
+            permissionDAO.approveAccountPermissions(user.email, client.clientID, ['rs4.read'] as Set)
+
+            assert permissionDAO.getGroupPermissions(adminGroup.code) == ['rs4.read', 'rs4.write'] as Set,
+                    'Admin permissions not granted'
+            assert permissionDAO.getGroupPermissions(userGroup.code) == ['rs4.read'] as Set,
+                    'User permissions not granted'
+
+            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs4.read', 'rs4.write'] as Set,
+                    'Admin permissions not approved'
+            assert permissionDAO.getAccountApprovals(user.email, client.clientID) == ['rs4.read'] as Set,
+                    'User permissions not approved'
+
+            delete adminGroup
+
+            assert !permissionDAO.getGroupPermissions(adminGroup.code),
+                    'Permissions are still granted'
+            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs4.read'] as Set,
+                    'Admin should have only user specific approval'
+            assert permissionDAO.getAccountApprovals(user.email, client.clientID) == ['rs4.read'] as Set,
+                    'User should have the same approval'
+
+        } finally {
+            delete userGroup
+            delete owner
+            delete user
             delete resource
             delete client
         }

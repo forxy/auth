@@ -4,7 +4,11 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="eventBus" class="com.google.common.eventbus.EventBus"/>
+    <bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus">
+        <constructor-arg>
+            <bean class="java.util.concurrent.ForkJoinPool"/>
+        </constructor-arg>
+    </bean>
 
     <!-- =========================================================================================
                                    Mongo Data Source

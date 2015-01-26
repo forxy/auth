@@ -6,7 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"
-            c:secret="password"/>
+          c:secret="password"/>
 
     <bean id="jwtManager.impl" class="auth.security.JWTManager"/>
 
@@ -31,10 +31,14 @@
     <bean id="userService.impl" class="auth.service.UserService"
           p:userDAO-ref="userDAO.mongo.perf"/>
 
+    <bean id="randomGenerator" class="auth.util.RandomValueStringGenerator"
+          p:length="${auth.code.length}"/>
+
     <bean id="authenticationService.impl" class="auth.service.AuthenticationService"
           p:userDAO-ref="userDAO.mongo.perf"
           p:permissionDAO-ref="permissionDAO.mongo.perf"
-          p:jwtManager-ref="jwtManager.perf"/>
+          p:jwtManager-ref="jwtManager.perf"
+          p:randomGenerator-ref="randomGenerator"/>
 
     <bean id="clientService.impl" class="auth.service.ClientService"
           p:clientDAO-ref="clientDAO.mongo.perf"

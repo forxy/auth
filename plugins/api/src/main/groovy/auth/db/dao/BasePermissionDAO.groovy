@@ -4,6 +4,7 @@ import auth.db.event.ClientChanged
 import auth.db.event.ClientRemoved
 import auth.db.event.GroupRemoved
 import auth.db.event.UserRemoved
+import com.google.common.eventbus.AllowConcurrentEvents
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 
@@ -20,27 +21,28 @@ abstract class BasePermissionDAO implements IPermissionDAO {
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     void handleClientRemoved(ClientRemoved clientRemovedEvent) {
-        deleteClientPermissions clientRemovedEvent?.client?.clientID
+        revokePermissions clientRemovedEvent?.client?.scopes
         deleteAccountPermissions clientRemovedEvent?.client?.email
-        deleteResourceApprovals clientRemovedEvent?.client?.clientID
+        revokeApprovals clientRemovedEvent?.client?.scopes
         deleteClientApprovals clientRemovedEvent?.client?.clientID
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     void handleClientChanged(ClientChanged clientChangedEvent) {
-        revokeResourcePermissions(
-                clientChangedEvent.to?.clientID,
-                clientChangedEvent.to?.scopes - clientChangedEvent.from?.scopes
-        )
+        revokePermissions clientChangedEvent.to?.scopes - clientChangedEvent.from?.scopes
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     void handleGroupRemoved(GroupRemoved groupRemovedEvent) {
         deleteGroupPermissions groupRemovedEvent?.group
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     void handleUserRemoved(UserRemoved userRemovedEvent) {
         deleteAccountPermissions userRemovedEvent?.user?.email
         deleteOwnerApprovals userRemovedEvent?.user?.email

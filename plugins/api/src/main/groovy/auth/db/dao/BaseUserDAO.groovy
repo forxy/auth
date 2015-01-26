@@ -3,6 +3,7 @@ package auth.db.dao
 import auth.api.v1.User
 import auth.db.event.GroupChanged
 import auth.db.event.GroupRemoved
+import com.google.common.eventbus.AllowConcurrentEvents
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 
@@ -15,6 +16,7 @@ abstract class BaseUserDAO implements IUserDAO {
     EventBus eventBus
 
     @Subscribe
+    @AllowConcurrentEvents
     void updateGroupMembership(GroupChanged groupChanged) {
         Set<String> oldUsers = groupChanged.from?.members ?: []
         Set<String> newUsers = groupChanged.to?.members ?: []
@@ -31,6 +33,7 @@ abstract class BaseUserDAO implements IUserDAO {
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     void updateGroupMembership(GroupRemoved groupRemoved) {
         groupRemoved?.group?.members?.each {
             User user = find it

@@ -2,7 +2,6 @@ package auth.controller.v1
 
 import auth.api.v1.AuthorizationType
 import auth.api.v1.DiscoveryInfo
-import auth.api.v1.User
 import auth.security.IJWTManager
 import auth.service.IAuthenticationService
 import com.nimbusds.jose.JWSObject
@@ -65,19 +64,19 @@ class AuthController extends AbstractService {
     @Path('/auth')
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     Response authorize(@FormParam('client_id') String clientID,
-                   @FormParam('response_type') String responseTypesSet,
-                   @FormParam('scope') String requestedScopes,
-                   @FormParam('redirect_uri') String redirectUri,
-                   @FormParam('state') String state,
-                   @Context final UriInfo uriInfo,
-                   @Context final HttpHeaders headers) {
+                       @FormParam('response_type') String responseTypesSet,
+                       @FormParam('scope') String requestedScopes,
+                       @FormParam('redirect_uri') String redirectUri,
+                       @FormParam('state') String state,
+                       @Context final UriInfo uriInfo,
+                       @Context final HttpHeaders headers) {
         String[] authorization = headers.getHeaderString(HttpHeaders.AUTHORIZATION)?.split(' ')
         if (authorization && authorization[0] == 'Bearer') {
             JWSObject jwt = jwtManager.fromJWT(authorization[1])
             JSONObject jwtBody = jwt.payload.toJSONObject()
             String authorizationCode = authenticationService.authorize(
                     clientID,
-                    responseTypesSet.split(' ').collect{ AuthorizationType.valueOf(it)} as Set,
+                    responseTypesSet.split(' ').collect { AuthorizationType.valueOf(it) } as Set,
                     jwtBody.get('sub') as String,
                     responseTypesSet.split(' ') as Set,
                     redirectUri

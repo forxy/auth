@@ -38,8 +38,6 @@ db.client.insert({
     "web_uri" : "https://localhost:12080/fraud/rest/v1/",
     "redirect_uris" : [],
     "scopes" : [
-        "openid",
-        "profile",
         "derogs_create",
         "derogs_update",
         "derogs_get",
@@ -55,5 +53,20 @@ db.client.insert({
     "create_date" : ISODate("2014-08-21T10:25:33.477Z")
 });
 
+db.client.insert({
+    "_id" : "abc901ea-3c87-4302-91cd-620ae4c80f9c",
+    "email" : "abc901ea-3c87-4302-91cd-620ae4c80f9c@forxy.ru",
+    "password" : "828b7488eaefd5001f08a8bd1296fc37b347c8c92f1be435f360220c552dad34dbd9883613d6edb2",
+    "name" : "Fraud GUI",
+    "description" : "Fraud Admin Tool",
+    "web_uri" : "https://localhost/fraud/",
+    "redirect_uris" : ["https://localhost/fraud/auth2callback"],
+    "scopes" : [],
+    "audiences" : [],
+    "update_date" : ISODate("2014-08-21T10:25:33.474Z"),
+    "create_date" : ISODate("2014-08-21T10:25:33.477Z")
+});
+
 db.client.ensureIndex( { email: 1} );
 db.client.ensureIndex( { name: 1} );
+db.client.ensureIndex( { scopes: 1} );

@@ -6,6 +6,7 @@ import auth.db.dao.IPermissionDAO
 import auth.db.dao.IUserDAO
 import auth.exceptions.AuthEvent
 import auth.security.IJWTManager
+import auth.util.RandomValueStringGenerator
 import com.nimbusds.jose.JOSEException
 import common.exceptions.ServiceException
 
@@ -18,6 +19,7 @@ class AuthenticationService implements IAuthenticationService {
     IPermissionDAO permissionDAO
 
     IJWTManager jwtManager
+    RandomValueStringGenerator randomGenerator
 
     @Override
     String login(String login, String password) {
@@ -47,7 +49,14 @@ class AuthenticationService implements IAuthenticationService {
                      final String email,
                      final Set<String> scopes,
                      final String redirectUri) {
-        String authorizationCode = null
-        return authorizationCode
+        User user = userDAO.find email
+        Set<String> permissions =
+                permissionDAO.getGroupsPermissionsUnion(user.groups) + permissionDAO.getAccountPermissions(user.email)
+        if (permissions.containsAll(scopes)) {
+
+        } else {
+            throw new ServiceException(AuthEvent.Unauthorized)
+        }
+        return randomGenerator.generate()
     }
 }

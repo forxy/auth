@@ -19,61 +19,62 @@ class PermissionDAO extends BasePermissionDAO {
     StringRedisTemplate redis
 
     @Override
-    Set<String> getGroupsPermissionsUnion(final Set<String> codes, final String resourceClientID) {
-        return redis.opsForSet().union(null, codes.collect {
-            "resource:$resourceClientID:group:$it:scopes" as String
-        } as Set)
+    Set<String> getGroupsPermissionsUnion(final Set<String> groupCodes) {
+        return redis.opsForSet().union(null, groupCodes.collect { "group:$it:scopes" as String })
     }
 
     @Override
-    Set<String> getGroupPermissions(final String code, final String resourceClientID) {
-        return redis.opsForSet().members("resource:$resourceClientID:group:$code:scopes" as String)
+    Set<String> getGroupPermissions(final String code) {
+        return redis.opsForSet().members("group:$code:scopes" as String)
     }
 
     @Override
-    void grantPermissionsToGroup(final String code, final String resourceClientID, final Set<String> scopes) {
+    void grantPermissionsToGroup(final String code, final Set<String> scopes) {
         if (scopes) {
-            redis.opsForSet().add("resource:$resourceClientID:group:$code:scopes" as String, scopes.toArray() as String[])
+            redis.opsForSet().add("group:$code:scopes" as String, scopes.toArray() as String[])
         }
     }
 
     @Override
-    void revokeGroupPermissions(final String code, final String resourceClientID, final Set<String> scopes) {
+    void revokeGroupPermissions(final String code, final Set<String> scopes) {
         if (scopes) {
-            redis.opsForSet().remove("resource:$resourceClientID:group:$code:scopes" as String, scopes.toArray() as String[])
+            redis.opsForSet().remove("group:$code:scopes" as String, scopes.toArray() as String[])
         }
     }
 
     @Override
-    Set<String> getAccountPermissions(final String email, final String resourceClientID) {
-        return redis.opsForSet().members("resource:$resourceClientID:account:$email:scopes" as String)
+    Set<String> getAccountPermissions(final String email) {
+        return redis.opsForSet().members("account:$email:scopes" as String)
     }
 
     @Override
-    void grantPermissionsToAccount(final String email, final String resourceClientID, final Set<String> scopes) {
+    void grantPermissionsToAccount(final String email, final Set<String> scopes) {
         if (scopes) {
-            redis.opsForSet().add("resource:$resourceClientID:account:$email:scopes" as String, scopes.toArray() as String[])
+            redis.opsForSet().add("account:$email:scopes" as String, scopes.toArray() as String[])
         }
     }
 
     @Override
-    void revokeAccountPermissions(final String email, final String resourceClientID, final Set<String> scopes) {
+    void revokeAccountPermissions(final String email, final Set<String> scopes) {
         if (scopes) {
-            redis.opsForSet().remove("resource:$resourceClientID:account:$email:scopes" as String, scopes.toArray() as String[])
+            redis.opsForSet().remove("account:$email:scopes" as String, scopes.toArray() as String[])
         }
     }
 
     @Override
-    void revokeResourcePermissions(String resourceClientID, Set<String> scopes) {
+    void revokePermissions(Set<String> scopes) {
         if (scopes) {
-            redis.keys("resource:$resourceClientID:*:*:scopes" as String)?.each {
+            redis.keys("group:*:scopes" as String)?.each {
+                redis.opsForSet().remove(it, scopes.toArray() as String[])
+            }
+            redis.keys("account:*:scopes" as String)?.each {
                 redis.opsForSet().remove(it, scopes.toArray() as String[])
             }
         }
     }
 
     /**
-     * At this particular complex case we need to remove all the permissions and approvals that this group has.
+     * At this particular complex case we need to remove all the permissions and approvals connected with removed group.
      * But at the same time we need not to remove the permissions assigned to this group user that he has being included
      * into other group that has pretty the same permissions i.e.:
      *
@@ -87,84 +88,70 @@ class PermissionDAO extends BasePermissionDAO {
      */
     @Override
     void deleteGroupPermissions(final Group groupToRemove) {
-        Set<String> groupPermissionKeys = redis.keys("resource:*:group:$groupToRemove.code:scopes" as String)
 
         if (groupToRemove?.members) {
 
             // retrieve all the permissions granted to removable group
-            Map<String, Set<String>> clientScopesForGroup = [:]
-            groupPermissionKeys?.each {
-                clientScopesForGroup[(it.split(':')[1])] = redis.opsForSet().members(it)
-            }
+            Set<String> groupPermissions = getGroupPermissions groupToRemove.code
             userDAO?.find(groupToRemove.members)?.each { User owner ->
 
-                // retrieve all the granted to user permissions not related to removable group
-                Map<String, Set<String>> clientScopesForUser = [:]
+                // retrieve all the granted to user permissions not related to removed group
+                Set<String> userPermissions = []
                 (owner.groups - groupToRemove.code)?.each { String nonRemovableGroup ->
-                    redis.keys("resource:*:group:$nonRemovableGroup:scopes" as String)?.each {
-                        String resourceClientID = it.split(':')[1]
-                        Set<String> scopes = redis.opsForSet().members(it) ?: []
-                        clientScopesForUser[(resourceClientID)] = clientScopesForUser[(resourceClientID)] ?
-                                scopes : clientScopesForUser[(resourceClientID)] + scopes
-                    }
+                    userPermissions += getGroupPermissions nonRemovableGroup
                 }
 
                 // revoke all the permissions that were approved for user excluding non removable ones
-                clientScopesForGroup?.each { resourceClientID, scopes ->
-                    Set<String> approvalsToRevoke = scopes - clientScopesForUser[resourceClientID]
-                    redis.keys("resource:$resourceClientID:owner:$owner.email:client:*:approvals" as String)?.each {
-                        redis.opsForSet().remove(it, approvalsToRevoke?.toArray() as String[])
-                    }
+                Set<String> approvalsToRevoke = groupPermissions - userPermissions
+                redis.keys("account:$owner.email:client:*:approvals" as String)?.each {
+                    redis.opsForSet().remove(it, approvalsToRevoke?.toArray() as String[])
                 }
             }
         }
-        redis.delete(groupPermissionKeys)
+        redis.delete("group:$groupToRemove.code:scopes" as String)
     }
 
     @Override
     void deleteAccountPermissions(final String email) {
-        redis.delete(redis.keys("resource:*:account:$email:scopes" as String))
+        redis.delete("account:$email:scopes" as String)
     }
 
     @Override
-    void deleteClientPermissions(final String resourceClientID) {
-        redis.delete(redis.keys("resource:$resourceClientID:*:*:scopes" as String))
+    Set<String> getAccountApprovals(final String ownerEmail, final String clientID) {
+        return redis.opsForSet().members("account:$ownerEmail:client:$clientID:approvals" as String)
     }
 
     @Override
-    Set<String> getAccountApprovals(final String ownerEmail, final String clientID, final String resourceClientID) {
-        return redis.opsForSet().members("resource:$resourceClientID:owner:$ownerEmail:client:$clientID:approvals" as String)
-    }
-
-    @Override
-    void approveAccountPermissions(
-            final String ownerEmail, final String clientID, final String resourceClientID, final Set<String> scopes) {
+    void approveAccountPermissions(final String ownerEmail, final String clientID, final Set<String> scopes) {
         if (scopes) {
-            redis.opsForSet().add("resource:$resourceClientID:owner:$ownerEmail:client:$clientID:approvals" as String, scopes.toArray() as String[])
+            redis.opsForSet().add("account:$ownerEmail:client:$clientID:approvals" as String, scopes.toArray() as String[])
         }
     }
 
     @Override
-    void revokeAccountApprovals(
-            final String ownerEmail, final String clientID, final String resourceClientID, final Set<String> scopes) {
+    void revokeAccountApprovals(final String ownerEmail, final String clientID, final Set<String> scopes) {
         if (scopes) {
-            redis.opsForSet().remove("resource:$resourceClientID:owner:$ownerEmail:client:$clientID:approvals" as String, scopes.toArray() as String[])
+            redis.opsForSet().remove("account:$ownerEmail:client:$clientID:approvals" as String, scopes.toArray() as String[])
         }
     }
 
     @Override
-    void deleteOwnerApprovals(final String email) {
-        redis.delete(redis.keys("resource:*:owner:$email:client:*:approvals" as String))
+    void revokeApprovals(Set<String> scopes) {
+        if (scopes) {
+            redis.keys("account:*:client:*:approvals" as String)?.each {
+                redis.opsForSet().remove(it, scopes.toArray() as String[])
+            }
+        }
+    }
+
+    @Override
+    void deleteOwnerApprovals(final String ownerEmail) {
+        redis.delete(redis.keys("account:$ownerEmail:client:*:approvals" as String))
     }
 
     @Override
     void deleteClientApprovals(final String clientID) {
-        redis.delete(redis.keys("resource:*:owner:*:client:$clientID:approvals" as String))
-    }
-
-    @Override
-    void deleteResourceApprovals(final String resourceClientID) {
-        redis.delete(redis.keys("resource:$resourceClientID:owner:*:client:*:approvals" as String))
+        redis.delete(redis.keys("account:*:client:$clientID:approvals" as String))
     }
 
     @Override

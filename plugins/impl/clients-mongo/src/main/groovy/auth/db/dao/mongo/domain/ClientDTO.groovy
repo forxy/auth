@@ -27,13 +27,14 @@ class ClientDTO {
     String createdBy
 
     Set<String> redirectUris = []
-    Set<String> scopes = []
+    @Indexed(unique = true, sparse = true, dropDups = false)
+    Set<String> scopes = null
     Set<String> audiences = []
 
     public static ClientDTO toDomain(Client client) {
         ClientDTO domain = new ClientDTO()
         InvokerHelper.setProperties(domain, client?.properties)
-        domain.scopes = domain.scopes ?: []
+        domain.scopes = domain.scopes ?: null
         return domain
     }
 

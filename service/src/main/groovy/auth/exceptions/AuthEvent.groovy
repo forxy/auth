@@ -45,7 +45,10 @@ enum AuthEvent implements EventLogBase {
             'Client with ID \'%1$s\' already exists.'),
 
     OperationNotAllowed(12, 405, EventLogBase.EventType.InvalidInput,
-            'Operation is not allowed.')
+            'Operation is not allowed.'),
+
+    Unauthorized(13, 403, EventLogBase.EventType.InvalidInput,
+            'Not enough permissions.')
 
     static int BASE_EVENT_LOG_ID = 10000
 
