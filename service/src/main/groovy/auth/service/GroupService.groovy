@@ -2,11 +2,11 @@ package auth.service
 
 import auth.api.v1.Group
 import auth.db.dao.IGroupDAO
+import auth.db.exceptions.AuthDBEvent
 import auth.exceptions.AuthEvent
-import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
-import org.joda.time.DateTime
+import common.exceptions.ServiceException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -20,9 +20,7 @@ class GroupService implements IGroupService {
 
     IGroupDAO groupDAO
 
-    List<Group> getAllGroups() {
-        groupDAO.findAll().collect { it }
-    }
+    List<Group> getAllGroups() { groupDAO.findAll() }
 
     @Override
     EntityPage<Group> getGroups(final Integer page, final Integer size, final SortDirection sortDirection,
@@ -36,7 +34,7 @@ class GroupService implements IGroupService {
             } else {
                 pageRequest = new PageRequest(page - 1, pageSize)
             }
-            final Page<Group> p = groupDAO.find(pageRequest, filter)
+            final Page<Group> p = groupDAO.find pageRequest, filter
             return new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
             throw new ServiceException(AuthEvent.InvalidPageNumber, page)
@@ -44,46 +42,23 @@ class GroupService implements IGroupService {
     }
 
     @Override
-    List<Group> getGroups(Set<String> groupCodes) {
-        return groupDAO.find(groupCodes)
-    }
+    List<Group> getGroups(Set<String> groupCodes) { groupDAO.find groupCodes }
 
     @Override
     Group getGroup(final String groupCode) {
         Group group = groupDAO.find(groupCode)
         if (group == null) {
-            throw new ServiceException(AuthEvent.GroupNotFound, groupCode)
+            throw new ServiceException(AuthDBEvent.GroupNotFound, groupCode)
         }
         return group
     }
 
     @Override
-    void updateGroup(final Group group) {
-        if (groupDAO.exists(group.getCode())) {
-            group.updateDate = DateTime.now()
-            groupDAO.save(group)
-        } else {
-            throw new ServiceException(AuthEvent.GroupNotFound, group.getCode())
-        }
-    }
+    void updateGroup(final Group group) { groupDAO.save group }
 
     @Override
-    void createGroup(final Group group) {
-        if (!groupDAO.exists(group.getCode())) {
-            group.createDate = DateTime.now()
-            group.updateDate = DateTime.now()
-            groupDAO.save(group)
-        } else {
-            throw new ServiceException(AuthEvent.GroupAlreadyExists, group.getCode())
-        }
-    }
+    void createGroup(final Group group) { groupDAO.create group }
 
     @Override
-    void deleteGroup(final String groupCode) {
-        if (groupDAO.exists(groupCode)) {
-            groupDAO.delete(groupCode)
-        } else {
-            throw new ServiceException(AuthEvent.GroupNotFound, groupCode)
-        }
-    }
+    void deleteGroup(final String groupCode) { groupDAO.delete groupCode }
 }

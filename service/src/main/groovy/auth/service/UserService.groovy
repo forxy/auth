@@ -2,11 +2,11 @@ package auth.service
 
 import auth.api.v1.User
 import auth.db.dao.IUserDAO
+import auth.db.exceptions.AuthDBEvent
 import auth.exceptions.AuthEvent
-import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
-import org.joda.time.DateTime
+import common.exceptions.ServiceException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -20,9 +20,7 @@ class UserService implements IUserService {
 
     IUserDAO userDAO
 
-    List<User> getAllUsers() {
-        return userDAO.findAll().collect { it }
-    }
+    List<User> getAllUsers() { userDAO.findAll() }
 
     @Override
     EntityPage<User> getUsers(final Integer pageNumber, final Integer size, final SortDirection sortDirection,
@@ -36,7 +34,7 @@ class UserService implements IUserService {
             } else {
                 pageRequest = new PageRequest(pageNumber - 1, pageSize)
             }
-            final Page<User> page = userDAO.find(pageRequest, filter)
+            final Page<User> page = userDAO.find pageRequest, filter
             return new EntityPage<>(page.content, page.size, page.number, page.totalElements)
         } else {
             throw new ServiceException(AuthEvent.InvalidPageNumber, pageNumber)
@@ -45,40 +43,19 @@ class UserService implements IUserService {
 
     @Override
     User getUser(final String email) {
-        User user = userDAO.find(email)
+        User user = userDAO.find email
         if (user == null) {
-            throw new ServiceException(AuthEvent.UserNotFound, email)
+            throw new ServiceException(AuthDBEvent.UserNotFound, email)
         }
         return user
     }
 
     @Override
-    void updateUser(final User user) {
-        if (userDAO.exists(user.email)) {
-            user.updateDate = DateTime.now()
-            userDAO.save(user)
-        } else {
-            throw new ServiceException(AuthEvent.UserNotFound, user.email)
-        }
-    }
+    void updateUser(final User user) { userDAO.save user }
 
     @Override
-    User createUser(final User user) {
-        if (!userDAO.exists(user.email)) {
-            user.createDate = DateTime.now()
-            user.updateDate = DateTime.now()
-            return userDAO.save(user)
-        } else {
-            throw new ServiceException(AuthEvent.UserAlreadyExists, user.email)
-        }
-    }
+    User createUser(final User user) { userDAO.create user }
 
     @Override
-    void deleteUser(final String email) {
-        if (userDAO.exists(email)) {
-            userDAO.delete(email)
-        } else {
-            throw new ServiceException(AuthEvent.UserNotFound, email)
-        }
-    }
+    void deleteUser(final String email) { userDAO.delete email }
 }

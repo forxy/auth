@@ -56,7 +56,7 @@ class AuthFilter implements ContainerRequestFilter {
             if (principal != null) {
                 String accountName = principal.name
 
-                final User account = userService.getUser(accountName)
+                final User account = userService.getUser accountName
                 if (account == null) {
                     throw new ServiceException(HttpEvent.Unauthorized)
                 } else {

@@ -2,12 +2,15 @@ package auth.controller.v1
 
 import auth.api.v1.AuthorizationType
 import auth.api.v1.DiscoveryInfo
+import auth.api.v1.User
 import auth.security.IJWTManager
 import auth.service.IAuthenticationService
 import com.nimbusds.jose.JWSObject
+import common.api.StatusEntity
 import common.rest.AbstractService
 import net.minidev.json.JSONObject
 
+import javax.annotation.security.RolesAllowed
 import javax.ws.rs.*
 import javax.ws.rs.core.*
 
@@ -58,6 +61,17 @@ class AuthController extends AbstractService {
                 uriInfo,
                 headers
         ).build()
+    }
+
+    @PUT
+    @RolesAllowed('profile')
+    @Path('/profile/')
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateProfile(final User profile,
+                        @Context final UriInfo uriInfo,
+                        @Context final HttpHeaders headers) {
+        authenticationService.updateProfile profile
+        return Response.ok(new StatusEntity("$uriInfo.absolutePath/$profile.email")).build()
     }
 
     @POST

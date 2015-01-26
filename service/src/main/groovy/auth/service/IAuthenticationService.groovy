@@ -12,6 +12,8 @@ interface IAuthenticationService {
 
     User getProfile(final String email)
 
+    void updateProfile(final User profile)
+
     String authorize(final String clientID,
                      final Set<AuthorizationType> responseType,
                      final String email,

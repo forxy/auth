@@ -3,11 +3,11 @@ package auth.test.logic
 import auth.api.v1.User
 import auth.controller.v1.UserController
 import auth.db.dao.IUserDAO
-import auth.exceptions.AuthEvent
+import auth.db.exceptions.AuthDBEvent
 import auth.test.BaseUserServiceTest
-import common.exceptions.ServiceException
 import common.api.EntityPage
 import common.api.SortDirection
+import common.exceptions.ServiceException
 import org.apache.commons.collections.CollectionUtils
 import org.apache.cxf.jaxrs.impl.HttpHeadersImpl
 import org.apache.cxf.jaxrs.impl.UriInfoImpl
@@ -82,7 +82,7 @@ class UserServiceImplTest extends BaseUserServiceTest {
                 userService.getUser(testUser.getEmail(), uriInfo, headers)
                 Assert.fail()
             } catch (ServiceException e) {
-                Assert.assertEquals(AuthEvent.UserNotFound, e.getEventLogID())
+                Assert.assertEquals(AuthDBEvent.UserNotFound, e.getEventLogID())
                 LOGGER.info('User {} has been successfully deleted.', TEST_USER_EMAIL)
             }
         } finally {

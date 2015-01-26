@@ -4,6 +4,7 @@ import auth.api.v1.AuthorizationType
 import auth.api.v1.User
 import auth.db.dao.IPermissionDAO
 import auth.db.dao.IUserDAO
+import auth.db.exceptions.AuthDBEvent
 import auth.exceptions.AuthEvent
 import auth.security.IJWTManager
 import auth.util.RandomValueStringGenerator
@@ -37,11 +38,14 @@ class AuthenticationService implements IAuthenticationService {
     @Override
     User getProfile(final String email) {
         User user = userDAO.getProfile(email)
-        if (user == null) {
-            throw new ServiceException(AuthEvent.UserNotFound, email)
+        if (!user) {
+            throw new ServiceException(AuthDBEvent.UserNotFound, email)
         }
         return user
     }
+
+    @Override
+    void updateProfile(User profile) { userDAO.updateProfile profile }
 
     @Override
     String authorize(final String clientID,
@@ -53,10 +57,9 @@ class AuthenticationService implements IAuthenticationService {
         Set<String> permissions =
                 permissionDAO.getGroupsPermissionsUnion(user.groups) + permissionDAO.getAccountPermissions(user.email)
         if (permissions.containsAll(scopes)) {
-
+            return randomGenerator.generate()
         } else {
-            throw new ServiceException(AuthEvent.Unauthorized)
+            throw new ServiceException(AuthEvent.NotEnoughPermissions)
         }
-        return randomGenerator.generate()
     }
 }
