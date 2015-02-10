@@ -3,7 +3,7 @@ package auth.db.dao
 import com.google.common.eventbus.EventBus
 
 /**
- * Performs common User DB actions
+ * Performs common User DB processing
  */
 abstract class BaseClientDAO implements IClientDAO {
 

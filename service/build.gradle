@@ -29,6 +29,7 @@ dependencies {
     compile project(":auth.plugins.users-mongo")
     compile project(":auth.plugins.clients-mongo")
     compile project(":auth.plugins.permissions-redis")
+    compile project(":auth.plugins.tokens-redis")
     compile "fraud:common.rest:$rev_fraud_common"
     compile "fraud:common.utils:$rev_fraud_common"
     compile "fraud:common.status:$rev_fraud_common"

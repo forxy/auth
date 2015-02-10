@@ -34,4 +34,9 @@
           factory-method="createNiceMock"
           c:toMock="auth.db.dao.IPermissionDAO"/>
 
+    <bean id="tokenDAO.impl.redis"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="auth.db.dao.ITokenDAO"/>
+
 </beans>

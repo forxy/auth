@@ -10,7 +10,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
 import org.springframework.data.redis.core.StringRedisTemplate
 
 /**
- * Created by Tiger on 20.01.15.
+ * Data access object based on Redis DB for permissions management.
  */
 class PermissionDAO extends BasePermissionDAO {
 

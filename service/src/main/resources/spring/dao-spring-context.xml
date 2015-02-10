@@ -33,6 +33,10 @@
           p:userDAO-ref="userDAO.mongo.perf"
           p:eventBus-ref="eventBus"/>
 
+    <bean id="tokenDAO.impl.redis" parent="tokenDAO.impl.redis.base"
+          autowire-candidate="false"
+          p:eventBus-ref="eventBus"/>
+
 
     <!-- =========================================================================================
                                        LDAP Data Source

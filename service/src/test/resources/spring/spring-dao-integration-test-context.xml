@@ -47,4 +47,7 @@
           p:userDAO-ref="userDAO.impl.mongo"
           p:eventBus-ref="eventBus"/>
 
+    <bean id="tokenDAO.impl.redis" parent="tokenDAO.impl.redis.base"
+          p:eventBus-ref="eventBus"/>
+
 </beans>

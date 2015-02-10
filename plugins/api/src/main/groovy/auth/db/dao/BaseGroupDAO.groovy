@@ -8,7 +8,7 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 
 /**
- * Performs common User DB actions
+ * Performs common User DB processing
  */
 abstract class BaseGroupDAO implements IGroupDAO {
 

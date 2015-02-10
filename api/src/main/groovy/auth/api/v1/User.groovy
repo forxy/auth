@@ -21,6 +21,4 @@ class User extends Account {
     String updatedBy
     DateTime createDate
     String createdBy
-
-    Set<String> groups = []
 }

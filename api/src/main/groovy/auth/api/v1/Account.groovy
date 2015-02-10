@@ -9,4 +9,6 @@ import groovy.transform.Canonical
 class Account {
     String email
     String password
+
+    Set<String> groups = []
 }

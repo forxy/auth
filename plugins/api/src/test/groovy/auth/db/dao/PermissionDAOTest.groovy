@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 /**
- * Client Data Source tests
+ * Permission Data Source tests
  */
 abstract class PermissionDAOTest extends AbstractJUnit4SpringContextTests {
 

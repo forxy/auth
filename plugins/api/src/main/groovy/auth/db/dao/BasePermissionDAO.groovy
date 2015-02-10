@@ -9,7 +9,7 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 
 /**
- * Performs common Permission related DB actions
+ * Performs common Permission related DB processing
  */
 abstract class BasePermissionDAO implements IPermissionDAO {
 

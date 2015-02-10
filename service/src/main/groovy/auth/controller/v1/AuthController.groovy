@@ -1,14 +1,11 @@
 package auth.controller.v1
 
-import auth.api.v1.AuthorizationType
+import auth.api.v1.Account
 import auth.api.v1.DiscoveryInfo
 import auth.api.v1.User
-import auth.security.IJWTManager
 import auth.service.IAuthenticationService
-import com.nimbusds.jose.JWSObject
 import common.api.StatusEntity
 import common.rest.AbstractService
-import net.minidev.json.JSONObject
 
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.*
@@ -23,8 +20,6 @@ class AuthController extends AbstractService {
     IAuthenticationService authenticationService
 
     DiscoveryInfo discoveryInfo
-
-    IJWTManager jwtManager
 
     @POST
     @Path('/login')
@@ -68,8 +63,8 @@ class AuthController extends AbstractService {
     @Path('/profile/')
     @Consumes(MediaType.APPLICATION_JSON)
     Response updateProfile(final User profile,
-                        @Context final UriInfo uriInfo,
-                        @Context final HttpHeaders headers) {
+                           @Context final UriInfo uriInfo,
+                           @Context final HttpHeaders headers) {
         authenticationService.updateProfile profile
         return Response.ok(new StatusEntity("$uriInfo.absolutePath/$profile.email")).build()
     }
@@ -77,25 +72,56 @@ class AuthController extends AbstractService {
     @POST
     @Path('/auth')
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    Response authorize(@FormParam('client_id') String clientID,
+    Response authorize(@FormParam('scope') String requestedScopes,
                        @FormParam('response_type') String responseTypesSet,
-                       @FormParam('scope') String requestedScopes,
+                       @FormParam('client_id') String clientID,
                        @FormParam('redirect_uri') String redirectUri,
                        @FormParam('state') String state,
+                       @FormParam('nonce') String nonce,
+                       @FormParam('include_granted_scopes') Boolean includeGrantedScopes,
                        @Context final UriInfo uriInfo,
                        @Context final HttpHeaders headers) {
-        String[] authorization = headers.getHeaderString(HttpHeaders.AUTHORIZATION)?.split(' ')
-        if (authorization && authorization[0] == 'Bearer') {
-            JWSObject jwt = jwtManager.fromJWT(authorization[1])
-            JSONObject jwtBody = jwt.payload.toJSONObject()
-            String authorizationCode = authenticationService.authorize(
+        Account account = authenticationService.authenticate(headers.getHeaderString(HttpHeaders.AUTHORIZATION))
+        if (account) {
+
+            Set<String> respTypes = responseTypesSet?.split(' ') as Set ?: []
+
+            authenticationService.authorize(
                     clientID,
-                    responseTypesSet.split(' ').collect { AuthorizationType.valueOf(it) } as Set,
-                    jwtBody.get('sub') as String,
-                    responseTypesSet.split(' ') as Set,
+                    respTypes,
+                    account,
+                    requestedScopes.split(' ') as Set,
                     redirectUri
             )
-            redirectUri += "?state=$state&code=$authorizationCode"
+
+            redirectUri += "?state=$state"
+            if (respTypes.contains('code')) redirectUri += "&code=${authenticationService.generateAccessCode()}"
+            if (respTypes.contains('token')) redirectUri += "&token=${authenticationService.generateAccessToken()}"
+            if (respTypes.contains('id_token')) redirectUri += "&id_token=${authenticationService.getIDToken(account)}"
+            if (nonce) redirectUri += "&nonce=$nonce"
+            return Response.temporaryRedirect(URI.create(redirectUri)).build()
+        }
+
+        return respondWith(Response.Status.UNAUTHORIZED, uriInfo, headers).build()
+    }
+
+    @POST
+    @Path('/token')
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    Response getToken(@FormParam('grant_type') String grantType,
+                      @FormParam('code') String accessCode,
+                      @FormParam('redirect_uri') String redirectUri,
+                      @FormParam('client_id') String clientID,
+                      @FormParam('secret') String clientSecret,
+                      @FormParam('state') String state,
+                      @Context final UriInfo uriInfo,
+                      @Context final HttpHeaders headers) {
+        String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION)
+        Account account = authorizationHeader ?
+                authenticationService.authenticate(authorizationHeader) :
+                authenticationService.authenticate(clientID, clientSecret)
+        if (account && 'authorization_code' == grantType) {
+
             return Response.temporaryRedirect(URI.create(redirectUri)).build()
         }
         return respondWith(Response.Status.UNAUTHORIZED, uriInfo, headers).build()

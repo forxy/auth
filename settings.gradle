@@ -8,6 +8,7 @@ def projects = [
         ':plugins.users-mongo' : [name: "auth.plugins.users-mongo", path: 'plugins/impl/users-mongo'],
         ':plugins.clients-mongo' : [name: "auth.plugins.clients-mongo", path: 'plugins/impl/clients-mongo'],
         ':plugins.permissions-redis' : [name: "auth.plugins.permissions-redis", path: 'plugins/impl/permissions-redis'],
+        ':plugins.tokens-redis' : [name: "auth.plugins.tokens-redis", path: 'plugins/impl/tokens-redis'],
         ':service': [name: "auth.service", path: 'service']
 ]
 
