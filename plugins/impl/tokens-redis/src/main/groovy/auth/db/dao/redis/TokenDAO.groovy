@@ -83,7 +83,7 @@ class TokenDAO extends BaseTokenDAO {
             statusType = StatusType.RED
         }
         return new ComponentStatus(
-                name: 'Permission DAO',
+                name: 'Token DAO',
                 location: location,
                 status: statusType,
                 componentType: ComponentStatus.ComponentType.DB,

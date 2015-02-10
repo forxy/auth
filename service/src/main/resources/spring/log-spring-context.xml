@@ -103,9 +103,9 @@
           class="common.logging.exceptions.DatabaseExceptionHandler"
           p:databaseHost="${auth.redis.permissions.host}:${auth.redis.permissions.port}"/>
 
-    <!--<bean id="databaseExceptionHandler.token.redis"
+    <bean id="databaseExceptionHandler.token.redis"
           class="common.logging.exceptions.DatabaseExceptionHandler"
-          p:databaseHost="${auth.mongo.tokens.host}:${auth.mongo.tokens.port}"/>-->
+          p:databaseHost="${auth.redis.tokens.host}:${auth.redis.tokens.port}"/>
 
     <bean id="auth.performance.logger.dao"
           class="common.logging.writer.LogWriter" c:name="auth.performance.dao"/>
@@ -127,6 +127,9 @@
 
     <bean id="performance.dao.loggingInterceptor.permission.redis" parent="performance.dao.loggingInterceptor"
           p:exceptionHandler-ref="databaseExceptionHandler.permission.redis"/>
+
+    <bean id="performance.dao.loggingInterceptor.token.redis" parent="performance.dao.loggingInterceptor"
+          p:exceptionHandler-ref="databaseExceptionHandler.token.redis"/>
 
 
     <!--<bean id="userDAO.ldap.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
@@ -184,13 +187,24 @@
         </property>
     </bean>
 
-    <bean id="permissionDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+    <bean id="permissionDAO.redis.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
           autowire-candidate="false"
           p:proxyInterfaces="auth.db.dao.IPermissionDAO"
           p:target-ref="permissionDAO.impl.redis">
         <property name="interceptorNames">
             <list>
                 <idref bean="performance.dao.loggingInterceptor.permission.redis"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tokenDAO.redis.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="auth.db.dao.ITokenDAO"
+          p:target-ref="tokenDAO.impl.redis">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor.token.redis"/>
             </list>
         </property>
     </bean>

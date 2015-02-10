@@ -5,12 +5,9 @@ import org.joda.time.DateTime
 
 @Canonical
 class Token {
-    String tokenKey
-    String clientID
-    String type
+    String accessToken
+    String idToken
     String refreshToken
-    String subject
     Long expiresIn
-    DateTime issuedAt
-    Set<String> scopes
+    String tokenType
 }

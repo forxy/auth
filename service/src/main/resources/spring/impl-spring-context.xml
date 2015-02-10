@@ -19,7 +19,8 @@
                 <ref bean="userDAO.mongo.perf"/>
                 <ref bean="groupDAO.mongo.perf"/>
                 <ref bean="clientDAO.mongo.perf"/>
-                <ref bean="permissionDAO.mongo.perf"/>
+                <ref bean="permissionDAO.redis.perf"/>
+                <ref bean="tokenDAO.redis.perf"/>
             </list>
         </property>
     </bean>
@@ -36,7 +37,9 @@
 
     <bean id="authenticationService.impl" class="auth.service.AuthenticationService"
           p:userDAO-ref="userDAO.mongo.perf"
-          p:permissionDAO-ref="permissionDAO.mongo.perf"
+          p:clientDAO-ref="clientDAO.mongo.perf"
+          p:permissionDAO-ref="permissionDAO.redis.perf"
+          p:tokenDAO-ref="tokenDAO.redis.perf"
           p:jwtManager-ref="jwtManager.perf"
           p:randomGenerator-ref="randomGenerator"/>
 

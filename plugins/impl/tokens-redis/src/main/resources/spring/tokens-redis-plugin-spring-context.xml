@@ -7,16 +7,16 @@
     <!-- =========================================================================================
                                    Redis Data Source
     ========================================================================================== -->
-    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+    <bean id="jedisConnectionFactory.tokens" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
           p:hostName="${auth.redis.tokens.host}" p:port="${auth.redis.tokens.port}"/>
 
-    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="stringRedisSerializer.tokens" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
 
-    <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"
-          p:connectionFactory-ref="jedisConnectionFactory"/>
+    <bean id="redisTemplate.tokens" class="org.springframework.data.redis.core.StringRedisTemplate"
+          p:connectionFactory-ref="jedisConnectionFactory.tokens"/>
 
     <bean id="tokenDAO.impl.redis.base" class="auth.db.dao.redis.TokenDAO" abstract="true"
           autowire-candidate="false"
-          p:redis-ref="redisTemplate"/>
+          p:redis-ref="redisTemplate.tokens"/>
 
 </beans>

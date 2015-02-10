@@ -5,6 +5,7 @@ import auth.api.v1.Client
 import auth.api.v1.User
 import auth.db.dao.IClientDAO
 import auth.db.dao.IPermissionDAO
+import auth.db.dao.ITokenDAO
 import auth.db.dao.IUserDAO
 import auth.db.exceptions.AuthDBEvent
 import auth.exceptions.AuthEvent
@@ -24,6 +25,7 @@ class AuthenticationService implements IAuthenticationService {
     IUserDAO userDAO
     IClientDAO clientDAO
     IPermissionDAO permissionDAO
+    ITokenDAO tokenDAO
 
     IJWTManager jwtManager
     RandomValueStringGenerator randomGenerator
@@ -107,7 +109,7 @@ class AuthenticationService implements IAuthenticationService {
 
     @Override
     String generateAccessToken() {
-        return null
+        return randomGenerator.generate()
     }
 
     @Override

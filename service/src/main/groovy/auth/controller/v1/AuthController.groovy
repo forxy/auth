@@ -2,6 +2,7 @@ package auth.controller.v1
 
 import auth.api.v1.Account
 import auth.api.v1.DiscoveryInfo
+import auth.api.v1.Token
 import auth.api.v1.User
 import auth.service.IAuthenticationService
 import common.api.StatusEntity
@@ -83,16 +84,10 @@ class AuthController extends AbstractService {
                        @Context final HttpHeaders headers) {
         Account account = authenticationService.authenticate(headers.getHeaderString(HttpHeaders.AUTHORIZATION))
         if (account) {
-
             Set<String> respTypes = responseTypesSet?.split(' ') as Set ?: []
+            Set<String> scopes = requestedScopes?.split(' ') as Set ?: []
 
-            authenticationService.authorize(
-                    clientID,
-                    respTypes,
-                    account,
-                    requestedScopes.split(' ') as Set,
-                    redirectUri
-            )
+            authenticationService.authorize(clientID, respTypes, account, scopes, redirectUri)
 
             redirectUri += "?state=$state"
             if (respTypes.contains('code')) redirectUri += "&code=${authenticationService.generateAccessCode()}"
@@ -108,12 +103,11 @@ class AuthController extends AbstractService {
     @POST
     @Path('/token')
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    Response getToken(@FormParam('grant_type') String grantType,
-                      @FormParam('code') String accessCode,
-                      @FormParam('redirect_uri') String redirectUri,
+    Response getToken(@FormParam('code') String accessCode,
                       @FormParam('client_id') String clientID,
                       @FormParam('secret') String clientSecret,
-                      @FormParam('state') String state,
+                      @FormParam('redirect_uri') String redirectUri,
+                      @FormParam('grant_type') String grantType,
                       @Context final UriInfo uriInfo,
                       @Context final HttpHeaders headers) {
         String authorizationHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION)
@@ -121,8 +115,13 @@ class AuthController extends AbstractService {
                 authenticationService.authenticate(authorizationHeader) :
                 authenticationService.authenticate(clientID, clientSecret)
         if (account && 'authorization_code' == grantType) {
-
-            return Response.temporaryRedirect(URI.create(redirectUri)).build()
+            return respondWith(new Token(
+                    accessToken: authenticationService.generateAccessToken(),
+                    idToken: authenticationService.getIDToken(account),
+                    refreshToken: authenticationService.generateAccessToken(),
+                    expiresIn: 1800000,
+                    tokenType: 'Bearer'
+            ), uriInfo, headers).build()
         }
         return respondWith(Response.Status.UNAUTHORIZED, uriInfo, headers).build()
     }

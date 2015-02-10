@@ -2,17 +2,6 @@
 <oval xmlns="http://oval.sf.net/oval-configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://oval.sf.net/oval-configuration http://oval.sourceforge.net/oval-configuration.xsd">
     <!-- ================================================================= -->
-    <!--                            Token                                  -->
-    <!-- ================================================================= -->
-    <class type="auth.api.v1.Token">
-        <field name="tokenKey">
-            <notNull message="tokenKey cannot be null"/>
-        </field>
-        <field name="clientID">
-            <notNull message="tokenKey cannot be null"/>
-        </field>
-    </class>
-    <!-- ================================================================= -->
     <!--                            Client                                 -->
     <!-- ================================================================= -->
     <class type="auth.api.v1.Client">
