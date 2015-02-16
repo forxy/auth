@@ -34,6 +34,6 @@ dependencies {
     }
 
     // ===================== TEST ========================================
-    testCompile "fraud:common.spring-support:$rev_fraud_common"
-    testCompile "junit:junit:$rev_junit"
+    testCompile "org.spockframework:spock-core:$rev_spok"
+    testCompile "org.spockframework:spock-spring:$rev_spok"
 }

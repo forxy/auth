@@ -19,6 +19,7 @@ dependencies {
 
     // ===================== TEST ========================================
     testCompile project(path: ':auth.plugins.api', configuration: 'tests')
-    testCompile "fraud:common.spring-support:$rev_fraud_common"
-    testCompile "junit:junit:$rev_junit"
+    testCompile "org.spockframework:spock-core:$rev_spok"
+    testRuntime "org.spockframework:spock-spring:$rev_spok"
+    testCompile "org.springframework:spring-test:$rev_spring"
 }

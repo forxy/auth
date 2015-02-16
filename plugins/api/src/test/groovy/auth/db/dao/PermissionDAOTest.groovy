@@ -4,97 +4,133 @@ import auth.api.v1.Group
 import common.status.api.ComponentStatus
 import common.status.api.StatusType
 import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
+import spock.lang.Specification
+
+import javax.annotation.Resource
 
 /**
  * Permission Data Source tests
  */
-abstract class PermissionDAOTest extends AbstractJUnit4SpringContextTests {
+abstract class PermissionDAOTest extends Specification {
 
     static final String TEST_EMAIL = 'test@email.com'
     static final String TEST_GROUP_CODE = 'test'
     static final String TEST_CLIENT_ID = UUID.randomUUID() as String
 
-    @Autowired
+    @Resource
     IPermissionDAO permissionDAO
 
-    @Test
-    void testGrantPermissionsToAccount() {
+    def "permissions should be granted to Account and then revoked"() {
+        when:
         permissionDAO.grantPermissionsToAccount TEST_EMAIL, ['test1'] as Set
-        assert permissionDAO.getAccountPermissions(TEST_EMAIL) == ['test1'] as Set, 'Permissions not granted'
+        then:
+        permissionDAO.getAccountPermissions(TEST_EMAIL) == ['test1'] as Set
+
+        when:
         permissionDAO.revokePermissions(['test1'] as Set)
-        assert !permissionDAO.getAccountPermissions(TEST_EMAIL), 'Permissions have not been removed'
+        then:
+        !permissionDAO.getAccountPermissions(TEST_EMAIL)
     }
 
-    @Test
-    void testGrantPermissionsToGroup() {
+    def "permissions should be granted to Group and then revoked"() {
+        when:
         permissionDAO.grantPermissionsToGroup(TEST_GROUP_CODE, ['test1'] as Set)
-        assert permissionDAO.getGroupPermissions(TEST_GROUP_CODE) == ['test1'] as Set, 'Permissions not granted'
+        then:
+        permissionDAO.getGroupPermissions(TEST_GROUP_CODE) == ['test1'] as Set
+
+        when:
         permissionDAO.revokePermissions(['test1'] as Set)
-        assert !permissionDAO.getGroupPermissions(TEST_GROUP_CODE), 'Permissions have not been removed'
+        then:
+        !permissionDAO.getGroupPermissions(TEST_GROUP_CODE)
     }
 
-    @Test
-    void testRevokeAccountPermissions() {
+    def "one of account permissions should be revoked"() {
+        when:
         permissionDAO.grantPermissionsToAccount(TEST_EMAIL, ['test1', 'test2'] as Set)
-        assert permissionDAO.getAccountPermissions(TEST_EMAIL) == ['test1', 'test2'] as Set, 'Permissions not granted'
+        then:
+        permissionDAO.getAccountPermissions(TEST_EMAIL) == ['test1', 'test2'] as Set
+
+        when:
         permissionDAO.revokeAccountPermissions(TEST_EMAIL, ['test2'] as Set)
-        assert permissionDAO.getAccountPermissions(TEST_EMAIL) == ['test1'] as Set, 'Permission "test2" should be revoked'
+        then:
+        permissionDAO.getAccountPermissions(TEST_EMAIL) == ['test1'] as Set
+
+        when:
         permissionDAO.deleteAccountPermissions(TEST_EMAIL)
-        assert !permissionDAO.getAccountPermissions(TEST_EMAIL), 'Permissions have not been removed'
+        then:
+        !permissionDAO.getAccountPermissions(TEST_EMAIL)
     }
 
-    @Test
-    void testRevokeGroupPermissions() {
+
+    def "one of group permissions should be revoked"() {
+        when:
         permissionDAO.grantPermissionsToGroup(TEST_GROUP_CODE, ['test1', 'test2'] as Set)
-        assert permissionDAO.getGroupPermissions(TEST_GROUP_CODE) == ['test1', 'test2'] as Set, 'Permissions not granted'
+        then:
+        permissionDAO.getGroupPermissions(TEST_GROUP_CODE) == ['test1', 'test2'] as Set
+
+        when:
         permissionDAO.revokeGroupPermissions(TEST_GROUP_CODE, ['test2'] as Set)
-        assert permissionDAO.getGroupPermissions(TEST_GROUP_CODE) == ['test1'] as Set, 'Permission "test2" should be revoked'
+        then:
+        permissionDAO.getGroupPermissions(TEST_GROUP_CODE) == ['test1'] as Set
+
+        when:
         permissionDAO.deleteGroupPermissions(new Group(code: TEST_GROUP_CODE, members: []))
-        assert !permissionDAO.getGroupPermissions(TEST_GROUP_CODE), 'Permissions have not been removed'
+        then:
+        !permissionDAO.getGroupPermissions(TEST_GROUP_CODE)
     }
 
-    @Test
-    void testGetGroupsPermissionsUnion() {
+    def "permissions DAO should return a union of permissions for a set of groups"() {
+        setup:
         permissionDAO.grantPermissionsToGroup('testGroup1', ['test1', 'test2'] as Set)
         permissionDAO.grantPermissionsToGroup('testGroup2', ['test2', 'test3'] as Set)
         permissionDAO.grantPermissionsToGroup('testGroup3', null)
 
-        assert permissionDAO.getGroupsPermissionsUnion(
-                ['testGroup1', 'testGroup2', 'testGroup3'] as Set
-        ) == ['test1', 'test2', 'test3'] as Set, 'Invalid permissions union'
+        expect:
+        permissionDAO.getGroupsPermissionsUnion(
+                ['testGroup1', 'testGroup2', 'testGroup3'] as Set) ==
+                ['test1', 'test2', 'test3'] as Set
 
+        cleanup:
         permissionDAO.revokePermissions(['test1', 'test2', 'test3'] as Set)
-        assert !permissionDAO.getGroupPermissions('testGroup1'), 'Permissions have not been removed'
-        assert !permissionDAO.getGroupPermissions('testGroup2'), 'Permissions have not been removed'
-        assert !permissionDAO.getGroupPermissions('testGroup3'), 'Permissions have not been removed'
     }
 
-    @Test
-    void testApproveAccountPermissions() {
+    def "permissions should be approved to Account and then deleted"() {
+        when:
         permissionDAO.approveAccountPermissions(TEST_EMAIL, TEST_CLIENT_ID, ['test1'] as Set)
-        assert permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID) == ['test1'] as Set, 'Permissions not approved'
+        then:
+        permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID) == ['test1'] as Set
+
+        when:
         permissionDAO.deleteClientApprovals(TEST_CLIENT_ID)
-        assert !permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID), 'Approvals have not been removed'
+        then:
+        !permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID)
     }
 
-    @Test
-    void testRevokeAccountApprovals() {
+    def "one of account approvals should be removed"() {
+        when:
         permissionDAO.approveAccountPermissions(TEST_EMAIL, TEST_CLIENT_ID, ['test1', 'test2'] as Set)
-        assert permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID) == ['test1', 'test2'] as Set, 'Permissions not approved'
+        then:
+        permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID) == ['test1', 'test2'] as Set
+
+        when:
         permissionDAO.revokeAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID, ['test2'] as Set)
-        assert permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID) == ['test1'] as Set, 'Approval "test2" should be revoked'
+        then:
+        permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID) == ['test1'] as Set
+
+        when:
         permissionDAO.deleteOwnerApprovals(TEST_EMAIL)
-        assert !permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID), 'Approvals have not been removed'
+        then:
+        !permissionDAO.getAccountApprovals(TEST_EMAIL, TEST_CLIENT_ID)
     }
 
-    @Test
-    void testGetSystemStatus() {
+    def "permissions DAO should return GREEN system status"() {
+        given:
         ComponentStatus status = permissionDAO.status
-        assert status, 'DB status not available'
-        assert status.componentType == ComponentStatus.ComponentType.DB
-        assert status.status == StatusType.GREEN
-        assert status.name == 'Permission DAO'
+
+        expect:
+        status
+        status.componentType == ComponentStatus.ComponentType.DB
+        status.status == StatusType.GREEN
+        status.name == 'Permission DAO'
     }
 }

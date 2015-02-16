@@ -34,7 +34,7 @@ class ClientDTO {
     public static ClientDTO toDomain(Client client) {
         ClientDTO domain = new ClientDTO()
         InvokerHelper.setProperties(domain, client?.properties)
-        domain.scopes = domain.scopes ?: null
+        domain.scopes = domain.scopes ?: null // don't allow to insert empty scopes since they should be unique
         return domain
     }
 

@@ -25,7 +25,7 @@ deploy {
 dependencies {
     // --------------------- FORXY ---------------------------------------
     compile project(":auth.api")
-    compile project(":auth.plugins.users-ldap")
+    //compile project(":auth.plugins.users-ldap")
     compile project(":auth.plugins.users-mongo")
     compile project(":auth.plugins.clients-mongo")
     compile project(":auth.plugins.permissions-redis")
@@ -64,7 +64,9 @@ dependencies {
 
     // ===================== TEST ========================================
     testCompile project(path: ':auth.plugins.api', configuration: 'tests')
-    testCompile "fraud:common.spring-support:$rev_fraud_common"
+    testCompile "org.spockframework:spock-core:$rev_spok"
+    testRuntime "org.spockframework:spock-spring:$rev_spok"
+    testCompile "org.springframework:spring-test:$rev_spring"
     testCompile "junit:junit:$rev_junit"
     testCompile "org.easymock:easymock:$rev_easymock"
 }

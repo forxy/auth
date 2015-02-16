@@ -4,228 +4,239 @@ import auth.api.v1.Group
 import auth.api.v1.User
 import common.status.api.ComponentStatus
 import common.status.api.StatusType
-import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
+import spock.lang.Specification
+
+import javax.annotation.Resource
 
 /**
  * User Data Source tests
  */
-abstract class UserAndGroupDAOTest extends AbstractJUnit4SpringContextTests {
+abstract class UserAndGroupDAOTest extends Specification {
 
-    @Autowired
+    protected static final ADMIN_EMAIL = 'admin@forxy.ru'
+
+    @Resource
     IUserDAO userDAO
-    @Autowired
+    @Resource
     IGroupDAO groupDAO
 
-    @Test
-    void testGetUsers() {
-        List<User> users = userDAO.findAll()
-        assert users, 'Cannot find any users'
+    def "user DAO should return at least one user"() {
+        expect:
+        userDAO.findAll()
     }
 
-    @Test
-    void testGetGroup() {
-        Group usersGroup = groupDAO.find 'users'
-        assert usersGroup, 'Group "users" not found'
+    def "group DAO should return at least one group"() {
+        expect:
+        groupDAO.findAll()
     }
 
-    @Test
-    void testGetAllGroups() {
-        List<Group> userGroups = groupDAO.findAll()
-        assert userGroups, 'Cannot find any groups'
+    def "group DAO should have group 'users'"() {
+        expect:
+        groupDAO.find 'users'
     }
 
-    @Test
-    void testAuthenticate() {
-        User admin = userDAO.authenticate 'admin', 'password'
-        assert admin, 'Admin not authorized'
-    }
-
-    @Test
-    void testCreateUser() {
+    def "user DAO should authenticate a new User"() {
+        setup:
         User user = createUser 'test'
-        try {
-            assert user.login == 'test'
-            assert user.email == 'test@mail.com'
-            assert user.firstName == 'testFirstName'
-            assert user.lastName == 'testLastName'
-            assert userDAO.authenticate('test', 'password'), 'Test user not authenticated'
-        } finally {
-            delete user
-        }
+
+        expect:
+        userDAO.authenticate user.login, 'password'
+
+        cleanup:
+        delete user
     }
 
-    @Test
-    void testUpdateUser() {
+    def "user DAO should create user"() {
+        setup:
         User user = createUser 'test'
-        try {
-            assert user, 'Test user has not been added'
-            user.firstName = 'otherTestFirstName'
-            user = userDAO.save user
-            assert user.firstName == 'otherTestFirstName'
-        } finally {
-            delete user
-        }
+
+        expect:
+        user.login == 'test'
+        user.email == 'test@mail.com'
+        user.firstName == 'testFirstName'
+        user.lastName == 'testLastName'
+        user.password != 'password'
+
+        userDAO.find user.login
+        userDAO.find user.email
+
+        cleanup:
+        delete user
     }
 
-    @Test
-    void testCreateGroup() {
+    def "user DAO should update user with new name"() {
+        setup:
+        User user = createUser 'test'
+
+        expect:
+        user
+
+        when:
+        user.firstName = 'otherTestFirstName'
+        user = userDAO.save user
+
+        then:
+        user.firstName == 'otherTestFirstName'
+
+        cleanup:
+        delete user
+    }
+
+    void "group DAO should create group"() {
+        setup:
         Group group = createGroup 'test'
-        try {
-            assert group.code == 'test'
-            assert group.name == 'Test Group'
-            assert group.description == 'Test Group'
-            assert groupDAO.find('test'), 'Test group not found'
-        } finally {
-            delete group
-        }
+
+        expect:
+        group.code == 'test'
+        group.name == 'Test Group'
+        group.description == 'Test Group'
+        groupDAO.find group.code
+
+        cleanup:
+        delete group
     }
 
-    @Test
-    void testGetUserDAOSystemStatus() {
-        Thread.sleep 1000
+    def "user DAO should return GREEN system status"() {
+        given:
         ComponentStatus status = userDAO.status
-        assert status, 'DB status not available'
-        assert status.componentType == ComponentStatus.ComponentType.DB
-        //assert status.status == StatusType.GREEN, "$status.exceptionMessage\n$status.exceptionDetails"
-        assert status.name == 'User DAO'
+
+        expect:
+        status
+        status.componentType == ComponentStatus.ComponentType.DB
+        status.status == StatusType.GREEN
+        status.name == 'User DAO'
     }
 
-    @Test
-    void testGetGroupDAOSystemStatus() {
-        Thread.sleep 1000
+    def "group DAO should return GREEN system status"() {
+        given:
         ComponentStatus status = groupDAO.status
-        assert status, 'DB status not available'
-        assert status.componentType == ComponentStatus.ComponentType.DB
-        //assert status.status == StatusType.GREEN, "$status.exceptionMessage\n$status.exceptionDetails"
-        assert status.name == 'Group DAO'
+
+        expect:
+        status
+        status.componentType == ComponentStatus.ComponentType.DB
+        status.status == StatusType.GREEN
+        status.name == 'Group DAO'
     }
 
-    @Test
-    void testCreateGroupWithUser() {
+    def "new Group should include itself into its users groups"() {
+        setup:
         User user = createUser 'test'
-        try {
-            Group group = createGroup 'test', [user.email]
-            try {
-                user = userDAO.find user.email
-                assert group.code in user.groups, 'Group has not been mapped into users'
+        Group group = createGroup 'test', [user.email]
 
-                group = groupDAO.find group.code
-                assert user.email in group.members, 'User has not been includes into group'
-            } finally {
-                delete group
-            }
-        } finally {
-            delete user
-        }
+        when:
+        user = userDAO.find user.email
+        group = groupDAO.find group.code
+
+        then:
+        group.code in user.groups
+        user.email in group.members
+
+        cleanup:
+        delete group
+        delete user
     }
 
-    @Test
-    void testCreateUserWithGroup() {
+
+    def "new User should include itself into its groups members"() {
+        setup:
         Group group = createGroup 'test'
-        try {
-            User user = createUser 'test', [group.code]
-            try {
-                user = userDAO.find(user.email)
-                assert group.code in user.groups, 'Group has not been mapped into users'
+        User user = createUser 'test', [group.code]
 
-                group = groupDAO.find(group.code)
-                assert user.email in group.members, 'User has not been includes into group'
-            } finally {
-                delete user
-            }
-        } finally {
-            delete group
-        }
+        when:
+        user = userDAO.find user.email
+        group = groupDAO.find group.code
+
+        then:
+        group.code in user.groups
+        user.email in group.members
+
+        cleanup:
+        delete user
+        delete group
     }
 
-    @Test
-    void testUpdateUsersAndGroups() {
+    def "groups should update users membership after users update"() {
+        setup:
         Group group1 = createGroup 'test1'
         Group group2 = createGroup 'test2'
         Group group3 = createGroup 'test3'
-        try {
-            User user1 = createUser 'test1', [group1.code, group2.code]
-            User user2 = createUser 'test2', [group2.code, group3.code]
-            try {
-                user1 = userDAO.find user1.email
-                assert user1.groups, 'Groups have not been mapped into user #1'
-                user2 = userDAO.find user2.email
-                assert user2.groups, 'Groups have not been mapped into user #2'
+        User user1 = createUser 'test1', [group1.code, group2.code]
+        User user2 = createUser 'test2', [group2.code, group3.code]
 
-                group1 = groupDAO.find group1.code
-                group2 = groupDAO.find group2.code
-                group3 = groupDAO.find group3.code
-                assert ['admin@forxy.ru', user1.email] as Set == group1.members, 'Group #1 should contain User #1'
-                assert ['admin@forxy.ru', user1.email, user2.email] as Set == group2.members, 'Group #2 should contain User #1 and #2'
-                assert ['admin@forxy.ru', user2.email] as Set == group3.members, 'Group #3 should contain User #2'
 
-                user1.groups -= group1.code
-                user1.groups << group3.code
-                userDAO.save user1
+        when:
+        user1 = userDAO.find user1.email
+        user2 = userDAO.find user2.email
+        group1 = groupDAO.find group1.code
+        group2 = groupDAO.find group2.code
+        group3 = groupDAO.find group3.code
 
-                group1 = groupDAO.find group1.code
-                group2 = groupDAO.find group2.code
-                group3 = groupDAO.find group3.code
-                assert ['admin@forxy.ru'] as Set == group1.members, 'Group #1 should contain only admin'
-                assert ['admin@forxy.ru', user1.email, user2.email] as Set == group2.members, 'Group #2 should contain User #1 and #2'
-                assert ['admin@forxy.ru', user1.email, user2.email] as Set == group3.members, 'Group #3 should contain User #1 and #2'
+        then:
+        [ADMIN_EMAIL, user1.email] as Set == group1.members
+        [ADMIN_EMAIL, user1.email, user2.email] as Set == group2.members
+        [ADMIN_EMAIL, user2.email] as Set == group3.members
 
-                user1 = userDAO.find user1.email
-                assert [group2.code, group3.code] as Set == user1.groups, 'User #1 should have Group #2 and #3'
-            } finally {
-                delete user1
-                delete user2
-            }
-        } finally {
-            delete group1
-            delete group2
-            delete group3
-        }
+
+        when:
+        user1.groups -= group1.code
+        user1.groups << group3.code
+        userDAO.save user1
+        user1 = userDAO.find user1.email
+        group1 = groupDAO.find group1.code
+        group2 = groupDAO.find group2.code
+        group3 = groupDAO.find group3.code
+
+        then:
+        [ADMIN_EMAIL] as Set == group1.members
+        [ADMIN_EMAIL, user1.email, user2.email] as Set == group2.members
+        [ADMIN_EMAIL, user1.email, user2.email] as Set == group3.members
+        [group2.code, group3.code] as Set == user1.groups
+
+
+        cleanup:
+        delete user2
+        delete user1
+        delete group3
+        delete group2
+        delete group1
     }
 
-    @Test
-    void testDeleteUserWithGroup() {
+    def "user should delete it self from groups membership"() {
+        setup:
         Group group = createGroup 'test'
-        try {
-            User user = createUser 'test', [group.code]
-            try {
-                user = userDAO.find(user.email)
-                assert group.code in user.groups, 'Group has not been mapped into users'
+        User user = createUser 'test', [group.code]
 
-                group = groupDAO.find(group.code)
-                assert user.email in group.members, 'User has not been includes into group'
-            } finally {
-                delete user
-                group = groupDAO.find group.code
-                assert !(user.email in group.members), "User $user.email hasn't been removed from the group members"
-            }
-        } finally {
-            delete group
-        }
+        when:
+        delete user
+        group = groupDAO.find group.code
+
+        then:
+        !(user.email in group.members)
+
+        cleanup:
+        delete group
     }
 
-    @Test
-    void testDeleteGroupWithUser() {
+    def "group should delete it self from users groups"() {
+        setup:
         User user = createUser 'test'
-        try {
-            Group group = createGroup 'test', [user.email]
-            try {
-                user = userDAO.find(user.email)
-                assert group.code in user.groups, 'Group has not been mapped into users'
+        Group group = createGroup 'test', [user.email]
 
-                group = groupDAO.find(group.code)
-                assert user.email in group.members, 'User has not been includes into group'
-            } finally {
-                delete group
-                user = userDAO.find user.email
-                assert !(group.code in user.groups), "Group $group.code hasn't been removed from the user's groups"
-            }
-        } finally {
-            delete user
-        }
+        when:
+        delete group
+        user = userDAO.find user.email
+
+        then:
+        !(group.code in user.groups)
+
+        cleanup:
+        delete user
     }
+
+
+    //------------------------------------------------
+    // Utils
+    //------------------------------------------------
 
     User createUser(String login) {
         createUser login, null

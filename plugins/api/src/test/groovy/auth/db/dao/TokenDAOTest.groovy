@@ -1,22 +1,22 @@
 package auth.db.dao
 
-import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
+import spock.lang.Specification
+
+import javax.annotation.Resource
 
 /**
  * Token Data Source tests
  */
-abstract class TokenDAOTest extends AbstractJUnit4SpringContextTests {
+abstract class TokenDAOTest extends Specification {
 
     static final String TEST_EMAIL = 'test@email.com'
     static final String TEST_CLIENT_ID = UUID.randomUUID() as String
 
-    @Autowired
+    @Resource
     ITokenDAO tokenDAO
 
-    @Test
-    void testGrantAccessCode() {
-
+    def "token DAO should be successfully initialized"() {
+        expect:
+        tokenDAO
     }
 }

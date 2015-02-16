@@ -7,8 +7,20 @@
     <!-- =========================================================================================
                                    Redis Data Source
     ========================================================================================== -->
-    <bean id="jedisConnectionFactory.tokens" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-          p:hostName="${auth.redis.tokens.host}" p:port="${auth.redis.tokens.port}"/>
+    <bean id="jedisPoolConfig.tokens" class="redis.clients.jedis.JedisPoolConfig" lazy-init="false"
+          p:maxTotal="${auth.redis.tokens.pool.maxTotal}"
+          p:maxIdle="${auth.redis.tokens.pool.maxIdle}"
+          p:maxWaitMillis="${auth.redis.tokens.pool.maxWaitMillis}"
+          p:blockWhenExhausted="${auth.redis.tokens.pool.blockWhenExhausted}"/>
+
+    <bean id="jedisConnectionFactory.tokens"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:hostName="${auth.redis.tokens.host}"
+          p:port="${auth.redis.tokens.port}"
+          p:database="${auth.redis.tokens.database}"
+          p:timeout="${auth.redis.tokens.timeout}"
+          p:usePool="true"
+          p:poolConfig-ref="jedisPoolConfig.tokens"/>
 
     <bean id="stringRedisSerializer.tokens" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
 
@@ -17,6 +29,7 @@
 
     <bean id="tokenDAO.impl.redis.base" class="auth.db.dao.redis.TokenDAO" abstract="true"
           autowire-candidate="false"
+          p:location="${auth.redis.tokens.host}:${auth.redis.tokens.port}"
           p:redis-ref="redisTemplate.tokens"/>
 
 </beans>

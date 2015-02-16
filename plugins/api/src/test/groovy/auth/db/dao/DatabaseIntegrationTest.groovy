@@ -3,149 +3,151 @@ package auth.db.dao
 import auth.api.v1.Client
 import auth.api.v1.Group
 import auth.api.v1.User
-import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
+import spock.lang.Specification
+
+import javax.annotation.Resource
 
 /**
  * Auth service Data Sources integration test
  */
-abstract class DatabaseIntegrationTest extends AbstractJUnit4SpringContextTests {
+abstract class DatabaseIntegrationTest extends Specification {
 
-    @Autowired
+    @Resource
     IClientDAO clientDAO
-    @Autowired
+    @Resource
     IUserDAO userDAO
-    @Autowired
+    @Resource
     IGroupDAO groupDAO
-    @Autowired
+    @Resource
     IPermissionDAO permissionDAO
 
-    @Test
-    void testDeleteClientWithGrantedAndApprovedPermissions() {
+    def "delete client: granted and approved permissions should be removed cascade"() {
+        setup:
         Client client = createClient 'testClient1'
         Client resource = createClient 'testResource1', ['rs1.test1', 'rs1.test2']
         User owner = createUser 'testUser1'
         Group group = createGroup 'testGroup1'
-        try {
-            permissionDAO.grantPermissionsToGroup(group.code, ['rs1.test1'] as Set)
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs1.test1'] as Set)
-            assert permissionDAO.getGroupPermissions(group.code) == ['rs1.test1'] as Set,
-                    'Permissions not granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs1.test1'] as Set,
-                    'Permissions not approved'
 
-            delete client
+        when:
+        permissionDAO.grantPermissionsToGroup(group.code, ['rs1.test1'] as Set)
+        permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs1.test1'] as Set)
 
-            assert permissionDAO.getGroupPermissions(group.code) == ['rs1.test1'] as Set,
-                    'Permissions should be still granted'
-            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID),
-                    'Approved client permissions not removed'
-        } finally {
-            delete resource
-            delete group
-            delete owner
-        }
+        then:
+        permissionDAO.getGroupPermissions(group.code) == ['rs1.test1'] as Set
+        permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs1.test1'] as Set
+
+        when:
+        delete client
+
+        then:
+        permissionDAO.getGroupPermissions(group.code) == ['rs1.test1'] as Set
+        !permissionDAO.getAccountApprovals(owner.email, client.clientID)
+
+        cleanup:
+        delete resource
+        delete group
+        delete owner
     }
 
-    @Test
-    void testDeleteResourceWithGrantedAndApprovedPermissions() {
+    def "delete resource: granted and approved permissions should be removed cascade"() {
+        setup:
         Client client = createClient 'testClient2'
         Client resource = createClient 'testResource2', ['rs2.test1', 'rs2.test2']
         User owner = createUser 'testUser2'
         Group group = createGroup 'testGroup2'
-        try {
-            permissionDAO.grantPermissionsToGroup(group.code, ['rs2.test1'] as Set)
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs2.test1'] as Set)
-            assert permissionDAO.getGroupPermissions(group.code) == ['rs2.test1'] as Set,
-                    'Permissions not granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs2.test1'] as Set,
-                    'Permissions not approved'
 
-            delete resource
+        when:
+        permissionDAO.grantPermissionsToGroup(group.code, ['rs2.test1'] as Set)
+        permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs2.test1'] as Set)
 
-            assert !permissionDAO.getGroupPermissions(group.code),
-                    'Permissions are still granted'
-            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID),
-                    'Approved client permissions not removed'
-        } finally {
-            delete owner
-            delete group
-            delete client
-        }
+        then:
+        permissionDAO.getGroupPermissions(group.code) == ['rs2.test1'] as Set
+        permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs2.test1'] as Set
+
+        when:
+        delete resource
+
+        then:
+        !permissionDAO.getGroupPermissions(group.code)
+        !permissionDAO.getAccountApprovals(owner.email, client.clientID)
+
+        cleanup:
+        delete owner
+        delete group
+        delete client
     }
 
-    @Test
-    void testDeleteGroupWithGrantedAndApprovedPermissions() {
+    def "delete group: granted and approved permissions should be removed cascade"() {
+        setup:
         Client client = createClient 'testClient3'
         Client resource = createClient 'testResource3', ['rs3.test1', 'rs3.test2']
         User owner = createUser 'testUser3'
         Group group = createGroup 'testGroup3', [owner.email]
-        try {
-            permissionDAO.grantPermissionsToGroup(group.code, ['rs3.test1'] as Set)
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs3.test1'] as Set)
-            assert permissionDAO.getGroupPermissions(group.code) == ['rs3.test1'] as Set,
-                    'Permissions not granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs3.test1'] as Set,
-                    'Permissions not approved'
 
-            delete group
+        when:
+        permissionDAO.grantPermissionsToGroup(group.code, ['rs3.test1'] as Set)
+        permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs3.test1'] as Set)
 
-            assert !permissionDAO.getGroupPermissions(group.code),
-                    'Permissions are still granted'
-            assert !permissionDAO.getAccountApprovals(owner.email, client.clientID),
-                    'Approved client permissions not removed'
-        } finally {
-            delete owner
-            delete resource
-            delete client
-        }
+        then:
+        permissionDAO.getGroupPermissions(group.code) == ['rs3.test1'] as Set
+        permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs3.test1'] as Set
+
+        when:
+        delete group
+
+        then:
+        !permissionDAO.getGroupPermissions(group.code)
+        !permissionDAO.getAccountApprovals(owner.email, client.clientID)
+
+        cleanup:
+        delete owner
+        delete resource
+        delete client
     }
 
-    @Test
-    void testDeleteMultiuserGroupWithGrantedAndApprovedPermissions() {
+    def "granted permission should not be removed when concurrent group still exist"() {
+        setup:
         Client client = createClient 'testClient4'
         Client resource = createClient 'testResource4', ['rs4.read', 'rs4.write']
         User owner = createUser 'testOwner4'
         User user = createUser 'testUser4'
         Group adminGroup = createGroup 'testAdminGroup4', [owner.email]
         Group userGroup = createGroup 'testUserGroup4', [owner.email, user.email]
-        try {
-            // link groups with resource using permissions available for this client/resource
-            permissionDAO.grantPermissionsToGroup(adminGroup.code, ['rs4.read', 'rs4.write'] as Set)
-            permissionDAO.grantPermissionsToGroup(userGroup.code, ['rs4.read'] as Set)
 
-            // approve these permissions for the group users
-            permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs4.read', 'rs4.write'] as Set)
-            permissionDAO.approveAccountPermissions(user.email, client.clientID, ['rs4.read'] as Set)
+        when:
+        // link groups with resource using permissions available for this client/resource
+        permissionDAO.grantPermissionsToGroup(adminGroup.code, ['rs4.read', 'rs4.write'] as Set)
+        permissionDAO.grantPermissionsToGroup(userGroup.code, ['rs4.read'] as Set)
+        // approve these permissions for the group users
+        permissionDAO.approveAccountPermissions(owner.email, client.clientID, ['rs4.read', 'rs4.write'] as Set)
+        permissionDAO.approveAccountPermissions(user.email, client.clientID, ['rs4.read'] as Set)
 
-            assert permissionDAO.getGroupPermissions(adminGroup.code) == ['rs4.read', 'rs4.write'] as Set,
-                    'Admin permissions not granted'
-            assert permissionDAO.getGroupPermissions(userGroup.code) == ['rs4.read'] as Set,
-                    'User permissions not granted'
+        then:
+        permissionDAO.getGroupPermissions(adminGroup.code) == ['rs4.read', 'rs4.write'] as Set
+        permissionDAO.getGroupPermissions(userGroup.code) == ['rs4.read'] as Set
 
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs4.read', 'rs4.write'] as Set,
-                    'Admin permissions not approved'
-            assert permissionDAO.getAccountApprovals(user.email, client.clientID) == ['rs4.read'] as Set,
-                    'User permissions not approved'
+        permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs4.read', 'rs4.write'] as Set
+        permissionDAO.getAccountApprovals(user.email, client.clientID) == ['rs4.read'] as Set
 
-            delete adminGroup
+        when:
+        delete adminGroup
 
-            assert !permissionDAO.getGroupPermissions(adminGroup.code),
-                    'Permissions are still granted'
-            assert permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs4.read'] as Set,
-                    'Admin should have only user specific approval'
-            assert permissionDAO.getAccountApprovals(user.email, client.clientID) == ['rs4.read'] as Set,
-                    'User should have the same approval'
+        then:
+        !permissionDAO.getGroupPermissions(adminGroup.code)
+        permissionDAO.getAccountApprovals(owner.email, client.clientID) == ['rs4.read'] as Set
+        permissionDAO.getAccountApprovals(user.email, client.clientID) == ['rs4.read'] as Set
 
-        } finally {
-            delete userGroup
-            delete owner
-            delete user
-            delete resource
-            delete client
-        }
+        cleanup:
+        delete userGroup
+        delete owner
+        delete user
+        delete resource
+        delete client
     }
+
+    //------------------------------------------------
+    // Utils
+    //------------------------------------------------
 
     User createUser(String login) {
         createUser login, null

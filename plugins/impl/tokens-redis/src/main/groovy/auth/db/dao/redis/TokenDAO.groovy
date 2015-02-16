@@ -4,6 +4,7 @@ import auth.db.dao.BaseTokenDAO
 import common.status.api.ComponentStatus
 import common.status.api.StatusType
 import org.apache.commons.lang.exception.ExceptionUtils
+import org.springframework.data.redis.connection.RedisConnection
 import org.springframework.data.redis.core.StringRedisTemplate
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate
 class TokenDAO extends BaseTokenDAO {
 
     StringRedisTemplate redis
+    String location
 
     @Override
     void grantAccessCode(final String code,final String clientID,final String email) {
@@ -66,21 +68,26 @@ class TokenDAO extends BaseTokenDAO {
         long responseTime = Long.MAX_VALUE
         String exceptionMessage = null
         String exceptionDetails = null
-        if (redis?.connectionFactory?.connection?.client) {
-            location = "$redis.connectionFactory.connection.client.host:$redis.connectionFactory.connection.client.port"
+        RedisConnection connection = redis?.connectionFactory?.connection
+        try {
+            if (connection?.client) {
+                location = "$connection.client.host:$connection.client.port"
 
-            long timeStart = new Date().time
-            try {
-                redis.randomKey()
-            } catch (final Exception e) {
-                exceptionMessage = e.message
-                exceptionDetails = ExceptionUtils.getStackTrace(e)
+                long timeStart = new Date().time
+                try {
+                    redis.randomKey()
+                } catch (final Exception e) {
+                    exceptionMessage = e.message
+                    exceptionDetails = ExceptionUtils.getStackTrace(e)
+                    statusType = StatusType.RED
+                } finally {
+                    responseTime = new Date().time - timeStart
+                }
+            } else {
                 statusType = StatusType.RED
-            } finally {
-                responseTime = new Date().time - timeStart
             }
-        } else {
-            statusType = StatusType.RED
+        } finally {
+            connection.close()
         }
         return new ComponentStatus(
                 name: 'Token DAO',

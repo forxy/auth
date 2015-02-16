@@ -7,16 +7,30 @@
     <!-- =========================================================================================
                                    Redis Data Source
     ========================================================================================== -->
-    <bean id="jedisConnectionFactory.permissions" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-          p:hostName="${auth.redis.permissions.host}" p:port="${auth.redis.permissions.port}"/>
+    <bean id="jedisPoolConfig.permissions" class="redis.clients.jedis.JedisPoolConfig" lazy-init="false"
+          p:maxTotal="${auth.redis.permissions.pool.maxTotal}"
+          p:maxIdle="${auth.redis.permissions.pool.maxIdle}"
+          p:maxWaitMillis="${auth.redis.permissions.pool.maxWaitMillis}"
+          p:blockWhenExhausted="${auth.redis.permissions.pool.blockWhenExhausted}"/>
 
-    <bean id="stringRedisSerializer.permissions" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="jedisConnectionFactory.permissions"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:hostName="${auth.redis.permissions.host}"
+          p:port="${auth.redis.permissions.port}"
+          p:database="${auth.redis.permissions.database}"
+          p:timeout="${auth.redis.permissions.timeout}"
+          p:usePool="true"
+          p:poolConfig-ref="jedisPoolConfig.permissions"/>
+
+    <bean id="stringRedisSerializer.permissions"
+          class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
 
     <bean id="redisTemplate.permissions" class="org.springframework.data.redis.core.StringRedisTemplate"
           p:connectionFactory-ref="jedisConnectionFactory.permissions"/>
 
     <bean id="permissionDAO.impl.redis.base" class="auth.db.dao.redis.PermissionDAO" abstract="true"
           autowire-candidate="false"
+          p:location="${auth.redis.permissions.host}:${auth.redis.permissions.port}"
           p:redis-ref="redisTemplate.permissions"/>
 
 </beans>
