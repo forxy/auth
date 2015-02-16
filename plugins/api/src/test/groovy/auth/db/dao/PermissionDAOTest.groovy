@@ -3,7 +3,6 @@ package auth.db.dao
 import auth.api.v1.Group
 import common.status.api.ComponentStatus
 import common.status.api.StatusType
-import org.junit.Test
 import spock.lang.Specification
 
 import javax.annotation.Resource

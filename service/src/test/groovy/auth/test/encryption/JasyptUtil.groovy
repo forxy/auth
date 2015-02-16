@@ -4,7 +4,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig
 
 /**
- * Created by Tiger on 24.12.14.
+ * Jacipt util for password generation
  */
 class JasyptUtil {
 
